@@ -30,7 +30,7 @@
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/rocketgraph.css?v=28c720e2" />
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=5248d183"></script>
+    <script src="../../_static/documentation_options.js?v=f630559a"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -500,7 +500,7 @@
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*- --------------------------------------------------===#</span>
 <span class="c1">#</span>
-<span class="c1">#  Copyright 2022-2024 Trovares Inc.</span>
+<span class="c1">#  Copyright 2022-2025 Trovares Inc.</span>
 <span class="c1">#</span>
 <span class="c1">#  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
 <span class="c1">#  you may not use this file except in compliance with the License.</span>
@@ -516,6 +516,7 @@
 <span class="c1">#</span>
 <span class="c1">#===----------------------------------------------------------------------===#</span>
 
+<span class="kn">import</span> <span class="nn">arrow_odbc</span>
 <span class="kn">import</span> <span class="nn">struct</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">xgt</span>
@@ -1406,32 +1407,41 @@
     <span class="k">def</span> <span class="nf">__copy_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_for_extract</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">progress_bar</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span>
                     <span class="n">transaction_size</span><span class="p">,</span> <span class="n">max_text_size</span><span class="p">,</span> <span class="n">max_binary_size</span><span class="p">,</span> <span class="n">column_mapping</span><span class="p">,</span>
                     <span class="n">suppress_errors</span><span class="p">,</span> <span class="n">row_filter</span><span class="p">,</span> <span class="n">on_duplicate_keys</span><span class="p">):</span>
-        <span class="n">reader</span> <span class="o">=</span> <span class="n">read_arrow_batches_from_odbc</span><span class="p">(</span>
-            <span class="n">query</span><span class="o">=</span><span class="n">query_for_extract</span><span class="p">,</span>
-            <span class="n">connection_string</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_connection_string</span><span class="p">,</span>
-            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
-            <span class="n">max_text_size</span><span class="o">=</span><span class="n">max_text_size</span><span class="p">,</span>
-            <span class="n">max_binary_size</span><span class="o">=</span><span class="n">max_binary_size</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__arrow_writer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">column_mapping</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="p">,</span> <span class="n">row_filter</span><span class="p">,</span> <span class="n">on_duplicate_keys</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
-            <span class="c1"># Process arrow batches</span>
-            <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
-            <span class="n">progress_bar</span><span class="o">.</span><span class="n">show_progress</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span><span class="p">)</span>
-            <span class="n">count</span> <span class="o">+=</span> <span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span>
-            <span class="c1"># Start a new transaction</span>
-            <span class="k">if</span> <span class="n">transaction_size</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="n">transaction_size</span><span class="p">:</span>
-                <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">suppress_errors</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">__check_for_error</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
-                <span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-                <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__arrow_writer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">column_mapping</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="p">,</span> <span class="n">row_filter</span><span class="p">,</span> <span class="n">on_duplicate_keys</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">read_arrow_batches_from_odbc</span><span class="p">(</span>
+                <span class="n">query</span><span class="o">=</span><span class="n">query_for_extract</span><span class="p">,</span>
+                <span class="n">connection_string</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_connection_string</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">max_text_size</span><span class="o">=</span><span class="n">max_text_size</span><span class="p">,</span>
+                <span class="n">max_binary_size</span><span class="o">=</span><span class="n">max_binary_size</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__arrow_writer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">column_mapping</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="p">,</span> <span class="n">row_filter</span><span class="p">,</span> <span class="n">on_duplicate_keys</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="c1"># Process arrow batches</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+                <span class="n">progress_bar</span><span class="o">.</span><span class="n">show_progress</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span><span class="p">)</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span>
+                <span class="c1"># Start a new transaction</span>
+                <span class="k">if</span> <span class="n">transaction_size</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="n">transaction_size</span><span class="p">:</span>
+                    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">suppress_errors</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__check_for_error</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+                    <span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                    <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__arrow_writer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">column_mapping</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="p">,</span> <span class="n">row_filter</span><span class="p">,</span> <span class="n">on_duplicate_keys</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="n">suppress_errors</span><span class="p">):</span>
-          <span class="bp">self</span><span class="o">.</span><span class="n">__check_for_error</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">suppress_errors</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__check_for_error</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
 
-        <span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">arrow_odbc</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;too large to be written&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="se">\n</span><span class="s2">Hint: Try building the query yourself with transfer_query_to_xgt and casting oversized columns with CAST(column AS VARCHAR(n)) &quot;</span>
+                    <span class="s2">&quot;or changing the schema of the table to use a fixed size VARCHAR(n). &quot;</span>
+                    <span class="s2">&quot;Variable text width columns sometimes report incorrect maximum sizes from drivers. &quot;</span>
+                <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="k">raise</span>
 
     <span class="k">def</span> <span class="nf">__check_for_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
         <span class="c1"># Write an empty batch with metadata to indicate we are done.</span>
@@ -1555,63 +1565,72 @@
     <span class="k">def</span> <span class="nf">__copy_query_data_to_xgt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">easy_edges</span><span class="p">,</span>
                                  <span class="n">batch_size</span><span class="p">,</span> <span class="n">transaction_size</span><span class="p">,</span> <span class="n">max_text_size</span><span class="p">,</span> <span class="n">max_binary_size</span><span class="p">,</span>
                                  <span class="n">column_mapping</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="p">,</span> <span class="n">row_filter</span><span class="p">,</span> <span class="n">on_duplicate_keys</span><span class="p">):</span>
-        <span class="n">estimate</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">mapping_vertices</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
-        <span class="n">mapping_edges</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
-        <span class="n">mapping_tables</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vertices&#39;</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span> <span class="s1">&#39;edges&#39;</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span> <span class="s1">&#39;tables&#39;</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">()}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__get_mapping</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="n">mapping_tables</span><span class="p">,</span> <span class="n">mapping_vertices</span><span class="p">,</span> <span class="n">mapping_edges</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">estimate</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">mapping_vertices</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+            <span class="n">mapping_edges</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+            <span class="n">mapping_tables</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vertices&#39;</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span> <span class="s1">&#39;edges&#39;</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span> <span class="s1">&#39;tables&#39;</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">()}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__get_mapping</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="n">mapping_tables</span><span class="p">,</span> <span class="n">mapping_vertices</span><span class="p">,</span> <span class="n">mapping_edges</span><span class="p">)</span>
 
-        <span class="k">with</span> <span class="n">ProgressDisplay</span><span class="p">(</span><span class="n">estimate</span><span class="p">)</span> <span class="k">as</span> <span class="n">progress_bar</span><span class="p">:</span>
-            <span class="n">reader</span> <span class="o">=</span> <span class="n">read_arrow_batches_from_odbc</span><span class="p">(</span>
-                <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span>
-                <span class="n">connection_string</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_connection_string</span><span class="p">,</span>
-                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
-                <span class="n">max_text_size</span><span class="o">=</span><span class="n">max_text_size</span><span class="p">,</span>
-                <span class="n">max_binary_size</span><span class="o">=</span><span class="n">max_binary_size</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">arrow_schema</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">schema</span>
-            <span class="n">xgt_schema</span> <span class="o">=</span> <span class="n">_infer_xgt_schema_from_pyarrow_schema</span><span class="p">(</span><span class="n">arrow_schema</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_conversions</span><span class="p">())</span>
-            <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">mapping_tables</span><span class="p">:</span>
-                <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;xgt_schema&#39;</span> <span class="p">:</span> <span class="n">xgt_schema</span><span class="p">,</span> <span class="s1">&#39;arrow_schema&#39;</span> <span class="p">:</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span> <span class="p">:</span> <span class="n">mapping_tables</span><span class="p">[</span><span class="n">table</span><span class="p">]}</span>
-                <span class="n">result</span><span class="p">[</span><span class="s1">&#39;tables&#39;</span><span class="p">][</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
-                <span class="n">frame</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span>
+            <span class="k">with</span> <span class="n">ProgressDisplay</span><span class="p">(</span><span class="n">estimate</span><span class="p">)</span> <span class="k">as</span> <span class="n">progress_bar</span><span class="p">:</span>
+                <span class="n">reader</span> <span class="o">=</span> <span class="n">read_arrow_batches_from_odbc</span><span class="p">(</span>
+                    <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span>
+                    <span class="n">connection_string</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_connection_string</span><span class="p">,</span>
+                    <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                    <span class="n">max_text_size</span><span class="o">=</span><span class="n">max_text_size</span><span class="p">,</span>
+                    <span class="n">max_binary_size</span><span class="o">=</span><span class="n">max_binary_size</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">arrow_schema</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">schema</span>
+                <span class="n">xgt_schema</span> <span class="o">=</span> <span class="n">_infer_xgt_schema_from_pyarrow_schema</span><span class="p">(</span><span class="n">arrow_schema</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_conversions</span><span class="p">())</span>
+                <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">mapping_tables</span><span class="p">:</span>
+                    <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;xgt_schema&#39;</span> <span class="p">:</span> <span class="n">xgt_schema</span><span class="p">,</span> <span class="s1">&#39;arrow_schema&#39;</span> <span class="p">:</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span> <span class="p">:</span> <span class="n">mapping_tables</span><span class="p">[</span><span class="n">table</span><span class="p">]}</span>
+                    <span class="n">result</span><span class="p">[</span><span class="s1">&#39;tables&#39;</span><span class="p">][</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
+                    <span class="n">frame</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span>
 
-            <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">mapping_vertices</span><span class="p">:</span>
-                <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;xgt_schema&#39;</span> <span class="p">:</span> <span class="n">xgt_schema</span><span class="p">,</span> <span class="s1">&#39;arrow_schema&#39;</span> <span class="p">:</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span> <span class="p">:</span> <span class="n">mapping_vertices</span><span class="p">[</span><span class="n">table</span><span class="p">]}</span>
-                <span class="n">result</span><span class="p">[</span><span class="s1">&#39;vertices&#39;</span><span class="p">][</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
-                <span class="n">frame</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">mapping_vertices</span><span class="p">:</span>
+                    <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;xgt_schema&#39;</span> <span class="p">:</span> <span class="n">xgt_schema</span><span class="p">,</span> <span class="s1">&#39;arrow_schema&#39;</span> <span class="p">:</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span> <span class="p">:</span> <span class="n">mapping_vertices</span><span class="p">[</span><span class="n">table</span><span class="p">]}</span>
+                    <span class="n">result</span><span class="p">[</span><span class="s1">&#39;vertices&#39;</span><span class="p">][</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
+                    <span class="n">frame</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span>
 
-            <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">mapping_edges</span><span class="p">:</span>
-                <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;xgt_schema&#39;</span> <span class="p">:</span> <span class="n">xgt_schema</span><span class="p">,</span> <span class="s1">&#39;arrow_schema&#39;</span> <span class="p">:</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span> <span class="p">:</span> <span class="n">mapping_edges</span><span class="p">[</span><span class="n">table</span><span class="p">]}</span>
-                <span class="n">result</span><span class="p">[</span><span class="s1">&#39;edges&#39;</span><span class="p">][</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
-                <span class="n">frame</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">mapping_edges</span><span class="p">:</span>
+                    <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;xgt_schema&#39;</span> <span class="p">:</span> <span class="n">xgt_schema</span><span class="p">,</span> <span class="s1">&#39;arrow_schema&#39;</span> <span class="p">:</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span> <span class="p">:</span> <span class="n">mapping_edges</span><span class="p">[</span><span class="n">table</span><span class="p">]}</span>
+                    <span class="n">result</span><span class="p">[</span><span class="s1">&#39;edges&#39;</span><span class="p">][</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
+                    <span class="n">frame</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">create_xgt_schemas</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">easy_edges</span><span class="p">)</span>
-            <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__arrow_writer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="n">column_mapping</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="p">,</span> <span class="n">row_filter</span><span class="p">,</span> <span class="n">on_duplicate_keys</span><span class="p">)</span>
-            <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">bytes_transferred</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">row_count</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
-                <span class="n">bytes_transferred</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">column</span><span class="o">.</span><span class="n">nbytes</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">)</span>
-                <span class="c1"># Process arrow batches</span>
-                <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
-                <span class="n">progress_bar</span><span class="o">.</span><span class="n">show_progress</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span><span class="p">)</span>
-                <span class="n">count</span> <span class="o">+=</span> <span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span>
-                <span class="n">row_count</span> <span class="o">+=</span> <span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span>
-                <span class="c1"># Start a new transaction</span>
-                <span class="k">if</span> <span class="n">transaction_size</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="n">transaction_size</span><span class="p">:</span>
-                    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="n">suppress_errors</span><span class="p">):</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">__check_for_error</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
-                    <span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-                    <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__arrow_writer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="n">column_mapping</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="p">,</span> <span class="n">row_filter</span><span class="p">,</span> <span class="n">on_duplicate_keys</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">create_xgt_schemas</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">easy_edges</span><span class="p">)</span>
+                <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__arrow_writer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="n">column_mapping</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="p">,</span> <span class="n">row_filter</span><span class="p">,</span> <span class="n">on_duplicate_keys</span><span class="p">)</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">bytes_transferred</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">row_count</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                    <span class="n">bytes_transferred</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">column</span><span class="o">.</span><span class="n">nbytes</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">)</span>
+                    <span class="c1"># Process arrow batches</span>
+                    <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+                    <span class="n">progress_bar</span><span class="o">.</span><span class="n">show_progress</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span><span class="p">)</span>
+                    <span class="n">count</span> <span class="o">+=</span> <span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span>
+                    <span class="n">row_count</span> <span class="o">+=</span> <span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span>
+                    <span class="c1"># Start a new transaction</span>
+                    <span class="k">if</span> <span class="n">transaction_size</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="n">transaction_size</span><span class="p">:</span>
+                        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">suppress_errors</span><span class="p">):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">__check_for_error</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+                        <span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                        <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__arrow_writer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="n">column_mapping</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="p">,</span> <span class="n">row_filter</span><span class="p">,</span> <span class="n">on_duplicate_keys</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="n">suppress_errors</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__check_for_error</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
-            <span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            
-            <span class="k">return</span> <span class="n">row_count</span><span class="p">,</span> <span class="n">bytes_transferred</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">suppress_errors</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__check_for_error</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+                <span class="k">return</span> <span class="n">row_count</span><span class="p">,</span> <span class="n">bytes_transferred</span>
+        <span class="k">except</span> <span class="n">arrow_odbc</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;too large to be written&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="se">\n</span><span class="s2">Hint: Try casting oversized columns with CAST(column AS VARCHAR(n)) &quot;</span>
+                    <span class="s2">&quot;or changing the schema of the table to use a fixed size VARCHAR(n). &quot;</span>
+                    <span class="s2">&quot;Variable text width columns sometimes report incorrect maximum sizes from drivers. &quot;</span>
+                <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="k">raise</span>
 
     <span class="k">def</span> <span class="nf">__validate_column_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_mapping</span><span class="p">):</span>
         <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;The data type of &quot;column_mapping&quot; is incorrect. &#39;</span>
