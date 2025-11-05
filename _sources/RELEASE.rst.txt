@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+2.6.5 (11-05-2025)
+------------------
+
+Changed
+^^^^^^^
+  - Give hints when column doesn't fit in buffer size.
+
 2.6.4 (02-25-2025)
 ------------------
 
