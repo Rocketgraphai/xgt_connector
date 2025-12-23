@@ -1,0 +1,1027 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>xgt_connector.Neo4jConnector</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/rocketgraph.css?v=28c720e2" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=f630559a"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'xgt_connector.Neo4jConnector';</script>
+    <script src="_static/rocketgraph-icon.js?v=b318d2f5"></script>
+    <script src="_static/pypi-icon.js?v=74687d30"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="xgt_connector.Neo4jDriver" href="xgt_connector.Neo4jDriver.html" />
+    <link rel="prev" title="Release Notes" href="RELEASE.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo-light.svg" class="logo__image only-light" alt=" - Home"/>
+    <img src="_static/logo-dark.svg" class="logo__image only-dark pst-js-only" alt=" - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="quick_start.html">
+    Quick Start
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="jupyter/index.html">
+    Jupyter Notebooks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="odbc/index.html">
+    ODBC Connector
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="requirements.html">
+    Requirements
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="RELEASE.html">
+    Release Notes
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#">
+    xgt_connector.Neo4jConnector
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="xgt_connector.Neo4jDriver.html">
+    xgt_connector.Neo4jDriver
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://rocketgraph.com/">
+    Rocketgraph Website
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://docs.rocketgraph.com/">
+    Rocketgraph xGT
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/rocketgraphai/xgt_connector" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/xgt_connector" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-pypi fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://rocketgraph.com" title="Rocketgraph" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-rocketgraph fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Rocketgraph</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="quick_start.html">
+    Quick Start
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="jupyter/index.html">
+    Jupyter Notebooks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="odbc/index.html">
+    ODBC Connector
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="requirements.html">
+    Requirements
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="RELEASE.html">
+    Release Notes
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    xgt_connector.Neo4jConnector
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="xgt_connector.Neo4jDriver.html">
+    xgt_connector.Neo4jDriver
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://rocketgraph.com/">
+    Rocketgraph Website
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://docs.rocketgraph.com/">
+    Rocketgraph xGT
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/rocketgraphai/xgt_connector" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/xgt_connector" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-pypi fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://rocketgraph.com" title="Rocketgraph" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-rocketgraph fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Rocketgraph</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">xgt_connector.Neo4jConnector</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="autodoc-section" id="xgt-connector-neo4jconnector">
+<h1>xgt_connector.Neo4jConnector<a class="headerlink" href="#xgt-connector-neo4jconnector" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xgt_connector.</span></span><span class="sig-name descname"><span class="pre">Neo4jConnector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xgt_connector/neo4j_connector/neo4j_connector.html#Neo4jConnector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xgt_connector.Neo4jConnector" title="Link to this definition">#</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xgt_connector/neo4j_connector/neo4j_connector.html#Neo4jConnector.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xgt_connector.Neo4jConnector.__init__" title="Link to this definition">#</a></dt>
+<dd><p>Initializes the connector class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xgt_server</strong> (<em>xgt.Connection</em>) – Connection object to xGT.</p></li>
+<li><p><strong>neo4j_driver</strong> (<em>neo4j.Neo4jDriver</em><em>, </em><em>neo4j.BoltDriver</em><em>, </em><em>tuple</em><em>(</em><em>neo4j.Neo4jDriver</em><em>, </em><em>database</em><em>)</em><em>, </em><em>tuple</em><em>(</em><em>neo4j.BoltDriver</em><em>, </em><em>database</em><em>)</em><em>, or </em><a class="reference internal" href="xgt_connector.Neo4jDriver.html#xgt_connector.Neo4jDriver" title="xgt_connector.Neo4jDriver"><em>xgt_connector.Neo4jDriver</em></a>) – Connection object to Neo4j.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Print detailed information during calls.</p></li>
+<li><p><strong>enable_apoc</strong> (<em>bool</em>) – If the connector finds APOC, it will use that to improve schema queries.
+If set to True this enables that feature.
+By default this is True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="xgt_connector.Neo4jConnector.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(xgt_server, neo4j_driver[, ...])</p></td>
+<td><p>Initializes the connector class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_connector.Neo4jConnector.copy_data_to_xgt" title="xgt_connector.Neo4jConnector.copy_data_to_xgt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_data_to_xgt</span></code></a>(xgt_schemas)</p></td>
+<td><p>Copies data from Neo4j to the requested vertex and/or edge frames in Rocketgraph xGT.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_connector.Neo4jConnector.create_xgt_schemas" title="xgt_connector.Neo4jConnector.create_xgt_schemas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_xgt_schemas</span></code></a>(xgt_schemas[, append, force])</p></td>
+<td><p>Creates vertex and/or edge frames in Rocketgraph xGT.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_connector.Neo4jConnector.get_xgt_schemas" title="xgt_connector.Neo4jConnector.get_xgt_schemas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_xgt_schemas</span></code></a>([vertices, edges, ...])</p></td>
+<td><p>Retrieve a dictionary containing the schema information for all of the nodes/vertices and all of the edges requested.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_connector.Neo4jConnector.transfer_to_neo4j" title="xgt_connector.Neo4jConnector.transfer_to_neo4j"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transfer_to_neo4j</span></code></a>([vertices, edges, ...])</p></td>
+<td><p>Copies data from Rocketgraph xGT to Neo4j.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_connector.Neo4jConnector.transfer_to_xgt" title="xgt_connector.Neo4jConnector.transfer_to_xgt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transfer_to_xgt</span></code></a>([vertices, edges, ...])</p></td>
+<td><p>Copies data from Neo4j to Rocketgraph xGT.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_connector.Neo4jConnector.translate_query" title="xgt_connector.Neo4jConnector.translate_query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translate_query</span></code></a>(query)</p></td>
+<td><p>Translate a Cypher query to be ready to run in Rocketgraph xGT.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Attributes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_connector.Neo4jConnector.neo4j_driver" title="xgt_connector.Neo4jConnector.neo4j_driver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_driver</span></code></a></p></td>
+<td><p>Retrieve the Neo4j driver used to connect to the neo4j database.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_connector.Neo4jConnector.neo4j_edges" title="xgt_connector.Neo4jConnector.neo4j_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_edges</span></code></a></p></td>
+<td><p>Retrieve a dictionary of the edges (relationships) mapped to a description of the edge's metadata, including its property schema and its endpoint node labels (for both source and target).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_connector.Neo4jConnector.neo4j_node_labels" title="xgt_connector.Neo4jConnector.neo4j_node_labels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_node_labels</span></code></a></p></td>
+<td><p>Retrieve a list of the Neo4j node labels.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_connector.Neo4jConnector.neo4j_node_type_properties" title="xgt_connector.Neo4jConnector.neo4j_node_type_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_node_type_properties</span></code></a></p></td>
+<td><p>Retrieve a list of the property types attached to the nodes in Neo4j.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_connector.Neo4jConnector.neo4j_nodes" title="xgt_connector.Neo4jConnector.neo4j_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_nodes</span></code></a></p></td>
+<td><p>Retrieve a dictionary of the node labels (types) mapped to a description of the node's schema.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_connector.Neo4jConnector.neo4j_property_keys" title="xgt_connector.Neo4jConnector.neo4j_property_keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_property_keys</span></code></a></p></td>
+<td><p>Retrieve a list of the Neo4j property keys.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_connector.Neo4jConnector.neo4j_rel_type_properties" title="xgt_connector.Neo4jConnector.neo4j_rel_type_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_rel_type_properties</span></code></a></p></td>
+<td><p>Retrieve a list of the property types attached to the relationships in Neo4j.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_connector.Neo4jConnector.neo4j_relationship_types" title="xgt_connector.Neo4jConnector.neo4j_relationship_types"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_relationship_types</span></code></a></p></td>
+<td><p>Retrieve a list of the Neo4j relationship types.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_connector.Neo4jConnector.xgt_server" title="xgt_connector.Neo4jConnector.xgt_server"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xgt_server</span></code></a></p></td>
+<td><p>Retrieve the xGT driver used to connect to the xGT server.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xgt_connector/neo4j_connector/neo4j_connector.html#Neo4jConnector.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<dd><p>Initializes the connector class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xgt_server</strong> (<em>xgt.Connection</em>) – Connection object to xGT.</p></li>
+<li><p><strong>neo4j_driver</strong> (<em>neo4j.Neo4jDriver</em><em>, </em><em>neo4j.BoltDriver</em><em>, </em><em>tuple</em><em>(</em><em>neo4j.Neo4jDriver</em><em>, </em><em>database</em><em>)</em><em>, </em><em>tuple</em><em>(</em><em>neo4j.BoltDriver</em><em>, </em><em>database</em><em>)</em><em>, or </em><a class="reference internal" href="xgt_connector.Neo4jDriver.html#xgt_connector.Neo4jDriver" title="xgt_connector.Neo4jDriver"><em>xgt_connector.Neo4jDriver</em></a>) – Connection object to Neo4j.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Print detailed information during calls.</p></li>
+<li><p><strong>enable_apoc</strong> (<em>bool</em>) – If the connector finds APOC, it will use that to improve schema queries.
+If set to True this enables that feature.
+By default this is True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.copy_data_to_xgt">
+<span class="sig-name descname"><span class="pre">copy_data_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_schemas</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/xgt_connector/neo4j_connector/neo4j_connector.html#Neo4jConnector.copy_data_to_xgt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xgt_connector.Neo4jConnector.copy_data_to_xgt" title="Link to this definition">#</a></dt>
+<dd><p>Copies data from Neo4j to the requested vertex and/or edge frames
+in Rocketgraph xGT.</p>
+<p>This function copies data from Neo4j to xGT for all of the nodes and
+all of the relationships, one frame at a time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>xgt_schemas</strong> (<em>dict</em>) – Dictionary containing schema information for vertex and edge frames
+to create in xGT.
+This dictionary can be the value returned from the
+<a class="reference internal" href="#xgt_connector.Neo4jConnector.get_xgt_schemas" title="xgt_connector.Neo4jConnector.get_xgt_schemas"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_xgt_schemas()</span></code></a> method.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.create_xgt_schemas">
+<span class="sig-name descname"><span class="pre">create_xgt_schemas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_schemas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/xgt_connector/neo4j_connector/neo4j_connector.html#Neo4jConnector.create_xgt_schemas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xgt_connector.Neo4jConnector.create_xgt_schemas" title="Link to this definition">#</a></dt>
+<dd><p>Creates vertex and/or edge frames in Rocketgraph xGT.</p>
+<p>This function first infers the schemas for all of the needed frames in xGT to
+store the requested data.
+Then those frames are created in xGT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xgt_schemas</strong> (<em>dict</em>) – Dictionary containing schema information for vertex and edge frames
+to create in xGT.
+This dictionary can be the value returned from the
+<a class="reference internal" href="#xgt_connector.Neo4jConnector.get_xgt_schemas" title="xgt_connector.Neo4jConnector.get_xgt_schemas"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_xgt_schemas()</span></code></a> method.</p></li>
+<li><p><strong>append</strong> (<em>boolean</em>) – Set to true when the xGT frames are already created and holding data
+that should be appended to.
+Set to false when the xGT frames are to be newly created (removing
+any existing frames with the same names prior to creation).</p></li>
+<li><p><strong>force</strong> (<em>boolean</em>) – Set to true to force xGT to drop edges when a vertex frame has dependencies.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.get_xgt_schemas">
+<span class="sig-name descname"><span class="pre">get_xgt_schemas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_id_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_source_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_source'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_target_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_target'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">import_edge_nodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">{}</span></span></span><a class="reference internal" href="_modules/xgt_connector/neo4j_connector/neo4j_connector.html#Neo4jConnector.get_xgt_schemas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xgt_connector.Neo4jConnector.get_xgt_schemas" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve a dictionary containing the schema information for all of
+the nodes/vertices and all of the edges requested.
+If both vertices and edges is None, it will retrieve them all.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vertices</strong> (<em>iterable</em>) – List of requested node labels (vertex frame names) as a string or tuple.
+To map to a specific from a Neo4j label to a xGT frame use a tuple like so:
+(‘neo4j_name’, ‘xgt_name’).</p></li>
+<li><p><strong>edges</strong> (<em>iterable</em>) – List of requested relationship type (edge frame) names or tuple.
+To map to a specific from a Neo4j type to a xGT frame use a tuple like so:
+(‘neo4j_name’, ‘xgt_name’).
+Any vertices not given for an edge will be automatically requested unless disabled.</p></li>
+<li><p><strong>neo4j_id_name</strong> (<em>str</em>) – The name of the xGT column holding the Neo4j node’s ID value.</p></li>
+<li><p><strong>neo4j_source_node_name</strong> (<em>str</em>) – The name of the xGT column holding the source node’s ID value.</p></li>
+<li><p><strong>neo4j_source_node_name</strong> – The name of the xGT column holding the target node’s ID value.</p></li>
+<li><p><strong>import_edge_nodes</strong> (<em>boolean</em>) – Add vertices from edge if not explicitly listed.
+By default True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary containing the schema information of all the nodes/
+vertices and all of the edges requested.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.neo4j_driver">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_driver</span></span><a class="headerlink" href="#xgt_connector.Neo4jConnector.neo4j_driver" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve the Neo4j driver used to connect to the neo4j database.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.neo4j_edges">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_edges</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#xgt_connector.Neo4jConnector.neo4j_edges" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve a dictionary of the edges (relationships) mapped to a
+description of the edge’s metadata, including its property schema and
+its endpoint node labels (for both source and target).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary mapping the edge names to a description of the
+edge’s schema and edge endpoints.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.neo4j_node_labels">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_node_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#xgt_connector.Neo4jConnector.neo4j_node_labels" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve a list of the Neo4j node labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of the string names of node labels in the connected Neo4j.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.neo4j_node_type_properties">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_node_type_properties</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#xgt_connector.Neo4jConnector.neo4j_node_type_properties" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve a list of the property types attached to the nodes in Neo4j.</p>
+<p>Each element of this list is a dictionary describing the property,
+including its name, its possible data types, and which node labels
+it may be attached to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of the string names of node property types in the connected Neo4j.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.neo4j_nodes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#xgt_connector.Neo4jConnector.neo4j_nodes" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve a dictionary of the node labels (types) mapped to a
+description of the node’s schema.</p>
+<p>Each dictionary entry has a key, which is the node label, and a value
+that is a dictionary of property-names mapped to property-types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary mapping the node labels to a description of the
+node’s schema.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.neo4j_property_keys">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_property_keys</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#xgt_connector.Neo4jConnector.neo4j_property_keys" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve a list of the Neo4j property keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of the string names of property keys in the connected Neo4j.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.neo4j_rel_type_properties">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_rel_type_properties</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#xgt_connector.Neo4jConnector.neo4j_rel_type_properties" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve a list of the property types attached to the relationships in
+Neo4j.</p>
+<p>Each element of this list is a dictionary describing the property,
+including its name, its possible data types, and which relationship(s)
+it may be attached to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of the string names of relationship property types in the
+connected Neo4j.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.neo4j_relationship_types">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_relationship_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#xgt_connector.Neo4jConnector.neo4j_relationship_types" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve a list of the Neo4j relationship types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of the string names of relationship types in the connected Neo4j.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.transfer_to_neo4j">
+<span class="sig-name descname"><span class="pre">transfer_to_neo4j</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertex_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xgt_connector/neo4j_connector/neo4j_connector.html#Neo4jConnector.transfer_to_neo4j"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xgt_connector.Neo4jConnector.transfer_to_neo4j" title="Link to this definition">#</a></dt>
+<dd><p>Copies data from Rocketgraph xGT to Neo4j.</p>
+<p>All of the nodes and all of the relationships are copied,
+one frame at a time, from xGT to Neo4j.
+If both vertices and edges is None, it will retrieve them all.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vertices</strong> (<em>iterable</em>) – List of requested node labels (vertex frame names).</p></li>
+<li><p><strong>edges</strong> (<em>iterable</em>) – List of requested relationship type (edge frame) names.
+Any vertices not given for an edge will be automatically requested.</p></li>
+<li><p><strong>namespace</strong> (<em>str</em>) – Namespace for the selected frames.
+If none will use the default namespace.</p></li>
+<li><p><strong>edge_keys</strong> (<em>boolean</em>) – If true will transfer edge key columns.</p></li>
+<li><p><strong>vertex_keys</strong> (<em>boolean</em>) – If true will transfer vertex key columns.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.transfer_to_xgt">
+<span class="sig-name descname"><span class="pre">transfer_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_id_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_source_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_source'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_target_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_target'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">import_edge_nodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/xgt_connector/neo4j_connector/neo4j_connector.html#Neo4jConnector.transfer_to_xgt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xgt_connector.Neo4jConnector.transfer_to_xgt" title="Link to this definition">#</a></dt>
+<dd><p>Copies data from Neo4j to Rocketgraph xGT.</p>
+<p>This function first infers the schemas for all of the needed frames in xGT to
+store the requested data.
+Then those frames are created in xGT.
+Finally, all of the nodes and all of the relationships are copied,
+one frame at a time, from Neo4j to xGT.
+If both vertices and edges is None, it will retrieve them all.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vertices</strong> (<em>iterable</em>) – List of requested node labels (vertex frame names) as a string or tuple.
+To map to a specific from a Neo4j label to a xGT frame use a tuple like so:
+(‘neo4j_name’, ‘xgt_name’).</p></li>
+<li><p><strong>edges</strong> (<em>iterable</em>) – List of requested relationship type (edge frame) names or tuple.
+To map to a specific from a Neo4j type to a xGT frame use a tuple like so:
+(‘neo4j_name’, ‘xgt_name’).
+Any vertices not given for an edge will be automatically requested unless disabled.</p></li>
+<li><p><strong>neo4j_id_name</strong> (<em>str</em>) – The name of the xGT column holding the Neo4j node’s ID value.</p></li>
+<li><p><strong>neo4j_source_node_name</strong> (<em>str</em>) – The name of the xGT column holding the source node’s ID value.</p></li>
+<li><p><strong>neo4j_source_node_name</strong> – The name of the xGT column holding the target node’s ID value.</p></li>
+<li><p><strong>append</strong> (<em>boolean</em>) – Set to true when the xGT frames are already created and holding data
+that should be appended to.
+Set to false when the xGT frames are to be newly created (removing
+any existing frames with the same names prior to creation).</p></li>
+<li><p><strong>force</strong> (<em>boolean</em>) – Set to true to force xGT to drop edges when a vertex frame has dependencies.</p></li>
+<li><p><strong>import_edge_nodes</strong> (<em>boolean</em>) – Add vertices from edge if not explicitly listed.
+By default True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.translate_query">
+<span class="sig-name descname"><span class="pre">translate_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/xgt_connector/neo4j_connector/neo4j_connector.html#Neo4jConnector.translate_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xgt_connector.Neo4jConnector.translate_query" title="Link to this definition">#</a></dt>
+<dd><p>Translate a Cypher query to be ready to run in Rocketgraph xGT.</p>
+<p>It is sometimes necessary to make alterations to naming of graph components
+as part of the automatic graph schema creation from a Neo4j database to
+hold data in a Rocketgraph xGT server.  One example of this is when a
+relationship type consists of some edges from one source node label and
+other edges from a different source node label.</p>
+<p>Given a Cypher query that formulated to run against a Neo4j database, there
+may be some changes required in order to run that same query against a
+Rocketgraph xGT server holding a graph schema that has been auto-generated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>query</strong> (<em>str</em>) – A Cypher query that can be run against the Neo4j database that is
+part of this connector instance.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Translated Cypher query.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.xgt_server">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">xgt_server</span></span><a class="headerlink" href="#xgt_connector.Neo4jConnector.xgt_server" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve the xGT driver used to connect to the xGT server.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="RELEASE.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Release Notes</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="xgt_connector.Neo4jDriver.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">xgt_connector.Neo4jDriver</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector.__init__"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector.copy_data_to_xgt"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.copy_data_to_xgt()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector.create_xgt_schemas"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.create_xgt_schemas()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector.get_xgt_schemas"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.get_xgt_schemas()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector.neo4j_driver"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.neo4j_driver</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector.neo4j_edges"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.neo4j_edges</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector.neo4j_node_labels"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.neo4j_node_labels</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector.neo4j_node_type_properties"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.neo4j_node_type_properties</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector.neo4j_nodes"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.neo4j_nodes</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector.neo4j_property_keys"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.neo4j_property_keys</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector.neo4j_rel_type_properties"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.neo4j_rel_type_properties</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector.neo4j_relationship_types"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.neo4j_relationship_types</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector.transfer_to_neo4j"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.transfer_to_neo4j()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector.transfer_to_xgt"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.transfer_to_xgt()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector.translate_query"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.translate_query()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xgt_connector.Neo4jConnector.xgt_server"><code class="docutils literal notranslate"><span class="pre">Neo4jConnector.xgt_server</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2022-2025, Trovares, Inc..
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

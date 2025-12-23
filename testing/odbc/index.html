@@ -1,0 +1,1077 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ODBC Connector</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/rocketgraph.css?v=28c720e2" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=f630559a"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'odbc/index';</script>
+    <script src="../_static/rocketgraph-icon.js?v=b318d2f5"></script>
+    <script src="../_static/pypi-icon.js?v=74687d30"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="xgt_connector.ODBCConnector" href="xgt_connector.ODBCConnector.html" />
+    <link rel="prev" title="Temporal Triangles ODBC" href="../jupyter/odbc/temporal_triangles.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo-light.svg" class="logo__image only-light" alt=" - Home"/>
+    <img src="../_static/logo-dark.svg" class="logo__image only-dark pst-js-only" alt=" - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../quick_start.html">
+    Quick Start
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../jupyter/index.html">
+    Jupyter Notebooks
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    ODBC Connector
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../requirements.html">
+    Requirements
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../RELEASE.html">
+    Release Notes
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../xgt_connector.Neo4jConnector.html">
+    xgt_connector.Neo4jConnector
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../xgt_connector.Neo4jDriver.html">
+    xgt_connector.Neo4jDriver
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://rocketgraph.com/">
+    Rocketgraph Website
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://docs.rocketgraph.com/">
+    Rocketgraph xGT
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/rocketgraphai/xgt_connector" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/xgt_connector" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-pypi fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://rocketgraph.com" title="Rocketgraph" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-rocketgraph fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Rocketgraph</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../quick_start.html">
+    Quick Start
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../jupyter/index.html">
+    Jupyter Notebooks
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    ODBC Connector
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../requirements.html">
+    Requirements
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../RELEASE.html">
+    Release Notes
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../xgt_connector.Neo4jConnector.html">
+    xgt_connector.Neo4jConnector
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../xgt_connector.Neo4jDriver.html">
+    xgt_connector.Neo4jDriver
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://rocketgraph.com/">
+    Rocketgraph Website
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://docs.rocketgraph.com/">
+    Rocketgraph xGT
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/rocketgraphai/xgt_connector" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/xgt_connector" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-pypi fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://rocketgraph.com" title="Rocketgraph" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-rocketgraph fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Rocketgraph</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="xgt_connector.ODBCConnector.html">xgt_connector.ODBCConnector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xgt_connector.SQLODBCDriver.html">xgt_connector.SQLODBCDriver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xgt_connector.MongoODBCDriver.html">xgt_connector.MongoODBCDriver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xgt_connector.OracleODBCDriver.html">xgt_connector.OracleODBCDriver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xgt_connector.SAPODBCDriver.html">xgt_connector.SAPODBCDriver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xgt_connector.SnowflakeODBCDriver.html">xgt_connector.SnowflakeODBCDriver</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ODBC Connector</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="odbc-connector">
+<span id="odbc"></span><h1>ODBC Connector<a class="headerlink" href="#odbc-connector" title="Link to this heading">#</a></h1>
+<p>The extra ODBC connector module allows for connecting to databases that support ODBC.
+The ODBC connector requires at least xGT 1.14.0.</p>
+<p>The ODBC driver has been tested against Databricks, DB2, MySQL, MariaDB, Oracle, Snowflake, SAP ASE, and SAP IQ.
+The driver regularly runs unit tests against MariaDB.
+Some SQL specific drivers are available below for Oracle, Snowflake and SAP-based databases.
+In general, SQL syntax varies between vendors, so transfer_to_xgt or transfer_to_odbc aren’t guaranteed to work.
+However, transfer_query_to_xgt will likely work with any vendor using the generic SQLODBCDriver.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
+<p>You can install the connector with dependencies for ODBC by executing this command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;xgt_connector[odbc]&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="mapping-sql-tables-to-graphs">
+<span id="mapping-sql-label"></span><h2>Mapping SQL Tables to Graphs<a class="headerlink" href="#mapping-sql-tables-to-graphs" title="Link to this heading">#</a></h2>
+<p>When transferring a table from SQL to xGT, the data must be mapped onto vertices and edge frames or as stand alone tables.</p>
+<ul class="simple">
+<li><p><strong>Vertices</strong>: Use a key to connect edges.</p></li>
+<li><p><strong>Edges</strong>: Use source and target keys from the edge row, along with a frame identifier, to connect to a specific row in the vertex frame.</p></li>
+<li><p><strong>Table</strong>: Similar to an SQL table: does not connect with other frames.</p></li>
+</ul>
+<p>When mapping a SQL table using the connector API, there are two ways to map data:</p>
+<ol class="arabic simple">
+<li><p><strong>Name to dictionary</strong></p></li>
+<li><p><strong>Name to shorthand tuple</strong></p></li>
+</ol>
+<p>Mappings are provided in tuple form to allow multiple types to be transferred in one call. These mappings take the forms:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">(SQL_TABLE,</span> <span class="pre">DICTIONARY)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">(SQL_TABLE,</span> <span class="pre">[XGT_FRAME],</span> <span class="pre">[TUPLE])</span></code></p></li>
+</ul>
+<p>For multiple tables, an array of mappings is used. While dictionary mapping is more verbose, it offers clarity, especially for beginners, because all parameter names must be explicitly defined.</p>
+<section id="dictionary-mapping">
+<h3>Dictionary Mapping<a class="headerlink" href="#dictionary-mapping" title="Link to this heading">#</a></h3>
+<p>In dictionary mappings, the type is determined by the keys provided. Available keys are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">frame</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">key</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">source</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">target</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">source_key</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">target_key</span></code></p></li>
+</ul>
+<p>If the frame name is the same as the SQL table name, the frame key can be omitted.</p>
+<ul class="simple">
+<li><p><strong>Table types</strong> may have <code class="docutils literal notranslate"><span class="pre">frame</span></code>.</p></li>
+<li><p><strong>Vertex types</strong> may have <code class="docutils literal notranslate"><span class="pre">frame</span></code> and require <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p></li>
+<li><p><strong>Edge types</strong> may have <code class="docutils literal notranslate"><span class="pre">frame</span></code> and require <code class="docutils literal notranslate"><span class="pre">source</span></code>, <code class="docutils literal notranslate"><span class="pre">target</span></code>, <code class="docutils literal notranslate"><span class="pre">source_key</span></code>, and <code class="docutils literal notranslate"><span class="pre">target_key</span></code>.</p></li>
+</ul>
+<p>Only these combinations are valid.</p>
+</section>
+<section id="dictionary-mapping-examples">
+<h3>Dictionary Mapping Examples<a class="headerlink" href="#dictionary-mapping-examples" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Mapping a SQL table to an xGT table:</span>
+<span class="p">(</span><span class="s1">&#39;sql_table_name&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span><span class="p">:</span> <span class="s1">&#39;xgt_table_name&#39;</span><span class="p">})</span>
+
+<span class="c1"># Mapping a SQL table to an xGT vertex (key is a column in the xgt_vertex_user frame):</span>
+<span class="p">(</span><span class="s1">&#39;sql_table_name&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span><span class="p">:</span> <span class="s1">&#39;xgt_vertex_user&#39;</span><span class="p">,</span> <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;username&#39;</span><span class="p">})</span>
+
+<span class="c1"># Mapping a SQL table to a different xGT vertex (key is a column in the xgt_vertex_login frame):</span>
+<span class="p">(</span><span class="s1">&#39;sql_different_table_name&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span><span class="p">:</span> <span class="s1">&#39;xgt_vertex_login&#39;</span><span class="p">,</span> <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;ip_address&#39;</span><span class="p">})</span>
+
+<span class="c1"># Mapping a SQL table to an xGT edge (source_key and target_key are columns in the xgt_edge_connection frame):</span>
+<span class="p">(</span><span class="s1">&#39;sql_table_name&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span><span class="p">:</span> <span class="s1">&#39;xgt_edge_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="s1">&#39;xgt_vertex_user&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;xgt_vertex_login&#39;</span><span class="p">,</span> <span class="s1">&#39;source_key&#39;</span><span class="p">:</span> <span class="s1">&#39;user_column&#39;</span><span class="p">,</span> <span class="s1">&#39;target_key&#39;</span><span class="p">:</span> <span class="s1">&#39;ip_column&#39;</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Note that for the edge frame, <code class="docutils literal notranslate"><span class="pre">source</span></code> and <code class="docutils literal notranslate"><span class="pre">target</span></code> refer to vertex frame names, not columns within the frame.</p>
+</section>
+<section id="shorthand-tuple-mapping">
+<h3>Shorthand Tuple Mapping<a class="headerlink" href="#shorthand-tuple-mapping" title="Link to this heading">#</a></h3>
+<p>To reduce verbosity, shorthand tuple mappings are available. The size of the tuple determines the xGT type:</p>
+<ul class="simple">
+<li><p><strong>Table mapping</strong>: <code class="docutils literal notranslate"><span class="pre">(SQL_TABLE,</span> <span class="pre">[XGT_FRAME])</span></code></p></li>
+<li><p><strong>Vertex mapping</strong>: <code class="docutils literal notranslate"><span class="pre">(SQL_TABLE,</span> <span class="pre">[XGT_FRAME],</span> <span class="pre">(KEY,))</span></code></p></li>
+<li><p><strong>Edge mapping</strong>: <code class="docutils literal notranslate"><span class="pre">(SQL_TABLE,</span> <span class="pre">[XGT_FRAME],</span> <span class="pre">(SOURCE,</span> <span class="pre">TARGET,</span> <span class="pre">SOURCE_KEY,</span> <span class="pre">TARGET_KEY))</span></code></p></li>
+</ul>
+<p>As before, the frame name can be omitted if it matches the SQL table name.</p>
+</section>
+<section id="shorthand-mapping-examples">
+<h3>Shorthand Mapping Examples<a class="headerlink" href="#shorthand-mapping-examples" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Mapping a SQL table to an xGT table:</span>
+<span class="p">(</span><span class="s1">&#39;sql_table_name&#39;</span><span class="p">,</span> <span class="s1">&#39;xgt_table_name&#39;</span><span class="p">)</span>
+
+<span class="c1"># Mapping a SQL table to an xGT vertex (key is a column in the xgt_vertex_user frame):</span>
+<span class="p">(</span><span class="s1">&#39;sql_table_name&#39;</span><span class="p">,</span> <span class="s1">&#39;xgt_vertex_user&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">,))</span>
+
+<span class="c1"># Mapping a SQL table to a different xGT vertex (key is a column in the xgt_vertex_login frame):</span>
+<span class="p">(</span><span class="s1">&#39;sql_different_table_name&#39;</span><span class="p">,</span> <span class="s1">&#39;xgt_vertex_login&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;ip_address&#39;</span><span class="p">,))</span>
+<span class="p">(</span><span class="s1">&#39;sql_table_name&#39;</span><span class="p">,</span> <span class="s1">&#39;xgt_edge_connection&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;xgt_vertex_user&#39;</span><span class="p">,</span> <span class="s1">&#39;xgt_vertex_login&#39;</span><span class="p">,</span> <span class="s1">&#39;user_column&#39;</span><span class="p">,</span> <span class="s1">&#39;ip_column&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Examples of these mappings used in the API are provided below.</p>
+</section>
+</section>
+<section id="api-usage-examples">
+<h2>API Usage Examples<a class="headerlink" href="#api-usage-examples" title="Link to this heading">#</a></h2>
+<p>These examples show typical usage patterns.</p>
+<section id="copy-a-sql-table">
+<span id="copy-examples"></span><h3>Copy a SQL table<a class="headerlink" href="#copy-a-sql-table" title="Link to this heading">#</a></h3>
+<p>This example copies test_table from the test database into test_table on xGT.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
+
+<span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([</span><span class="s1">&#39;test_table&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>To map to a specific xGT table type pass a tuple of (SQL table, xGT table):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;test_table&#39;</span><span class="p">,</span> <span class="s1">&#39;xgt_table&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>Or as a dictionary:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;test_table&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="s1">&#39;xgt_table&#39;</span><span class="p">}</span> <span class="p">)])</span>
+</pre></div>
+</div>
+</section>
+<section id="copy-a-sql-table-to-vertices">
+<h3>Copy a SQL table to vertices<a class="headerlink" href="#copy-a-sql-table-to-vertices" title="Link to this heading">#</a></h3>
+<p>This example copy Person into the vertex frame Person.
+The simplest way is to pass the key column as tuple with the table name.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
+
+<span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;ID&#39;</span><span class="p">,))])</span>
+</pre></div>
+</div>
+<p>The key here may be a column number.
+To map to a specific xGT table type, pass a triple tuple of (SQL table, xGT vertex, key tuple):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;xgt_person&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;ID&#39;</span><span class="p">,))])</span>
+</pre></div>
+</div>
+<p>Dictionary remap:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="s1">&#39;xgt_person&#39;</span><span class="p">,</span> <span class="s1">&#39;key&#39;</span> <span class="p">:</span> <span class="s1">&#39;ID&#39;</span> <span class="p">})])</span>
+</pre></div>
+</div>
+<p>The frame may be omitted in the last example if the frame name is the same as SQL table.</p>
+</section>
+<section id="copy-a-sql-table-to-edges">
+<h3>Copy a SQL table to edges<a class="headerlink" href="#copy-a-sql-table-to-edges" title="Link to this heading">#</a></h3>
+<p>This example copy Person into the vertex frame Person and the edge Friend into the edge frame Friend.
+The simplest way is to pass the frames and source and target columns as tuple with the table name.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
+
+<span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;ID&#39;</span><span class="p">,)),</span> <span class="p">(</span><span class="s1">&#39;Friend&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;src_key&#39;</span><span class="p">,</span> <span class="s1">&#39;trg_key&#39;</span><span class="p">))])</span>
+</pre></div>
+</div>
+<p>The tuple format for the argument tuple is (Source Frame, Target Frame, Source Key, Target Key)</p>
+<p>Similarly, a triple tuple may be given to rename:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;ID&#39;</span><span class="p">,)),</span> <span class="p">(</span><span class="s1">&#39;Friend&#39;</span><span class="p">,</span> <span class="s1">&#39;xgt_friend&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;src_key&#39;</span><span class="p">,</span> <span class="s1">&#39;trg_key&#39;</span><span class="p">))])</span>
+</pre></div>
+</div>
+<p>Or a dictionary:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;ID&#39;</span><span class="p">,)),</span> <span class="p">(</span><span class="s1">&#39;Friend&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="s1">&#39;xgt_friend&#39;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span> <span class="p">:</span> <span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;source_key&#39;</span> <span class="p">:</span> <span class="s1">&#39;src_key&#39;</span><span class="p">,</span> <span class="s1">&#39;target_key&#39;</span> <span class="p">:</span> <span class="s1">&#39;trg_key&#39;</span><span class="p">})])</span>
+</pre></div>
+</div>
+</section>
+<section id="copy-a-sql-table-to-edges-without-a-vertex-table">
+<h3>Copy a SQL table to edges without a vertex table<a class="headerlink" href="#copy-a-sql-table-to-edges-without-a-vertex-table" title="Link to this heading">#</a></h3>
+<p>This example will create the corresponding vertex frame for the source and target with a key column named Key using the source and target keys when creating the edge.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
+
+<span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;Friend&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;src_key&#39;</span><span class="p">,</span> <span class="s1">&#39;trg_key&#39;</span><span class="p">))],</span> <span class="n">easy_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The easy_edges parameter would automatically create the Person vertices with a single column using the keys from the Friend edges.</p>
+</section>
+<section id="executing-and-transferring-sql-commands">
+<h3>Executing and transferring SQL commands<a class="headerlink" href="#executing-and-transferring-sql-commands" title="Link to this heading">#</a></h3>
+<p>This example shows executing a SQL command and transferring the results to xGT.
+This functionality allows xGT to connect to any ODBC database and read data from it using their flavor of SQL.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
+
+<span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_query_to_xgt</span><span class="p">(</span><span class="s1">&#39;SELECT * From SqlTable&#39;</span><span class="p">,</span> <span class="n">mapping</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Friend&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;src_key&#39;</span><span class="p">,</span> <span class="s1">&#39;trg_key&#39;</span><span class="p">),</span> <span class="n">easy_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This would transfer the whole SqlTable to the xGT Friend edges.
+Similar to above the Person vertices would be automatically created.
+The mapping parameter is similar to the examples above except it takes single mapping instead of a list.
+See <a class="reference internal" href="#copy-examples"><span class="std std-ref">Copy a SQL table</span></a>.
+This specifies the frame and type you want the table to map to.</p>
+</section>
+<section id="appending-data">
+<h3>Appending data<a class="headerlink" href="#appending-data" title="Link to this heading">#</a></h3>
+<p>By default a transfer will drop any associated frame on xGT.
+To append to a frame, set <cite>append</cite> to True on the transfer.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([</span><span class="s1">&#39;Person&#39;</span><span class="p">],</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="other-parameters-when-transferring-to-xgt">
+<h3>Other parameters when transferring to <span class="nocap">xGT</span><a class="headerlink" href="#other-parameters-when-transferring-to-xgt" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The parameter <cite>batch_size</cite> can be used to set the amount of rows to transfer at once.</p></li>
+<li><p>The parameter <cite>transaction_size</cite> number of rows to treat as a single transaction to xGT.</p></li>
+<li><p>The parameter <cite>suppress_errors</cite> if True, will ingest all valid rows and return an error with rows not ingested.</p></li>
+<li><p>The parameter <cite>on_duplicate_keys</cite> changes the behavior how duplicate vertex keys are handles.</p></li>
+<li><p>The parameter <cite>row_filter</cite> takes a Cypher fragment that modifies incoming data.</p></li>
+<li><p>The parameter <cite>column_mapping</cite> takes a dictionary of frame column names mapped to either column position or name.</p></li>
+</ul>
+<p>For details about the parameters see: <a class="reference internal" href="xgt_connector.ODBCConnector.html#xgt_connector.ODBCConnector.transfer_to_xgt" title="xgt_connector.ODBCConnector.transfer_to_xgt"><code class="xref py py-meth docutils literal notranslate"><span class="pre">transfer_to_xgt()</span></code></a> or <a class="reference internal" href="xgt_connector.ODBCConnector.html#xgt_connector.ODBCConnector.transfer_query_to_xgt" title="xgt_connector.ODBCConnector.transfer_query_to_xgt"><code class="xref py py-meth docutils literal notranslate"><span class="pre">transfer_query_to_xgt()</span></code></a>.</p>
+<p>For row filtering see the <a class="reference external" href="https://docs.rocketgraph.com/user_ref/graphanalytics/tql_fragments.html">xGT Documentation</a>.
+The column names will correspond to the names of the columns coming from the database table.
+For instance the row filter would look something like <cite>WHERE a.key = 1 RETURN toString(a.key), a.name”</cite> where <cite>key</cite> and <cite>name</cite> are two columns from table.</p>
+<p>For error suppression, the first 10 errors are shown in the error message.
+Additional errors can be seen like so:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+  <span class="n">c</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">xgt</span><span class="o">.</span><span class="n">XgtIOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+  <span class="n">error_rows</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">get_ingest_errors</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="connecting-to-databricks">
+<h3>Connecting to Databricks<a class="headerlink" href="#connecting-to-databricks" title="Link to this heading">#</a></h3>
+<p>After installing <a class="reference external" href="https://www.databricks.com/spark/odbc-drivers-download">Databricks’ ODBC driver</a>, connect like so:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
+
+<span class="n">connection_string</span><span class="o">=</span><span class="s2">&quot;DSN=databricks;Database=test;AuthMech=3;Uid=token;Pwd=f98b2a5c1d34e7890abf123456defabc6789;&quot;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;my_table&#39;</span><span class="p">,</span> <span class="s1">&#39;test_table&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>This would transfer the table, <cite>my_table</cite>, under the <cite>test</cite> database to the xGT table named <cite>test_table</cite>.</p>
+</section>
+<section id="connecting-to-db2">
+<h3>Connecting to DB2<a class="headerlink" href="#connecting-to-db2" title="Link to this heading">#</a></h3>
+<p>After installing <a class="reference external" href="https://www.ibm.com/support/pages/db2-odbc-cli-driver-download-and-installation-information">IBM’s ODBC driver</a>, connect like so:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
+
+<span class="n">connection_string</span><span class="o">=</span><span class="s2">&quot;DSN=db2;Database=test;UID=test;PWD=test;&quot;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;my_table&#39;</span><span class="p">,</span> <span class="s1">&#39;test_table&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>This would transfer the table, <cite>my_table</cite>, under the <cite>test</cite> database to the xGT table named <cite>test_table</cite>.
+With DB2 make sure you are using the correct driver.
+On 64-bit systems make sure you are using the libdb2o.so driver.
+The 32-bit driver does not work correctly with 64-bit systems, and will only transfer part of the data.</p>
+</section>
+<section id="connecting-to-snowflake">
+<h3>Connecting to Snowflake<a class="headerlink" href="#connecting-to-snowflake" title="Link to this heading">#</a></h3>
+<p>After installing <a class="reference external" href="https://docs.snowflake.com/en/user-guide/odbc.html">Snowflake’s ODBC driver</a>, connect like so:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SnowflakeODBCDriver</span>
+
+<span class="n">connection_string</span><span class="o">=</span><span class="s2">&quot;DSN=snowflake;Database=test;Warehouse=test;Uid=test;Pwd=test;&quot;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SnowflakeODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;my_schema.my_table&#39;</span><span class="p">,</span> <span class="s1">&#39;test_table&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>This would transfer the table, <cite>my_table</cite>, in the <cite>my_schema</cite> schema, under the <cite>test</cite> database to the xGT table named <cite>test_table</cite>.</p>
+</section>
+<section id="connecting-to-mongodb">
+<h3>Connecting to MongoDB<a class="headerlink" href="#connecting-to-mongodb" title="Link to this heading">#</a></h3>
+<p>This example uses MongoDB 5 with CData’s MongoDB ODBC driver.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">MongoODBCDriver</span>
+
+<span class="n">connection_string</span><span class="o">=</span><span class="s2">&quot;DSN=MongoDB;Database=test;Uid=test;Pwd=test;&quot;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">MongoODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;my_collection&#39;</span><span class="p">,</span> <span class="s1">&#39;test_table&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>This would transfer the collection, <cite>my_collection</cite>, under the <cite>test</cite> database to the xGT table named <cite>test_table</cite>.
+The driver provides an parameter, include_id, that by default is false.
+This parameter removes the _id field returned by the driver.
+If this field is present when saving to MongoDB, it will replace documents with corresponding _ids in the database.</p>
+</section>
+<section id="connecting-to-oracle">
+<h3>Connecting to Oracle<a class="headerlink" href="#connecting-to-oracle" title="Link to this heading">#</a></h3>
+<p>This example uses Oracle XE with their ODBC driver.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">OracleODBCDriver</span>
+
+<span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;DSN={OracleODBC-19};Server=127.0.0.1;Port=1521;Uid=c##test;Pwd=test;DBQ=XE;&#39;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">OracleODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;test_table&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>This would transfer the table, <cite>test_table</cite>, to the xGT table named <cite>test_table</cite>.
+The driver provides two parameters, upper_case_names and ansi_conversion.
+The upper_case_names parameter will treat names of tables like unquoted Oracle SQL does.
+By default this is false.
+And the ansi_conversion parameter, will convert Number(38,0) Oracle types into int64.
+By default this is true.</p>
+<p>The Oracle driver only support transferring data from Oracle to xGT.
+It doesn’t support transferring data from xGT to Oracle.
+Binary types are no supported for Oracle.
+Interval types likely don’t work through ODBC as well.</p>
+</section>
+<section id="connecting-to-sap-ase-iq">
+<h3>Connecting to SAP ASE/IQ<a class="headerlink" href="#connecting-to-sap-ase-iq" title="Link to this heading">#</a></h3>
+<p>This example uses SAP ASE/IQ with their ODBC driver.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SAPODBCDriver</span>
+
+<span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;DSN=</span><span class="si">{ASE}</span><span class="s1">;Server=127.0.0.1;Port=5000;Uid=test;Pwd=test;Database=test;&#39;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SAPODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;test_table&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>This would transfer the table, <cite>test_table</cite>, to the xGT table named <cite>test_table</cite>.
+Transferring data from xGT to SAP ASE/IQ also works.</p>
+</section>
+<section id="transferring-data-from-xgt-to-odbc">
+<h3>Transferring data from <span class="nocap">xGT</span> to ODBC<a class="headerlink" href="#transferring-data-from-xgt-to-odbc" title="Link to this heading">#</a></h3>
+<p>This example copies test_table from xGT to a test database.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
+
+<span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_odbc</span><span class="p">(</span><span class="n">tables</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;test_table&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>To map to a specific xGT table type pass a tuple of (xGT frame, SQL table):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_odbc</span><span class="p">(</span><span class="n">tables</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;xgt_table&#39;</span><span class="p">,</span> <span class="s1">&#39;sql_table&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>The parameter <cite>batch_size</cite> can be used to set the amount of rows to transfer at once.
+Parameters for transferring edges and vertices exist as well.
+Some limitations exist.
+See below for more details.</p>
+</section>
+<section id="additional-examples">
+<h3>Additional Examples<a class="headerlink" href="#additional-examples" title="Link to this heading">#</a></h3>
+<p>More detailed examples can be found in <a class="reference internal" href="../jupyter/index.html#jupyter"><span class="std std-ref">Jupyter Notebooks</span></a> or on github:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/rocketgraphai/xgt_connector/tree/main/examples/odbc">Python Examples</a></p></li>
+<li><p><a class="reference external" href="https://github.com/rocketgraphai/xgt_connector/tree/main/jupyter/odbc">Jupyter Notebooks</a></p></li>
+</ul>
+</section>
+</section>
+<section id="limitations">
+<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>When transferring to a database, the table must already be created.</p></li>
+<li><p>Transfer sizes/times are estimates and may not be available.</p></li>
+<li><p>The Databricks and Oracle drivers don’t support transferring from xGT to them.</p></li>
+<li><p>Transferring from xGT to MarieDB with None for floats is not supported.</p></li>
+<li><p>Binary data types not supported.</p></li>
+</ul>
+</section>
+<section id="api-details">
+<h2>API Details<a class="headerlink" href="#api-details" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="xgt_connector.ODBCConnector.html#xgt_connector.ODBCConnector" title="xgt_connector.ODBCConnector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ODBCConnector</span></code></a>(xgt_server, odbc_driver)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="xgt_connector.SQLODBCDriver.html#xgt_connector.SQLODBCDriver" title="xgt_connector.SQLODBCDriver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SQLODBCDriver</span></code></a>(connection_string)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="xgt_connector.MongoODBCDriver.html#xgt_connector.MongoODBCDriver" title="xgt_connector.MongoODBCDriver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MongoODBCDriver</span></code></a>(connection_string[, include_id])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="xgt_connector.OracleODBCDriver.html#xgt_connector.OracleODBCDriver" title="xgt_connector.OracleODBCDriver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OracleODBCDriver</span></code></a>(connection_string[, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="xgt_connector.SAPODBCDriver.html#xgt_connector.SAPODBCDriver" title="xgt_connector.SAPODBCDriver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SAPODBCDriver</span></code></a>(connection_string)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="xgt_connector.SnowflakeODBCDriver.html#xgt_connector.SnowflakeODBCDriver" title="xgt_connector.SnowflakeODBCDriver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SnowflakeODBCDriver</span></code></a>(connection_string[, ...])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../jupyter/odbc/temporal_triangles.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Temporal Triangles ODBC</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="xgt_connector.ODBCConnector.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">xgt_connector.ODBCConnector</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mapping-sql-tables-to-graphs">Mapping SQL Tables to Graphs</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dictionary-mapping">Dictionary Mapping</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dictionary-mapping-examples">Dictionary Mapping Examples</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shorthand-tuple-mapping">Shorthand Tuple Mapping</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shorthand-mapping-examples">Shorthand Mapping Examples</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-usage-examples">API Usage Examples</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-sql-table">Copy a SQL table</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-sql-table-to-vertices">Copy a SQL table to vertices</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-sql-table-to-edges">Copy a SQL table to edges</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-sql-table-to-edges-without-a-vertex-table">Copy a SQL table to edges without a vertex table</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#executing-and-transferring-sql-commands">Executing and transferring SQL commands</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-parameters-when-transferring-to-xgt">Other parameters when transferring to <span class="nocap">xGT</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-databricks">Connecting to Databricks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-db2">Connecting to DB2</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-snowflake">Connecting to Snowflake</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-mongodb">Connecting to MongoDB</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-oracle">Connecting to Oracle</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-sap-ase-iq">Connecting to SAP ASE/IQ</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transferring-data-from-xgt-to-odbc">Transferring data from <span class="nocap">xGT</span> to ODBC</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-examples">Additional Examples</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-details">API Details</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2022-2025, Trovares, Inc..
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
