@@ -33,7 +33,7 @@
 This Python package is for connecting the `Rocketgraph xGT <https://www.rocketgraph.com/>`_ graph analytics engine with various applications.
 Rocketgraph xGT can `significantly speedup Neo4j queries <https://rocketgraph.com/benchmarks-neo4j/>`_.
 
-The connector `source code <http://github.com/trovares/trovares_connector/>`_ is available on github.
+The connector `source code <http://github.com/rocketgraphai/xgt_connector/>`_ is available on github.
 
 A basic guide is provided below.
 For a quick start see :ref:`quick_start`.
@@ -213,8 +213,8 @@ Additional Examples
 
 More detailed examples can be found in :ref:`jupyter` or on github:
 
-* `Python Examples <https://github.com/trovares/trovares_connector/tree/main/examples/neo4j>`_
-* `Jupyter Notebooks <https://github.com/trovares/trovares_connector/tree/main/jupyter/neo4j>`_
+* `Python Examples <https://github.com/rocketgraphai/xgt_connector/tree/main/examples/neo4j>`_
+* `Jupyter Notebooks <https://github.com/rocketgraphai/xgt_connector/tree/main/jupyter/neo4j>`_
 
 Limitations
 -----------

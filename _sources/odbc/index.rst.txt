@@ -481,8 +481,8 @@ Additional Examples
 
 More detailed examples can be found in :ref:`jupyter` or on github:
 
-* `Python Examples <https://github.com/trovares/xgt_connector/tree/main/examples/odbc>`_
-* `Jupyter Notebooks <https://github.com/trovares/xgt_connector/tree/main/jupyter/odbc>`_
+* `Python Examples <https://github.com/rocketgraphai/xgt_connector/tree/main/examples/odbc>`_
+* `Jupyter Notebooks <https://github.com/rocketgraphai/xgt_connector/tree/main/jupyter/odbc>`_
 
 Limitations
 -----------
