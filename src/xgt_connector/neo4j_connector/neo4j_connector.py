@@ -93,7 +93,7 @@ class Neo4jDriver(object):
         self._database = database
         self.__verbose = verbose
 
-        # These are just kept as seperate variables because they may be needed
+        # These are just kept as separate variables because they may be needed
         self._neo4j_driver = None
         self._py2neo_driver = None
         self._arrow_driver = None
@@ -469,11 +469,11 @@ class Neo4jConnector(object):
         ----------
         vertices : iterable
             List of requested node labels (vertex frame names) as a string or tuple.
-            To map to a specific from a Neo4j label to a xGT frame use a tuple like so:
+            To map to a specific from a Neo4j label to an xGT frame use a tuple like so:
             ('neo4j_name', 'xgt_name').
         edges : iterable
             List of requested relationship type (edge frame) names or tuple.
-            To map to a specific from a Neo4j type to a xGT frame use a tuple like so:
+            To map to a specific from a Neo4j type to an xGT frame use a tuple like so:
             ('neo4j_name', 'xgt_name').
             Any vertices not given for an edge will be automatically requested unless disabled.
         neo4j_id_name : str
@@ -754,11 +754,11 @@ class Neo4jConnector(object):
         ----------
         vertices : iterable
             List of requested node labels (vertex frame names) as a string or tuple.
-            To map to a specific from a Neo4j label to a xGT frame use a tuple like so:
+            To map to a specific from a Neo4j label to an xGT frame use a tuple like so:
             ('neo4j_name', 'xgt_name').
         edges : iterable
             List of requested relationship type (edge frame) names or tuple.
-            To map to a specific from a Neo4j type to a xGT frame use a tuple like so:
+            To map to a specific from a Neo4j type to an xGT frame use a tuple like so:
             ('neo4j_name', 'xgt_name').
             Any vertices not given for an edge will be automatically requested unless disabled.
         neo4j_id_name : str
