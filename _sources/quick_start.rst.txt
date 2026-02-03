@@ -25,7 +25,7 @@ Quick Start
 Installing
 ----------
 
-In a seperate terminal install the `Developer version of xGT with Docker <https://hub.docker.com/r/rocketgraph/xgt>`_ and run it:
+In a separate terminal install the `Developer version of xGT with Docker <https://hub.docker.com/r/rocketgraph/xgt>`_ and run it:
 
 .. code-block:: bash
 

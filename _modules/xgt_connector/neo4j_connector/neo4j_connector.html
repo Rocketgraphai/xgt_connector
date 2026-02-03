@@ -596,7 +596,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_database</span> <span class="o">=</span> <span class="n">database</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__verbose</span> <span class="o">=</span> <span class="n">verbose</span>
 
-        <span class="c1"># These are just kept as seperate variables because they may be needed</span>
+        <span class="c1"># These are just kept as separate variables because they may be needed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_neo4j_driver</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_py2neo_driver</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_arrow_driver</span> <span class="o">=</span> <span class="kc">None</span>
@@ -984,11 +984,11 @@
 <span class="sd">        ----------</span>
 <span class="sd">        vertices : iterable</span>
 <span class="sd">            List of requested node labels (vertex frame names) as a string or tuple.</span>
-<span class="sd">            To map to a specific from a Neo4j label to a xGT frame use a tuple like so:</span>
+<span class="sd">            To map to a specific from a Neo4j label to an xGT frame use a tuple like so:</span>
 <span class="sd">            (&#39;neo4j_name&#39;, &#39;xgt_name&#39;).</span>
 <span class="sd">        edges : iterable</span>
 <span class="sd">            List of requested relationship type (edge frame) names or tuple.</span>
-<span class="sd">            To map to a specific from a Neo4j type to a xGT frame use a tuple like so:</span>
+<span class="sd">            To map to a specific from a Neo4j type to an xGT frame use a tuple like so:</span>
 <span class="sd">            (&#39;neo4j_name&#39;, &#39;xgt_name&#39;).</span>
 <span class="sd">            Any vertices not given for an edge will be automatically requested unless disabled.</span>
 <span class="sd">        neo4j_id_name : str</span>
@@ -1278,11 +1278,11 @@
 <span class="sd">        ----------</span>
 <span class="sd">        vertices : iterable</span>
 <span class="sd">            List of requested node labels (vertex frame names) as a string or tuple.</span>
-<span class="sd">            To map to a specific from a Neo4j label to a xGT frame use a tuple like so:</span>
+<span class="sd">            To map to a specific from a Neo4j label to an xGT frame use a tuple like so:</span>
 <span class="sd">            (&#39;neo4j_name&#39;, &#39;xgt_name&#39;).</span>
 <span class="sd">        edges : iterable</span>
 <span class="sd">            List of requested relationship type (edge frame) names or tuple.</span>
-<span class="sd">            To map to a specific from a Neo4j type to a xGT frame use a tuple like so:</span>
+<span class="sd">            To map to a specific from a Neo4j type to an xGT frame use a tuple like so:</span>
 <span class="sd">            (&#39;neo4j_name&#39;, &#39;xgt_name&#39;).</span>
 <span class="sd">            Any vertices not given for an edge will be automatically requested unless disabled.</span>
 <span class="sd">        neo4j_id_name : str</span>
