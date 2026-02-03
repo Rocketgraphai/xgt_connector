@@ -180,7 +180,7 @@ The connector can connect to AuraDB instances by setting the hostname and approp
 Using various Neo4j drivers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The connector supports passing a xgt_connector.Neo4jDriver, neo4j.BoltDriver, or a neo4j.Neo4jDriver.
+The connector supports passing an xgt_connector.Neo4jDriver, neo4j.BoltDriver, or a neo4j.Neo4jDriver.
 The Rocketgraph Neo4jDriver provides support for connecting to the Neo4j server through a combination of choices such as http, arrow, bolt, or other drivers.
 These additional drivers can provide much faster performance than the default neo4j.Neo4jDriver, but may require the optional components as explained in :ref:`requirements`.
 
