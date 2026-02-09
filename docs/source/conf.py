@@ -38,7 +38,7 @@ print(f"Sys.path: {sys.path}")
 # -- Project information -----------------------------------------------------
 
 project = 'xgt_connector'
-copyright = '2022-2026, Trovares, Inc.'
+copyright = '2022-2026 Trovares Inc. dba Rocketgraph'
 author = 'rocketgraph.com'
 
 # The full version, including alpha/beta/rc tags
