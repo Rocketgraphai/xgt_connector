@@ -1,0 +1,62 @@
+/*
+ * Rocketgraph Custom css
+ * ~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * Stylesheet settings overriding the agogo theme specific for Rocketgraph.
+ *
+ */
+
+/* Load the fonts from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+/* Apply body font */
+body {
+  font-family: 'Rubik', sans-serif;
+}
+
+/* Apply header font */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Barlow Semi Condensed', sans-serif;
+}
+
+/* Uppercase only non-api headers */
+h1:not(.autodoc-section h1),
+h2:not(.autodoc-section h2),
+h3:not(.autodoc-section h3),
+h4:not(.autodoc-section h4),
+h5:not(.autodoc-section h5),
+h6:not(.autodoc-section h6) {
+  text-transform: uppercase;
+}
+
+/* Apply pre and code font */
+pre, code {
+  font-family: 'Roboto Mono', monospace;
+}
+
+/* Special cases like xGT. */
+.nocap {
+  text-transform: none !important;
+}
+
+/* prevent logo from being to wide and text clashing with next item */
+
+.navbar-header-items__start .navbar-item {
+  width: 100%;
+}
+
+.navbar-item .navbar-brand {
+  width: 90%;
+  min-width: 250px;
+}
+
+.navbar-brand img {
+  min-width: 0;
+  height: auto;
+  max-height: 100%;
+  flex-shrink: 1;
+}
+
+.navbar-brand p {
+  flex: 0 1 auto;
+}

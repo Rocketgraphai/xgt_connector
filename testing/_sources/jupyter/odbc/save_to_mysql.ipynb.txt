@@ -1,0 +1,191 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "0a84f0a2",
+   "metadata": {},
+   "source": [
+    "# Transfer or backup data to MySQL\n",
+    "This notebook walks through transferring data from xGT to MySQL."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "8e10ab2e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from xgt_connector import ODBCConnector, SQLODBCDriver\n",
+    "import xgt\n",
+    "import time\n",
+    "import pyodbc\n",
+    "import requests\n",
+    "import os"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "52f1e71d",
+   "metadata": {},
+   "source": [
+    "## Connect to xGT and MySQL"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "066e36c6",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'\n",
+    "xgt_server = xgt.Connection()\n",
+    "odbc_driver = SQLODBCDriver(connection_string)   \n",
+    "c = ODBCConnector(xgt_server, odbc_driver)       \n",
+    "pyodbc_driver = pyodbc.connect(connection_string)\n",
+    "cursor = pyodbc_driver.cursor()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c80a4a94",
+   "metadata": {},
+   "source": [
+    "## Transfer the dataset locally"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "c21fbd4a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "file_object = requests.get('https://datasets.rocketgraph.com/TT/tt.10M')\n",
+    "with open('tt.10M', 'wb') as local_file:\n",
+    "    local_file.write(file_object.content)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "64d027ac",
+   "metadata": {},
+   "source": [
+    "## Load the data into MySQL"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "36502592",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Load time: 25.33\n"
+     ]
+    }
+   ],
+   "source": [
+    "cursor.execute(\"DROP TABLE IF EXISTS Events1\")\n",
+    "cursor.execute(\"DROP TABLE IF EXISTS Events2\")\n",
+    "cursor.execute(\"CREATE TABLE Events1 (src BIGINT, trg BIGINT, timestamp BIGINT)\")\n",
+    "cursor.execute(\"CREATE TABLE Events2 (src BIGINT, trg BIGINT, timestamp BIGINT)\")\n",
+    "t0 = time.time()\n",
+    "cursor.execute(\"LOAD DATA LOCAL INFILE './tt.10M' INTO TABLE Events1 FIELDS TERMINATED BY ',' LINES TERMINATED BY '\\n';\") \n",
+    "pyodbc_driver.commit()\n",
+    "t_duration = time.time() - t0\n",
+    "print(f\"Load time: {t_duration:,.2f}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3b4e7f02",
+   "metadata": {},
+   "source": [
+    "## Query to run"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "d7154ed8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "cypher_query = \"MATCH (row:Events) WHERE row.timestamp < 1 return count(*)\"\n",
+    "sql_query = \"SELECT COUNT(*) FROM Events WHERE timestamp < 1\""
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1b52fb50",
+   "metadata": {},
+   "source": [
+    "## Transfer data to MySQL"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "f49f1f12",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Load xgt time: 0.94\n",
+      "Transferring: [############################################################] 10000000/10000000 in 0:00:33.3s (300334.1/s, eta: 0:00:00.0s)     \n",
+      "Transfer to MySQL time: 33.30\n"
+     ]
+    }
+   ],
+   "source": [
+    "file = 'xgtd://' + os.getcwd() + '/tt.10M'\n",
+    "xgt_server.drop_frame('Events2')\n",
+    "t0 = time.time()\n",
+    "xgt_server.create_table_frame_from_data(file, 'Events2',\n",
+    "                                        schema=[('src', xgt.INT), ('trg', xgt.INT), ('timestamp', xgt.INT)])\n",
+    "t_duration = time.time() - t0\n",
+    "print(f\"Load xgt time: {t_duration:,.2f}\")\n",
+    "t0 = time.time()\n",
+    "c.transfer_to_odbc(tables=['Events2'])\n",
+    "t_duration = time.time() - t0\n",
+    "print(f\"Transfer to MySQL time: {t_duration:,.2f}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8474d04a",
+   "metadata": {},
+   "source": [
+    "Here we see the performance for transfer is comparable to loading from CSV in MySQL and that CSV loading is much faster in xGT compared to MySQL."
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
