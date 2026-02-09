@@ -395,7 +395,7 @@ This example uses MongoDB 5 with CData's MongoDB ODBC driver.
    conn.transfer_to_xgt([('my_collection', 'test_table')])
 
 This would transfer the collection, `my_collection`, under the `test` database to the xGT table named `test_table`.
-The driver provides an parameter, include_id, that by default is false.
+The driver provides a parameter, include_id, that by default is false.
 This parameter removes the _id field returned by the driver.
 If this field is present when saving to MongoDB, it will replace documents with corresponding _ids in the database.
 
