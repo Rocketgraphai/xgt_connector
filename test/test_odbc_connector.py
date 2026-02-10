@@ -48,7 +48,7 @@ class TestXgtODBCConnector(unittest.TestCase):
 
   @classmethod
   def _setup_connector(cls):
-    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=test;'
+    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
     odbc_driver = pyodbc.connect(connection_string)
     driver = SQLODBCDriver(connection_string)
     conn = ODBCConnector(cls.xgt, driver)
