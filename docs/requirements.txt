@@ -6,5 +6,5 @@ pyarrow
 neo4j
 xgt
 pandas
-arrow_odbc==0.2.0
+arrow_odbc
 antlr4-python3-runtime

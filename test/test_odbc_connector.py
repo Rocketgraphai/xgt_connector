@@ -48,7 +48,7 @@ class TestXgtODBCConnector(unittest.TestCase):
 
   @classmethod
   def _setup_connector(cls):
-    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
+    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=test;'
     odbc_driver = pyodbc.connect(connection_string)
     driver = SQLODBCDriver(connection_string)
     conn = ODBCConnector(cls.xgt, driver)
@@ -83,7 +83,7 @@ class TestXgtODBCConnector(unittest.TestCase):
     result = [[1, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, date(year = 1989, month = 5, day = 6),
                datetime(year = 1986, month = 5, day = 6, hour = 12, minute = 56, second = 34),
                datetime(year = 1989, month = 5, day = 6, hour = 12, minute = 56, second = 34),
-               '12:56:34', 1999], [None, None, None, None, None, None, None, None, None, None, None, None, None]]
+               time(12, 56, 34), 1999], [None, None, None, None, None, None, None, None, None, None, None, None, None]]
     cursor = self.odbc_driver.cursor()
     cursor.execute("CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53), "
                    "TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE, "
@@ -357,8 +357,8 @@ class TestXgtODBCConnector(unittest.TestCase):
     result = [[1, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, date(year = 1989, month = 5, day = 6),
                datetime(year = 1986, month = 5, day = 6, hour = 12, minute = 56, second = 34),
                datetime(year = 1989, month = 5, day = 6, hour = 12, minute = 56, second = 34),
-               '12:56:34', 1999]]
-               #'12:56:34', 1999], [None, None, None, None, None, None, None, None, None, None, None, None, None]]
+               time(12, 56, 34), 1999]]
+               #time(12, 56, 34), 1999], [None, None, None, None, None, None, None, None, None, None, None, None, None]]
     cursor = self.odbc_driver.cursor()
     create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
@@ -381,7 +381,7 @@ class TestXgtODBCConnector(unittest.TestCase):
     result = [[1, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, date(year = 1989, month = 5, day = 6),
                datetime(year = 1986, month = 5, day = 6, hour = 12, minute = 56, second = 34),
                datetime(year = 1989, month = 5, day = 6, hour = 12, minute = 56, second = 34),
-               '12:56:34', 1999]]
+               time(12, 56, 34), 1999]]
     cursor = self.odbc_driver.cursor()
     create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
@@ -403,7 +403,7 @@ class TestXgtODBCConnector(unittest.TestCase):
     result = [[1, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, date(year = 1989, month = 5, day = 6),
                datetime(year = 1986, month = 5, day = 6, hour = 12, minute = 56, second = 34),
                datetime(year = 1989, month = 5, day = 6, hour = 12, minute = 56, second = 34),
-               '12:56:34', 1999]]
+               time(12, 56, 34), 1999]]
     cursor = self.odbc_driver.cursor()
     create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
@@ -425,7 +425,7 @@ class TestXgtODBCConnector(unittest.TestCase):
     result = [[1, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, date(year = 1989, month = 5, day = 6),
                datetime(year = 1986, month = 5, day = 6, hour = 12, minute = 56, second = 34),
                datetime(year = 1989, month = 5, day = 6, hour = 12, minute = 56, second = 34),
-               '12:56:34', 1999]]
+               time(12, 56, 34), 1999]]
     cursor = self.odbc_driver.cursor()
     create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
@@ -447,7 +447,7 @@ class TestXgtODBCConnector(unittest.TestCase):
     result = [[1, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, date(year = 1989, month = 5, day = 6),
                datetime(year = 1986, month = 5, day = 6, hour = 12, minute = 56, second = 34),
                datetime(year = 1989, month = 5, day = 6, hour = 12, minute = 56, second = 34),
-               '12:56:34', 1999]]
+               time(12, 56, 34), 1999]]
     cursor = self.odbc_driver.cursor()
     create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
@@ -469,7 +469,7 @@ class TestXgtODBCConnector(unittest.TestCase):
     result = [[1, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, date(year = 1989, month = 5, day = 6),
                datetime(year = 1986, month = 5, day = 6, hour = 12, minute = 56, second = 34),
                datetime(year = 1989, month = 5, day = 6, hour = 12, minute = 56, second = 34),
-               '12:56:34', 1999]]
+               time(12, 56, 34), 1999]]
     cursor = self.odbc_driver.cursor()
     create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
@@ -491,7 +491,7 @@ class TestXgtODBCConnector(unittest.TestCase):
     result = [[1, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, date(year = 1989, month = 5, day = 6),
                datetime(year = 1986, month = 5, day = 6, hour = 12, minute = 56, second = 34),
                datetime(year = 1989, month = 5, day = 6, hour = 12, minute = 56, second = 34),
-               '12:56:34', 1999], [None, None, None, None, None, None, None, None, None, None, None, None, None]]
+               time(12, 56, 34), 1999], [None, None, None, None, None, None, None, None, None, None, None, None, None]]
     cursor = self.odbc_driver.cursor()
     cursor.execute("CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53), "
                    "TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE, "
