@@ -793,6 +793,12 @@ class ODBCConnector(object):
                 def iter_record_batches():
                     for batch in batch_reader:
                         table = pa.Table.from_pandas(batch.to_pandas(integer_object_nulls=True, date_as_object=True, timestamp_as_object=True))
+                        new_schema = pa.schema([
+                            (field.name, pa.string() if field.type == pa.large_string() else field.type)
+                            for field in table.schema
+                        ])
+
+                        table = table.cast(new_schema)
                         table = table.rename_columns(final_names).to_batches()
                         for batch in table:
                             yield batch
