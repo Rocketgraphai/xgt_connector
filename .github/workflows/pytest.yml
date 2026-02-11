@@ -93,3 +93,7 @@ jobs:
     - name: Run test suite
       run: |
         pytest -v -s test
+
+    - name: Setup tmate session on failure
+      if: failure()
+      uses: mxschmitt/action-tmate@v3
