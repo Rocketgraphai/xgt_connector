@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- --------------------------------------------------===#
 #
-#  Copyright 2022-2025 Trovares Inc.
+#  Copyright 2022-2026 Trovares Inc. dba Rocketgraph.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -793,7 +793,11 @@ class ODBCConnector(object):
                 def iter_record_batches():
                     for batch in batch_reader:
                         table = pa.Table.from_pandas(batch.to_pandas(integer_object_nulls=True, date_as_object=True, timestamp_as_object=True))
-                        table = table.rename_columns(final_names).to_batches()
+                        new_schema = pa.schema([
+                            (field.name, pa.string() if pa.types.is_large_string(field.type) else field.type)
+                            for field in table.schema
+                        ])
+                        table = table.cast(new_schema).rename_columns(final_names).to_batches()
                         for batch in table:
                             yield batch
                             progress_bar.show_progress(batch.num_rows)

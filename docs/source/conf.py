@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- --------------------------------------------------===#
 #
-#  Copyright 2022-2025 Trovares Inc.
+#  Copyright 2022-2026 Trovares Inc. dba Rocketgraph.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -38,11 +38,11 @@ print(f"Sys.path: {sys.path}")
 # -- Project information -----------------------------------------------------
 
 project = 'xgt_connector'
-copyright = '2022-2025, Trovares, Inc.'
+copyright = '2022-2026 Trovares Inc. dba Rocketgraph'
 author = 'rocketgraph.com'
 
 # The full version, including alpha/beta/rc tags
-release = '2.6.5'
+release = '2.6.6'
 
 # -- General configuration ---------------------------------------------------
 
