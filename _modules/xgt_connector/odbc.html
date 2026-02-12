@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=f630559a"></script>
+    <script src="../../_static/documentation_options.js?v=c1c8dff0"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -500,7 +500,7 @@
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*- --------------------------------------------------===#</span>
 <span class="c1">#</span>
-<span class="c1">#  Copyright 2022-2025 Trovares Inc.</span>
+<span class="c1">#  Copyright 2022-2026 Trovares Inc. dba Rocketgraph.</span>
 <span class="c1">#</span>
 <span class="c1">#  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
 <span class="c1">#  you may not use this file except in compliance with the License.</span>
@@ -1344,7 +1344,11 @@
                 <span class="k">def</span> <span class="nf">iter_record_batches</span><span class="p">():</span>
                     <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">batch_reader</span><span class="p">:</span>
                         <span class="n">table</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">(</span><span class="n">integer_object_nulls</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">date_as_object</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timestamp_as_object</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-                        <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">rename_columns</span><span class="p">(</span><span class="n">final_names</span><span class="p">)</span><span class="o">.</span><span class="n">to_batches</span><span class="p">()</span>
+                        <span class="n">new_schema</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">schema</span><span class="p">([</span>
+                            <span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">string</span><span class="p">()</span> <span class="k">if</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_large_string</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">type</span><span class="p">)</span> <span class="k">else</span> <span class="n">field</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">schema</span>
+                        <span class="p">])</span>
+                        <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">new_schema</span><span class="p">)</span><span class="o">.</span><span class="n">rename_columns</span><span class="p">(</span><span class="n">final_names</span><span class="p">)</span><span class="o">.</span><span class="n">to_batches</span><span class="p">()</span>
                         <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">table</span><span class="p">:</span>
                             <span class="k">yield</span> <span class="n">batch</span>
                             <span class="n">progress_bar</span><span class="o">.</span><span class="n">show_progress</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span><span class="p">)</span>
@@ -1686,7 +1690,7 @@
 
   <p class="copyright">
     
-      © Copyright 2022-2025, Trovares, Inc..
+      © Copyright 2022-2026 Trovares Inc. dba Rocketgraph.
       <br/>
     
   </p>
