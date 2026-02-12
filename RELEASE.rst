@@ -1,6 +1,17 @@
 Release Notes
 =============
 
+2.6.6 (02-11-2026)
+------------------
+
+Changed
+^^^^^^^
+  - Added support for Python 3.14.
+
+Fixed
+^^^^^
+  - Transfers not working with pandas 3.0.
+
 2.6.5 (11-05-2025)
 ------------------
 
