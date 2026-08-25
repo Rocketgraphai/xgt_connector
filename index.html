@@ -27,26 +27,27 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/rocketgraph.css?v=28c720e2" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="_static/documentation_options.js?v=c1c8dff0"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/documentation_options.js?v=65b05be9"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <script src="_static/rocketgraph-icon.js?v=b318d2f5"></script>
     <script src="_static/pypi-icon.js?v=74687d30"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -55,20 +56,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -94,7 +101,7 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -229,11 +236,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -246,8 +260,7 @@
           
           
           
-          <a href="https://github.com/rocketgraphai/xgt_connector" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/rocketgraphai/xgt_connector" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
         <li class="nav-item">
           
@@ -258,8 +271,7 @@
           
           
           
-          <a href="https://pypi.org/project/xgt_connector" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-pypi fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">PyPI</span></a>
+          <a href="https://pypi.org/project/xgt_connector" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
         </li>
         <li class="nav-item">
           
@@ -270,8 +282,7 @@
           
           
           
-          <a href="https://rocketgraph.com" title="Rocketgraph" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-rocketgraph fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">Rocketgraph</span></a>
+          <a href="https://rocketgraph.com" title="Rocketgraph" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="rocketgraph" aria-hidden="true"></i><span class="visually-hidden">Rocketgraph</span></a>
         </li>
 </ul></div>
       
@@ -397,11 +408,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -414,8 +432,7 @@
           
           
           
-          <a href="https://github.com/rocketgraphai/xgt_connector" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/rocketgraphai/xgt_connector" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
         <li class="nav-item">
           
@@ -426,8 +443,7 @@
           
           
           
-          <a href="https://pypi.org/project/xgt_connector" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-pypi fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">PyPI</span></a>
+          <a href="https://pypi.org/project/xgt_connector" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
         </li>
         <li class="nav-item">
           
@@ -438,8 +454,7 @@
           
           
           
-          <a href="https://rocketgraph.com" title="Rocketgraph" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-rocketgraph fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">Rocketgraph</span></a>
+          <a href="https://rocketgraph.com" title="Rocketgraph" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="rocketgraph" aria-hidden="true"></i><span class="visually-hidden">Rocketgraph</span></a>
         </li>
 </ul></div>
         
@@ -706,31 +721,32 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="RELEASE.html">Release Notes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id1">2.6.6 (02-11-2026)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id2">2.6.5 (11-05-2025)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id4">2.6.4 (02-25-2025)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id6">2.6.3 (02-12-2025)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id8">2.6.2 (10-15-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id10">2.6.1 (10-02-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id12">2.6.0 (02-20-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id14">2.5.0 (02-14-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id17">2.4.0 (02-06-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id19">2.3.0 (12-18-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id22">2.2.0 (12-07-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id24">2.1.0 (08-23-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id26">2.0.0 (06-14-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id29">1.7.0 (02-22-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id31">1.6.0 (10-21-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id34">1.5.2 (08-26-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id36">1.5.1 (07-29-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id38">1.5.0 (07-29-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id40">1.4.0 (07-26-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id44">1.3.1 (07-11-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id46">1.3.0 (07-08-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id48">1.2.1 (07-01-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id50">1.2.0 (06-24-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id53">1.1.0 (06-17-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id57">1.0.0 (06-13-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id1">2.6.7 (08-25-2026)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id2">2.6.6 (02-11-2026)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id5">2.6.5 (11-05-2025)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id7">2.6.4 (02-25-2025)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id9">2.6.3 (02-12-2025)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id11">2.6.2 (10-15-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id13">2.6.1 (10-02-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id15">2.6.0 (02-20-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id17">2.5.0 (02-14-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id20">2.4.0 (02-06-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id22">2.3.0 (12-18-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id25">2.2.0 (12-07-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id27">2.1.0 (08-23-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id29">2.0.0 (06-14-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id32">1.7.0 (02-22-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id34">1.6.0 (10-21-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id37">1.5.2 (08-26-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id39">1.5.1 (07-29-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id41">1.5.0 (07-29-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id43">1.4.0 (07-26-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id47">1.3.1 (07-11-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id49">1.3.0 (07-08-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id51">1.2.1 (07-01-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id53">1.2.0 (06-24-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id56">1.1.0 (06-17-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id60">1.0.0 (06-13-2022)</a></li>
 </ul>
 </li>
 </ul>
@@ -738,7 +754,7 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
 </section>
 <section id="api-details">
 <span id="id1"></span><h2>API Details<a class="headerlink" href="#api-details" title="Link to this heading">#</a></h2>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="xgt_connector.Neo4jConnector.html#xgt_connector.Neo4jConnector" title="xgt_connector.Neo4jConnector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Neo4jConnector</span></code></a>(xgt_server, neo4j_driver[, ...])</p></td>
 <td><p></p></td>
@@ -788,11 +804,11 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
     class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-xgt-connector">Using the <span class="nocap">xGT</span> Connector</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-entire-graph-from-neo4j-to-rocketgraph-xgt">Copy entire graph from Neo4j to Rocketgraph <span class="nocap">xGT</span></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">Copy a portion of a graph based on node labels and/or relationship types</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
@@ -802,7 +818,7 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-examples">Additional Examples</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#single-relationship-with-multiple-node-conversion">Single relationship with multiple node conversion</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#translating-cypher-queries">Translating Cypher queries</a></li>
 </ul>
@@ -825,8 +841,8 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -846,7 +862,7 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     <br/>
   </p>
 </div>
@@ -860,7 +876,7 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.21.0.
 </p></div>
       
     </div>

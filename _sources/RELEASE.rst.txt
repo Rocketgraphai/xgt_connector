@@ -1,6 +1,19 @@
 Release Notes
 =============
 
+2.6.7 (08-25-2026)
+------------------
+
+Changed
+^^^^^^^
+  - Drop support for python 3.9.
+  - Test against Neo4j 4.4, 5, and the latest release, with and without graph-data-science.
+
+Fixed
+^^^^^
+  - Neo4j 2026.02 and later reporting schema property types with Cypher type names.
+  - Neo4jDriver ignoring bolt_port and always connecting to port 7687.
+
 2.6.6 (02-11-2026)
 ------------------
 
