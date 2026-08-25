@@ -40,9 +40,20 @@ jobs:
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
+        # 4.4 and 5 report legacy schema type names, 2026.02 and later Cypher ones.
+        neo4j-version: ['4.4.12', '5', 'latest']
+        # Nothing under test needs the plugin, so cover a plain server too.
+        gds: [true, false]
+        exclude:
+          # One python is enough to show the connector does not need the plugin.
+          - {gds: false, python-version: '3.10'}
+          - {gds: false, python-version: '3.11'}
+          - {gds: false, python-version: '3.12'}
+          - {gds: false, python-version: '3.13'}
 
     steps:
     - name: Check out repository code
@@ -69,14 +80,30 @@ jobs:
         echo -e '[MariaDB]\nDescription = ODBC Driver for MariaDB\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so\nFileUsage = 1' | sudo tee -a /etc/odbcinst.ini > /dev/null
 
     - name: Launch neo4j
+      env:
+        NEO4J_VERSION: ${{ matrix.neo4j-version }}
+        WITH_GDS: ${{ matrix.gds }}
       run: |
         mkdir -p neo4j/plugins
+        # Neo4j 5 renamed the plugin variable and moved dbms.default_listen_address
+        # into the server namespace, and refuses to start when handed a setting it
+        # does not recognize.
+        if [ "${NEO4J_VERSION%%.*}" = "4" ]; then
+          plugin_var=NEO4JLABS_PLUGINS
+          listen_address=NEO4J_dbms_default__listen__address=0.0.0.0
+        else
+          plugin_var=NEO4J_PLUGINS
+          listen_address=NEO4J_server_default__listen__address=0.0.0.0
+        fi
+        plugins=()
+        if [ "$WITH_GDS" = "true" ]; then
+          plugins=(--env "$plugin_var=[\"graph-data-science\"]")
+        fi
         docker run --rm -d --name neo4j -p7474:7474 -p7687:7687 -p 9999:9999 \
             --user=$(id -u):$(id -g) -v $PWD/neo4j/plugins:/var/lib/neo4j/plugins \
-            --env NEO4J_AUTH=neo4j/foo --env NEO4J_EDITION=community \
-            --env NEO4JLABS_PLUGINS='["graph-data-science"]' \
-            --env HOST=0.0.0.0  --env NEO4J_dbms_default__listen__address=0.0.0.0 \
-            neo4j:4.4.12
+            --env NEO4J_AUTH=neo4j/testtest --env NEO4J_EDITION=community \
+            "${plugins[@]}" --env HOST=0.0.0.0 --env "$listen_address" \
+            neo4j:${NEO4J_VERSION}
 
     - name: Launch mariadb
       run: |

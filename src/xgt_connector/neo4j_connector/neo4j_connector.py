@@ -27,6 +27,7 @@ import os
 import time
 import warnings
 from enum import Enum
+from urllib.parse import urlsplit
 from ..common import ProgressDisplay
 from ..common import BasicArrowClientAuthHandler
 
@@ -104,8 +105,12 @@ class Neo4jDriver(object):
         if driver_passed_in:
             self._neo4j_driver = host
         else:
-            self._neo4j_driver = neo4j.GraphDatabase.driver(f"{self._protocol}://{self._host}",
-                                                            auth=self._auth)
+            url = f"{self._protocol}://{self._host}"
+            # Callers who worked around bolt_port being ignored here may already
+            # carry a port on the host, so only supply one when it has none.
+            if urlsplit(url).port is None:
+                url = f"{url}:{self._bolt_port}"
+            self._neo4j_driver = neo4j.GraphDatabase.driver(url, auth=self._auth)
         if driver == 'neo4j-bolt':
             pass
         elif driver == 'py2neo-bolt':
@@ -271,6 +276,25 @@ class Neo4jConnector(object):
         'LocalDateTimeArray': pa.list_(pa.timestamp('us')),
         'DurationArray': pa.list_(pa.int64()),
         'PointArray': pa.list_(pa.list_(pa.float32())),
+    }
+
+    # Neo4j 2026.02 and later report Cypher type names from
+    # db.schema.nodeTypeProperties() and db.schema.relTypeProperties() instead of
+    # the legacy names used above, e.g. 'INTEGER NOT NULL' for 'Long' and
+    # 'LIST<STRING NOT NULL> NOT NULL' for 'StringArray'. Map the scalar names onto
+    # the legacy keys, as a scalar and as the element of a list.
+    _NEO4J_CYPHER_TYPE_TO_LEGACY_TYPE = {
+        'INTEGER': ('INTEGER', 'LongArray'),
+        'FLOAT': ('FLOAT', 'DoubleArray'),
+        'STRING': ('STRING', 'StringArray'),
+        'BOOLEAN': ('Boolean', 'BooleanArray'),
+        'DATE': ('Date', 'DateArray'),
+        'ZONED TIME': ('Time', 'TimeArray'),
+        'LOCAL TIME': ('LocalTime', 'LocalTimeArray'),
+        'ZONED DATETIME': ('DateTime', 'DateTimeArray'),
+        'LOCAL DATETIME': ('LocalDateTime', 'LocalDateTimeArray'),
+        'DURATION': ('Duration', 'DurationArray'),
+        'POINT': ('Point', 'PointArray'),
     }
 
     class _Labels(Enum):
@@ -1312,12 +1336,39 @@ class Neo4jConnector(object):
 
         return schemas
 
+    @classmethod
+    def _neo4j_canonical_type(cls, prop_type):
+        """Map a Neo4j type name onto the key used by the type tables above.
+
+        Names reported by Neo4j 4.4 through 2026.01 are already keys and pass
+        through untouched. Neo4j 2026.02 and later report Cypher type names with a
+        nullability suffix and parameterized lists, rewritten onto the legacy key
+        here.
+        """
+        if prop_type in cls._NEO4J_TYPE_TO_XGT_TYPE:
+            return prop_type
+        base = prop_type.removesuffix(' NOT NULL').strip()
+        if base.startswith('LIST<') and base.endswith('>'):
+            element = base[len('LIST<'):-1].removesuffix(' NOT NULL').strip()
+            if element in cls._NEO4J_CYPHER_TYPE_TO_LEGACY_TYPE:
+                return cls._NEO4J_CYPHER_TYPE_TO_LEGACY_TYPE[element][1]
+        elif base in cls._NEO4J_CYPHER_TYPE_TO_LEGACY_TYPE:
+            return cls._NEO4J_CYPHER_TYPE_TO_LEGACY_TYPE[base][0]
+        return prop_type
+
     def __neo4j_type_to_xgt_type(self, prop_type):
         if isinstance(prop_type, list):
                 raise ValueError(
                     f"Multiple types for property not supported.")
-        elif prop_type in self._NEO4J_TYPE_TO_XGT_TYPE:
-            return self._NEO4J_TYPE_TO_XGT_TYPE[prop_type]
+        canonical_type = self._neo4j_canonical_type(prop_type)
+        if canonical_type in self._NEO4J_TYPE_TO_XGT_TYPE:
+            return self._NEO4J_TYPE_TO_XGT_TYPE[canonical_type]
+        raise TypeError(f'The "{prop_type}" Neo4j type is not yet supported')
+
+    def __neo4j_type_to_arrow_type(self, prop_type):
+        canonical_type = self._neo4j_canonical_type(prop_type)
+        if canonical_type in self._NEO4J_TYPE_TO_ARROW_TYPE:
+            return self._NEO4J_TYPE_TO_ARROW_TYPE[canonical_type]
         raise TypeError(f'The "{prop_type}" Neo4j type is not yet supported')
 
     def __arrow_writer(self, frame_name, schema):
@@ -1356,7 +1407,7 @@ class Neo4jConnector(object):
             # With xGT 10.1 we need to change double to float
             # so we infer the schema manually.
             for i, value in enumerate(neo4j_schema):
-                arrow_type = self._NEO4J_TYPE_TO_ARROW_TYPE[value[1]]
+                arrow_type = self.__neo4j_type_to_arrow_type(value[1])
                 schema = schema.append(pa.field('col' + str(i), arrow_type))
 
             result = session.run(cypher_for_extract)
@@ -1411,7 +1462,7 @@ class Neo4jConnector(object):
         # With xGT 10.1 we need to change double to float
         # so we infer the schema manually.
         for i, value in enumerate(neo4j_schema):
-            arrow_type = self._NEO4J_TYPE_TO_ARROW_TYPE[value[1]]
+            arrow_type = self.__neo4j_type_to_arrow_type(value[1])
             schema = schema.append(pa.field('col' + str(i), arrow_type))
 
         result = self._neo4j_driver._py2neo_driver.query(cypher_for_extract)

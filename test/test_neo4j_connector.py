@@ -42,7 +42,23 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       pass
     cls.xgt.set_default_namespace('test')
     cls.neo4j_driver, cls.conn = cls._setup_connector(cls.driver)
+    cls._probe_neo4j_type_names()
     return
+
+  @classmethod
+  def _probe_neo4j_type_names(cls):
+    # Neo4j 4.4 through 2026.01 report legacy type names such as 'Long' and
+    # 'String' from db.schema.nodeTypeProperties(), while 2026.02 and later report
+    # Cypher type names such as 'INTEGER NOT NULL' and 'STRING NOT NULL'. Tests
+    # that assert on these raw names ask the server which spelling it uses.
+    cls.neo4j_driver.query('MATCH (n) DETACH DELETE n').finalize()
+    cls.neo4j_driver.query('CREATE (:TypeProbe{int: 1, str: "hello"})').finalize()
+    names = {prop['propertyName'] : prop['propertyTypes'][0]
+             for prop in cls.conn.neo4j_node_type_properties
+             if prop['nodeLabels'] == ['TypeProbe']}
+    cls.neo4j_driver.query('MATCH (n) DETACH DELETE n').finalize()
+    cls.INT_TYPE = names['int']
+    cls.STR_TYPE = names['str']
 
   @classmethod
   def teardown_class(cls):
@@ -54,9 +70,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def _setup_connector(cls, connector_type, retries = 20):
     try:
       if connector_type == "neo4j":
-        driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'foo'))
+        driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'testtest'))
       else:
-        driver = Neo4jDriver(auth=('neo4j', 'foo'), driver=connector_type)
+        driver = Neo4jDriver(auth=('neo4j', 'testtest'), driver=connector_type)
       conn = Neo4jConnector(cls.xgt, driver)
       # Validate the db can run queries.
       with conn._neo4j_driver.bolt.session() as session:
@@ -68,9 +84,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         time.sleep(3)
         return cls._setup_connector(connector_type, retries - 1)
     if connector_type == "neo4j":
-        driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'foo'))
+        driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'testtest'))
     else:
-        driver = Neo4jDriver(auth=('neo4j', 'foo'), driver=connector_type)
+        driver = Neo4jDriver(auth=('neo4j', 'testtest'), driver=connector_type)
     conn = Neo4jConnector(cls.xgt, driver)
     return (conn._neo4j_driver, conn)
 
@@ -158,8 +174,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.assertCountEqual(
         c.neo4j_rel_type_properties,
         [{'relType': ':`Relationship1`', 'propertyName': None, 'propertyTypes': None, 'mandatory': False},
-         {'relType': ':`Relationship2`', 'propertyName': 'int', 'propertyTypes': ['Long'], 'mandatory': False},
-         {'relType': ':`Relationship2`', 'propertyName': 'str', 'propertyTypes': ['String'], 'mandatory': True}])
+         {'relType': ':`Relationship2`', 'propertyName': 'int', 'propertyTypes': [self.INT_TYPE], 'mandatory': False},
+         {'relType': ':`Relationship2`', 'propertyName': 'str', 'propertyTypes': [self.STR_TYPE], 'mandatory': True}])
 
   def test_neo4j_node_type_properties(self):
     c = self.conn
@@ -168,8 +184,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.assertCountEqual(
         c.neo4j_node_type_properties,
         [{'nodeType': ':`Node1`', 'nodeLabels': ['Node1'], 'propertyName': None, 'propertyTypes': None, 'mandatory': False},
-         {'nodeType': ':`Node2`', 'nodeLabels': ['Node2'], 'propertyName': 'int', 'propertyTypes': ['Long'], 'mandatory': False},
-         {'nodeType': ':`Node2`', 'nodeLabels': ['Node2'], 'propertyName': 'str', 'propertyTypes': ['String'], 'mandatory': True}])
+         {'nodeType': ':`Node2`', 'nodeLabels': ['Node2'], 'propertyName': 'int', 'propertyTypes': [self.INT_TYPE], 'mandatory': False},
+         {'nodeType': ':`Node2`', 'nodeLabels': ['Node2'], 'propertyName': 'str', 'propertyTypes': [self.STR_TYPE], 'mandatory': True}])
 
   def test_neo4j_edges(self):
     c = self.conn
@@ -183,7 +199,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert c.neo4j_edges['Relationship2']['endpoints'] == {('Node1', 'Node2')}
     assert c.neo4j_edges['Relationship2']['sources'] == {'Node1'}
     assert c.neo4j_edges['Relationship2']['targets'] == {'Node2'}
-    assert c.neo4j_edges['Relationship2']['schema'] == {'int' : 'Long'}
+    assert c.neo4j_edges['Relationship2']['schema'] == {'int' : self.INT_TYPE}
 
   def test_neo4j_edges_multi(self):
     c = self.conn
@@ -193,14 +209,14 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert c.neo4j_edges['Relationship1']['endpoints'] == {('Node1', 'Node2'), ('Node2', 'Node1')}
     assert c.neo4j_edges['Relationship1']['sources'] == {'Node1', 'Node2'}
     assert c.neo4j_edges['Relationship1']['targets'] == {'Node1', 'Node2'}
-    assert c.neo4j_edges['Relationship1']['schema'] == {'int' : 'Long'}
+    assert c.neo4j_edges['Relationship1']['schema'] == {'int' : self.INT_TYPE}
 
   def test_neo4j_nodes(self):
     c = self.conn
     self.neo4j_driver.query('CREATE (:Node1{}), (:Node2{int : 1})').finalize()
     assert len(c.neo4j_nodes) == 2
     assert c.neo4j_nodes['Node1'] == {}
-    assert c.neo4j_nodes['Node2'] == {'int' : 'Long'}
+    assert c.neo4j_nodes['Node2'] == {'int' : self.INT_TYPE}
 
   def test_graph_update_after_connector_created(self):
     c = self.conn

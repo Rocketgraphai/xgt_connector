@@ -1,6 +1,17 @@
 Release Notes
 =============
 
+2.6.7 (08-25-2026)
+------------------
+
+Changed
+^^^^^^^
+  - Drop support for python 3.9.
+
+Fixed
+^^^^^
+  - Neo4j 2026.02 and later reporting schema property types with Cypher type names.
+
 2.6.6 (02-11-2026)
 ------------------
 
