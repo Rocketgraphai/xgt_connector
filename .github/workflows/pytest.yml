@@ -48,12 +48,19 @@ jobs:
         neo4j-version: ['4.4.12', '5', 'latest']
         # Nothing under test needs the plugin, so cover a plain server too.
         gds: [true, false]
+        fast: [false]
         exclude:
           # One python is enough to show the connector does not need the plugin.
           - {gds: false, python-version: '3.10'}
           - {gds: false, python-version: '3.11'}
           - {gds: false, python-version: '3.12'}
           - {gds: false, python-version: '3.13'}
+        include:
+          # neo4j-rust-ext swaps out the whole bolt codec, so run every neo4j
+          # against it as well.
+          - {os: ubuntu-latest, python-version: '3.14', neo4j-version: '4.4.12', gds: true, fast: true}
+          - {os: ubuntu-latest, python-version: '3.14', neo4j-version: '5', gds: true, fast: true}
+          - {os: ubuntu-latest, python-version: '3.14', neo4j-version: 'latest', gds: true, fast: true}
 
     steps:
     - name: Check out repository code
@@ -70,7 +77,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install parameterized pyodbc pandas
         pip install pytest
-        pip install './[odbc]'
+        if [ "${{ matrix.fast }}" = "true" ]; then
+          pip install './[odbc,fast]'
+          # A missing wheel would otherwise leave the pure python codec in place
+          # and quietly test nothing new.
+          python -c "import neo4j._rust"
+        else
+          pip install './[odbc]'
+        fi
 
         sudo apt-get install odbc-mariadb
 
