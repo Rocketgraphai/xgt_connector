@@ -19,6 +19,7 @@
 
 import unittest
 from parameterized import parameterized_class
+import contextlib
 import time
 
 import neo4j
@@ -26,8 +27,10 @@ import xgt
 from xgt_connector import Neo4jConnector, Neo4jDriver
 
 @parameterized_class([
-   { "driver": "neo4j" },
-   { "driver": "neo4j-bolt" },
+   { "driver": "neo4j", "batch_size": None },
+   { "driver": "neo4j", "batch_size": 4 },
+   { "driver": "neo4j-bolt", "batch_size": None },
+   { "driver": "neo4j-bolt", "batch_size": 4 },
 ])
 class TestXgtNeo4jConnector(unittest.TestCase):
   # Print all diffs on failure.
@@ -73,7 +76,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'testtest'))
       else:
         driver = Neo4jDriver(auth=('neo4j', 'testtest'), driver=connector_type)
-      conn = Neo4jConnector(cls.xgt, driver)
+      conn = Neo4jConnector(cls.xgt, driver, batch_size = cls.batch_size)
       # Validate the db can run queries.
       with conn._neo4j_driver.bolt.session() as session:
         session.run("call db.info()")
@@ -87,7 +90,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'testtest'))
     else:
         driver = Neo4jDriver(auth=('neo4j', 'testtest'), driver=connector_type)
-    conn = Neo4jConnector(cls.xgt, driver)
+    conn = Neo4jConnector(cls.xgt, driver, batch_size = cls.batch_size)
     return (conn._neo4j_driver, conn)
 
   def setup_method(self, method):
@@ -484,7 +487,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       rows = sorted(tuple(row) for row in self.xgt.get_frame('Node').get_data())
       self.xgt.drop_frame('Node')
       return rows
-    expected = transfer(self.conn)
+    expected = transfer(Neo4jConnector(self.xgt, self.neo4j_driver))
     # A batch size well under the row count exercises the batch boundaries.
     for batch_size in [1, 4, 25, 1000]:
       assert transfer(self._batched_connector(batch_size)) == expected, batch_size
@@ -500,6 +503,65 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     c.transfer_to_xgt(vertices=['Node'], edges=['Relationship'])
     assert self.xgt.get_frame('Node').num_rows == 40
     assert self.xgt.get_frame('Relationship').num_rows == 20
+    self.xgt.drop_frame('Relationship')
+    self.xgt.drop_frame('Node')
+
+  @contextlib.contextmanager
+  def _record_queries(self):
+    queries = []
+    original_run = neo4j.Session.run
+    def run(session, query, *args, **kwargs):
+      queries.append(str(query))
+      return original_run(session, query, *args, **kwargs)
+    neo4j.Session.run = run
+    try:
+      yield queries
+    finally:
+      neo4j.Session.run = original_run
+
+  def test_batched_transfer_edges_stay_batched(self):
+    # Relationship ids are neither small nor dense, so batching edges on them
+    # walks a span many orders of magnitude larger than the edge count. Edges
+    # must be batched on a node instead, and must not silently stop batching.
+    self.neo4j_driver.query(
+        'UNWIND range(1, 60) AS i'
+        ' CREATE (:Node{int: i})-[:Relationship{int: i}]->(:Node{int: -i})').finalize()
+    c = self._batched_connector(10)
+    with self._record_queries() as queries:
+      c.transfer_to_xgt(vertices=['Node'], edges=['Relationship'])
+    batched = [q for q in queries if 'collect(' in q and 'Relationship' in q]
+    assert len(batched) > 0, queries
+    # Asserted on the query itself because relationship ids only spread out on
+    # a database far larger than a test builds, so no amount of data here would
+    # show the difference.
+    assert all('id(u) >=' in q for q in batched), batched
+    assert not any('id(e) >=' in q for q in batched), batched
+    assert len(queries) < 100, len(queries)
+    assert self.xgt.get_frame('Relationship').num_rows == 60
+    self.xgt.drop_frame('Relationship')
+    self.xgt.drop_frame('Node')
+
+  def test_batched_transfer_sparse_node_ids(self):
+    self.neo4j_driver.query(
+        'UNWIND range(1, 60) AS i CREATE (:Node{int: i})').finalize()
+    # Leaves holes in the ids the batches are cut on.
+    self.neo4j_driver.query(
+        'MATCH (n:Node) WHERE n.int % 3 <> 0 DELETE n').finalize()
+    c = self._batched_connector(4)
+    c.transfer_to_xgt(vertices=['Node'])
+    rows = sorted(row[1] for row in self.xgt.get_frame('Node').get_data())
+    assert rows == [i for i in range(1, 61) if i % 3 == 0]
+    self.xgt.drop_frame('Node')
+
+  def test_batched_transfer_uneven_batches(self):
+    # One source node owns many more edges than a batch holds.
+    self.neo4j_driver.query(
+        'CREATE (h:Node{int: 0}) WITH h UNWIND range(1, 50) AS i'
+        ' CREATE (h)-[:Relationship{int: i}]->(:Node{int: i})').finalize()
+    c = self._batched_connector(2)
+    c.transfer_to_xgt(vertices=['Node'], edges=['Relationship'])
+    assert self.xgt.get_frame('Node').num_rows == 51
+    assert self.xgt.get_frame('Relationship').num_rows == 50
     self.xgt.drop_frame('Relationship')
     self.xgt.drop_frame('Node')
 
