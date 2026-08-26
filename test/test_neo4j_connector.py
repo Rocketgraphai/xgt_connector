@@ -472,6 +472,47 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.xgt.drop_frame("Node1_Relationship_Node1")
     self.xgt.drop_frame("Node2_Relationship_Node1")
 
+  def _batched_connector(self, batch_size):
+    return Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = batch_size)
+
+  def test_batched_transfer_matches_unbatched(self):
+    self.neo4j_driver.query(
+        'UNWIND range(1, 25) AS i CREATE (n:Node{int: i, str: "s" + toString(i)})'
+        ' WITH n, i WHERE i % 4 <> 0 SET n.x = i * 2').finalize()
+    def transfer(connector):
+      connector.transfer_to_xgt(vertices=['Node'])
+      rows = sorted(tuple(row) for row in self.xgt.get_frame('Node').get_data())
+      self.xgt.drop_frame('Node')
+      return rows
+    expected = transfer(self.conn)
+    # A batch size well under the row count exercises the batch boundaries.
+    for batch_size in [1, 4, 25, 1000]:
+      assert transfer(self._batched_connector(batch_size)) == expected, batch_size
+    assert len(expected) == 25
+    # The optional property is absent on some nodes and must stay aligned.
+    assert sum(1 for row in expected if None in row) == 6
+
+  def test_batched_transfer_edges(self):
+    self.neo4j_driver.query(
+        'UNWIND range(1, 20) AS i'
+        ' CREATE (:Node{int: i})-[:Relationship{int: i}]->(:Node{int: -i})').finalize()
+    c = self._batched_connector(3)
+    c.transfer_to_xgt(vertices=['Node'], edges=['Relationship'])
+    assert self.xgt.get_frame('Node').num_rows == 40
+    assert self.xgt.get_frame('Relationship').num_rows == 20
+    self.xgt.drop_frame('Relationship')
+    self.xgt.drop_frame('Node')
+
+  def test_batched_transfer_no_data(self):
+    self.neo4j_driver.query('CREATE (:Node{int: 1})').finalize()
+    schema = self.conn.get_xgt_schemas(vertices=['Node'])
+    self.neo4j_driver.query('MATCH (n) DETACH DELETE n').finalize()
+    c = self._batched_connector(10)
+    c.create_xgt_schemas(schema)
+    c.copy_data_to_xgt(schema)
+    assert self.xgt.get_frame('Node').num_rows == 0
+    self.xgt.drop_frame('Node')
+
   def test_multiple_property_types_vertex_negative(self):
     c = self.conn
     self.neo4j_driver.query(

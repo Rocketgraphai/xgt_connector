@@ -4,6 +4,11 @@ Release Notes
 2.6.7 (08-25-2026)
 ------------------
 
+New Features
+^^^^^^^^^^^^
+  - Added a batch_size option to Neo4jConnector that transfers rows to xGT in batches grouped by Neo4j, which is much faster than a row at a time.
+  - Added a "fast" install extra that pulls in neo4j-rust-ext, a faster bolt codec.
+
 Changed
 ^^^^^^^
   - Drop support for python 3.9.
