@@ -503,6 +503,18 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.xgt.drop_frame('Relationship')
     self.xgt.drop_frame('Node')
 
+  def test_batched_transfer_sparse_ids_falls_back(self):
+    # Relationship ids are neither small nor dense, and node ids need not be
+    # either, so a span far larger than the row count must not be walked.
+    self.neo4j_driver.query(
+        'UNWIND range(1, 10) AS i CREATE (:Node{int: i})').finalize()
+    c = self._batched_connector(2)
+    c._MAX_ID_SPAN_PER_ROW = 0
+    c.transfer_to_xgt(vertices=['Node'])
+    rows = sorted(row[1] for row in self.xgt.get_frame('Node').get_data())
+    assert rows == list(range(1, 11))
+    self.xgt.drop_frame('Node')
+
   def test_batched_transfer_no_data(self):
     self.neo4j_driver.query('CREATE (:Node{int: 1})').finalize()
     schema = self.conn.get_xgt_schemas(vertices=['Node'])
