@@ -208,6 +208,39 @@ Some examples of connecting:
 
 These additional connectors will connect to Neo4j with a combination of connections currently and may have some limitations.
 
+Transferring Larger Graphs
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Bolt sends each row of a result as its own message, so by default a transfer
+spends most of its time on per row overhead rather than on the data itself.
+Passing `batch_size` to the connector has Neo4j group that many rows into each
+message, which is often ten times faster or more, depending on the shape of the
+data.
+
+.. code-block:: python
+
+   conn = Neo4jConnector(xgt_server, neo4j_server, batch_size=20000)
+
+   conn.transfer_to_xgt(vertices=['Person'], edges=['KNOWS'])
+
+Neo4j holds a single batch at a time, so the batch size also bounds how much
+memory the transfer uses on the server. Batches between 10,000 and 50,000 rows
+transfer at close to the same rate, so there is little reason to use a larger
+one. Very small batches give back some of the gain.
+
+Installing the optional
+`neo4j-rust-ext <https://pypi.org/project/neo4j-rust-ext/>`_ package speeds up
+batched transfers further, by replacing the bolt codec of the Neo4j driver with
+a compiled one:
+
+.. code-block:: bash
+
+   python -m pip install 'xgt_connector[fast]'
+
+It needs no code change and is only worth installing together with `batch_size`.
+Decoding is not what a row at a time transfer spends its time on, so on its own
+it makes little difference.
+
 Additional Examples
 ^^^^^^^^^^^^^^^^^^^
 
