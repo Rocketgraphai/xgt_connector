@@ -199,6 +199,7 @@ class Neo4jDriver(object):
             self._query = query
             self._connector = connector
             self._closed = False
+            self._result = None
             if write:
                 self._session = self._connector._neo4j_driver.session(database=self._connector._database,
                                                                       default_access_mode=neo4j.WRITE_ACCESS)
@@ -212,14 +213,19 @@ class Neo4jDriver(object):
             self.finalize()
 
         def result(self):
-            return self._session.run(self._query)
+            # Held onto rather than run again: every caller that iterates the
+            # result is followed by finalize(), which would otherwise run the
+            # whole query a second time. For a write that means writing twice.
+            if self._result is None:
+                self._result = self._session.run(self._query)
+            return self._result
 
         def finalize(self):
             for result in self.result():
                 pass
             if not self._closed:
                 self._session.close()
-                self._close = True
+                self._closed = True
 
 class Neo4jConnector(object):
     _NEO4J_TYPE_TO_XGT_TYPE = {

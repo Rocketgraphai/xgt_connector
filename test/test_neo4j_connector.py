@@ -157,6 +157,32 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.neo4j_driver.query('CREATE (:Node1{}), (:Node2{int : 1})').finalize()
     self.assertCountEqual(c.neo4j_node_labels, ['Node1', 'Node2'])
 
+  def test_query_runs_once(self):
+    # result() used to run the query, and the finalize() that follows it ran
+    # the query a second time.
+    runs = []
+    original_run = neo4j.Session.run
+    def run(session, query, *args, **kwargs):
+      runs.append(str(query))
+      return original_run(session, query, *args, **kwargs)
+    neo4j.Session.run = run
+    try:
+      with self.neo4j_driver.query('RETURN 1 AS one', False) as query:
+        rows = [record['one'] for record in query.result()]
+    finally:
+      neo4j.Session.run = original_run
+    assert rows == [1], rows
+    assert len(runs) == 1, runs
+
+  def test_write_query_is_not_run_twice(self):
+    with self.neo4j_driver.query('CREATE (:Node{int: 1}) RETURN 1', True) as query:
+      for _record in query.result():
+        pass
+    count = self.conn.neo4j_node_type_properties
+    with self.neo4j_driver.query('MATCH (n:Node) RETURN count(n) AS c', False) as query:
+      rows = [record['c'] for record in query.result()]
+    assert rows == [1], rows
+
   def test_neo4j_property_keys(self):
     c = self.conn
     self._populate_node_working_types_bolt()
