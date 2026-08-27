@@ -66,8 +66,9 @@ jobs:
         pip install parameterized pyodbc pandas pytest
         pip install './[odbc]'
 
-        # FreeTDS speaks the protocol SAP ASE uses and is packaged.
-        sudo apt-get install -y tdsodbc
+        # FreeTDS speaks the protocol SAP ASE uses and is packaged. Sqlite needs
+        # no server, and is required here as a check that the run is sane.
+        sudo apt-get install -y tdsodbc libsqliteodbc
 
         # Oracle ships its ODBC driver as a zip rather than a package.
         sudo apt-get install -y libaio1t64 unzip
@@ -88,6 +89,7 @@ jobs:
         ORACLE_SO=$(ls $ORACLE_LIB/libsqora.so.*)
         echo -e "[Oracle]\nDescription = Oracle ODBC driver\nDriver = $ORACLE_SO\nFileUsage = 1" | sudo tee -a /etc/odbcinst.ini > /dev/null
         echo -e "[FreeTDS]\nDescription = FreeTDS\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so\nFileUsage = 1" | sudo tee -a /etc/odbcinst.ini > /dev/null
+        echo -e "[SQLite3]\nDescription = SQLite ODBC Driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libsqlite3odbc.so\nSetup = /usr/lib/x86_64-linux-gnu/odbc/libsqlite3odbc.so\nFileUsage = 1" | sudo tee -a /etc/odbcinst.ini > /dev/null
         echo "$ORACLE_LIB" | sudo tee /etc/ld.so.conf.d/oracle.conf > /dev/null
         sudo ldconfig
         echo "LD_LIBRARY_PATH=$ORACLE_LIB" >> $GITHUB_ENV
