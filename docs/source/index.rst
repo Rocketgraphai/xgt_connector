@@ -259,9 +259,28 @@ a compiled one:
 
    python -m pip install 'xgt_connector[fast]'
 
-It needs no code change and is only worth installing together with `batch_size`.
-Decoding is not what a row at a time transfer spends its time on, so on its own
-it makes little difference.
+It needs no code change. On the transfer above it roughly halved the time
+again, giving about 24 times the rate of a row at a time transfer:
+
+.. list-table::
+   :header-rows: 1
+
+   * - batch_size
+     - Plain
+     - With neo4j-rust-ext
+   * - None (a row at a time)
+     - 32.9s
+     - 31.2s
+   * - 1000 (default)
+     - 5.1s
+     - 3.2s
+   * - 20000
+     - 2.7s
+     - 1.4s
+
+It is only worth installing together with batching. Decoding is not what a row
+at a time transfer spends its time on, which is why the first row of that table
+barely moves.
 
 Additional Examples
 ^^^^^^^^^^^^^^^^^^^
