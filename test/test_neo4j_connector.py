@@ -605,13 +605,35 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.xgt.drop_frame('Relationship')
     self.xgt.drop_frame('Node')
 
+  def test_sparse_edge_anchors_fall_back(self):
+    # An edge batch holds every edge of the nodes in its range, so density has
+    # to be judged on distinct source nodes. Counting edges instead lets a
+    # couple of high degree sources far apart in id space look dense, and the
+    # transfer then walks a range of mostly empty batches.
+    self.neo4j_driver.query('CREATE (:Node{int: 1})').finalize()
+    self.neo4j_driver.query(
+        'UNWIND range(1, 2500) AS i CREATE (:Filler{int: i})').finalize()
+    self.neo4j_driver.query('CREATE (:Node{int: 2})').finalize()
+    self.neo4j_driver.query('MATCH (n:Filler) DELETE n').finalize()
+    self.neo4j_driver.query(
+        'MATCH (h:Node) UNWIND range(1, 10) AS i'
+        ' CREATE (h)-[:Relationship{int: i}]->(h)').finalize()
+    c = self._batched_connector(1000)
+    with self._record_queries() as queries:
+      c.transfer_to_xgt(vertices=['Node'], edges=['Relationship'])
+    batched = [q for q in queries if 'collect(' in q and 'Relationship' in q]
+    assert batched == [], batched
+    assert self.xgt.get_frame('Relationship').num_rows == 20
+    self.xgt.drop_frame('Relationship')
+    self.xgt.drop_frame('Node')
+
   def test_batched_transfer_sparse_ids_falls_back(self):
     # Relationship ids are neither small nor dense, and node ids need not be
     # either, so a span far larger than the row count must not be walked.
     self.neo4j_driver.query(
         'UNWIND range(1, 10) AS i CREATE (:Node{int: i})').finalize()
     c = self._batched_connector(2)
-    c._MAX_ID_SPAN_PER_ROW = 0
+    c._MAX_ID_SPAN_PER_ANCHOR = 0
     c.transfer_to_xgt(vertices=['Node'])
     rows = sorted(row[1] for row in self.xgt.get_frame('Node').get_data())
     assert rows == list(range(1, 11))

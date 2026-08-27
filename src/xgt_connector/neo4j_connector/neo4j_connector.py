@@ -285,7 +285,7 @@ class Neo4jConnector(object):
     # the legacy keys, as a scalar and as the element of a list.
     # How sparse the ids of a batch anchor may be before walking ranges of them
     # costs more than it saves.
-    _MAX_ID_SPAN_PER_ROW = 1000
+    _MAX_ID_SPAN_PER_ANCHOR = 1000
 
     # Types arrow accepts straight from the driver, needing no conversion.
     _NEO4J_PASSTHROUGH_TYPES = frozenset({
@@ -1486,8 +1486,8 @@ class Neo4jConnector(object):
         of magnitude larger than the number of relationships. Edges are cut on
         their source node instead, which covers every edge exactly once.
         Node ids can still be sparse enough to make ranges pointless, so the
-        span is compared against the row count and the row at a time path is
-        used when a range walk would not pay off.
+        span is compared against the number of distinct anchors and the row at a
+        time path is used when a range walk would not pay off.
         """
         keys = [key for key, *_unused_ in neo4j_schema]
         # The match clause may already carry a WHERE for the empty label cases.
@@ -1495,14 +1495,17 @@ class Neo4jConnector(object):
         id_expr = f"id({batch_anchor})"
         batch_size = self._batch_size
 
-        bounds_query = (f"{match_clause} "
-                        f"RETURN min({id_expr}), max({id_expr}), count(*)")
+        # Counted over distinct anchors rather than rows: an edge batch holds
+        # every edge of the nodes in its range, so a handful of nodes of high
+        # degree would otherwise make a sparse span look dense enough to walk.
+        bounds_query = (f"{match_clause} RETURN min({id_expr}), max({id_expr}), "
+                        f"count(DISTINCT {id_expr})")
         with self._neo4j_driver.query(bounds_query, False) as query:
             bounds = [(record[0], record[1], record[2]) for record in query.result()]
-        low, high, rows = bounds[0] if bounds else (None, None, 0)
-        if low is None or rows == 0:
+        low, high, anchors = bounds[0] if bounds else (None, None, 0)
+        if low is None or anchors == 0:
             return
-        if (high - low + 1) > rows * self._MAX_ID_SPAN_PER_ROW:
+        if (high - low + 1) > anchors * self._MAX_ID_SPAN_PER_ANCHOR:
             self.__bolt_copy_data(f"{match_clause} RETURN {projection}",
                                   neo4j_schema, frame, progress_bar)
             return
