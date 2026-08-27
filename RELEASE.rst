@@ -14,6 +14,8 @@ Changed
 ^^^^^^^
   - Transfers from Neo4j read in batches by default. Neo4j holds one batch at a time, so a transfer now costs it some memory. Pass batch_size=None for the row at a time behaviour of earlier releases.
   - Neo4jDriver.query() no longer runs its query a second time when the result is finalized. result() hands back the same result on every call rather than running the query again.
+  - TIME columns transferred over ODBC arrive in xGT as a time of day rather than as text, which is what arrow_odbc reports them as from 9.0.0 onwards. Anything reading those columns as strings needs adjusting.
+  - The odbc extra asks for arrow_odbc 9.0.0 or newer, in place of the 0.2.0 it was pinned to.
 
 Fixed
 ^^^^^
