@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-2.6.8 (08-27-2026)
+3.0.0 (08-27-2026)
 ------------------
 
 New Features
@@ -9,6 +9,11 @@ New Features
   - Transfers to xGT now read rows from Neo4j in batches, which is several times faster. Controlled by the batch_size option of Neo4jConnector.
   - Added SQLServerODBCDriver for connecting to SQL Server.
   - Added a "fast" install extra that pulls in neo4j-rust-ext, a faster bolt codec.
+
+Changed
+^^^^^^^
+  - Transfers from Neo4j read in batches by default. Neo4j holds one batch at a time, so a transfer now costs it some memory. Pass batch_size=None for the row at a time behaviour of earlier releases.
+  - Neo4jDriver.query() no longer runs its query a second time when the result is finalized. result() hands back the same result on every call rather than running the query again.
 
 Fixed
 ^^^^^
