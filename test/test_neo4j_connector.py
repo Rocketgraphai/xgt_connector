@@ -568,13 +568,42 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def test_batch_size_must_be_positive(self):
     # A negative batch size walks an empty range of ids, which would transfer
-    # no rows at all into freshly created frames.
-    for batch_size in [-10, 0, 2.5, '1000']:
-      with self.assertRaises(ValueError):
+    # no rows at all into freshly created frames. True is rejected as well,
+    # since it would otherwise quietly mean a batch size of one.
+    for batch_size in [-10, 0, 2.5, '1000', True]:
+      with self.assertRaises(ValueError) as caught:
         Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = batch_size)
+      assert 'batch_size' in str(caught.exception), caught.exception
     # None and a positive integer are both fine.
     Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = None)
     Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = 10)
+
+  def test_bad_batch_size_leaves_xgt_untouched(self):
+    # The rejection has to happen before any frame is created, because
+    # transfer_to_xgt recreates the destination frames before copying.
+    self.neo4j_driver.query(
+        'UNWIND range(1, 20) AS i CREATE (:Node{int: i})').finalize()
+    with self.assertRaises(ValueError):
+      Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = -10)
+    with self.assertRaises(Exception):
+      self.xgt.get_frame('Node')
+    # A sound connector still transfers every row afterwards.
+    c = Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = 5)
+    c.transfer_to_xgt(vertices=['Node'])
+    assert self.xgt.get_frame('Node').num_rows == 20
+    self.xgt.drop_frame('Node')
+
+  def test_batch_size_larger_than_the_data(self):
+    # A single batch wider than the whole result must still transfer it all.
+    self.neo4j_driver.query(
+        'UNWIND range(1, 15) AS i'
+        ' CREATE (:Node{int: i})-[:Relationship{int: i}]->(:Node{int: -i})').finalize()
+    c = Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = 1000000)
+    c.transfer_to_xgt(vertices=['Node'], edges=['Relationship'])
+    assert self.xgt.get_frame('Node').num_rows == 30
+    assert self.xgt.get_frame('Relationship').num_rows == 15
+    self.xgt.drop_frame('Relationship')
+    self.xgt.drop_frame('Node')
 
   def test_batched_transfer_sparse_ids_falls_back(self):
     # Relationship ids are neither small nor dense, and node ids need not be
