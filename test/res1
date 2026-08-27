@@ -1,331 +1,0 @@
-============================= test session starts ==============================
-platform linux -- Python 3.14.5, pytest-9.0.3, pluggy-1.6.0 -- /home/snapcore/python/bin/python
-cachedir: .pytest_cache
-rootdir: /home/snapcore
-configfile: pytest.ini
-plugins: langsmith-0.8.14, anyio-4.13.0, asyncio-1.4.0
-asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
-collecting ... collected 84 items
-
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_append Transferring: [............................................................] 0/1 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 1/1 in 0:00:00.0s (258.2/s, eta: 0:00:00.0s)     
-Transferring: [............................................................] 0/1 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 1/1 in 0:00:00.0s (402.5/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_connector_creation PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_different_properties_combine_into_single_schema PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_dropping PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_edge_empty_labels Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [##########################..................................] 4/9 in 0:00:00.0s (1369.6/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (354.3/s, eta: 0:00:00.0s)     Transferring: [##############################################..............] 7/9 in 0:00:00.0s (231.0/s, eta: 0:00:00.0s)     Transferring: [#####################################################.......] 8/9 in 0:00:00.0s (186.0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.1s (155.6/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_edge_empty_labels_schema Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [##########################..................................] 4/9 in 0:00:00.0s (1317.3/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (305.6/s, eta: 0:00:00.0s)     Transferring: [##############################################..............] 7/9 in 0:00:00.0s (200.7/s, eta: 0:00:00.0s)     Transferring: [#####################################################.......] 8/9 in 0:00:00.1s (158.8/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.1s (137.6/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_edge_empty_labels_schema_no_implicit Transferring: [............................................................] 0/6 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 4/6 in 0:00:00.0s (690.7/s, eta: 0:00:00.0s)     Transferring: [############################################################] 6/6 in 0:00:00.0s (233.5/s, eta: 0:00:00.0s)     
-Transferring: [............................................................] 0/3 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [####################........................................] 1/3 in 0:00:00.0s (86.4/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 2/3 in 0:00:00.0s (58.3/s, eta: 0:00:00.0s)     Transferring: [############################################################] 3/3 in 0:00:00.1s (54.5/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_empty_labels Transferring: [............................................................] 0/1 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 1/1 in 0:00:00.0s (381.8/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_empty_labels_schema Transferring: [............................................................] 0/1 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 1/1 in 0:00:00.0s (371.4/s, eta: 0:00:00.0s)     
-Transferring: [............................................................] 0/1 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 1/1 in 0:00:00.0s (410.5/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_graph_delete_after_connector_created PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_graph_update_after_connector_created PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_map_edge_empty_labels Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [##########################..................................] 4/9 in 0:00:00.0s (430.8/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (260.1/s, eta: 0:00:00.0s)     Transferring: [##############################################..............] 7/9 in 0:00:00.0s (190.9/s, eta: 0:00:00.0s)     Transferring: [#####################################################.......] 8/9 in 0:00:00.1s (156.2/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.1s (139.2/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_map_empty_labels Transferring: [............................................................] 0/1 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 1/1 in 0:00:00.0s (368.7/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_multiple_node_labels_from Transferring: [............................................................] 0/8 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [######################......................................] 3/8 in 0:00:00.0s (1018.4/s, eta: 0:00:00.0s)     Transferring: [##############################..............................] 4/8 in 0:00:00.0s (240.9/s, eta: 0:00:00.0s)     Transferring: [#####################################.......................] 5/8 in 0:00:00.0s (165.6/s, eta: 0:00:00.0s)     Transferring: [#############################################...............] 6/8 in 0:00:00.0s (132.7/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_multiple_node_labels_to Transferring: [............................................................] 0/8 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [######################......................................] 3/8 in 0:00:00.0s (1076.1/s, eta: 0:00:00.0s)     Transferring: [##############################..............................] 4/8 in 0:00:00.0s (218.2/s, eta: 0:00:00.0s)     Transferring: [#####################################.......................] 5/8 in 0:00:00.0s (158.7/s, eta: 0:00:00.0s)     Transferring: [#############################################...............] 6/8 in 0:00:00.0s (122.2/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_multiple_property_types_edge_negative PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_multiple_property_types_vertex_negative PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_neo4j_edges PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_neo4j_edges_multi PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_neo4j_node_labels PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_neo4j_node_type_properties PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_neo4j_nodes PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_neo4j_properties PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_neo4j_property_keys PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_neo4j_rel_type_properties PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_neo4j_relationship_types PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_node_attributes {'vertices': {'Node': {'schema': [['neo4j_id', 'int'], ['int', 'int'], ['str', 'text'], ['bool', 'boolean'], ['date_attr', 'date'], ['datetime_attr', 'datetime'], ['duration_attr', 'int'], ['localdatetime_attr', 'datetime'], ['localtime_attr', 'time'], ['real', 'float'], ['time_attr', 'time']], 'neo4j_schema': [['neo4j_id', 'INTEGER'], ['int', 'INTEGER NOT NULL'], ['str', 'STRING NOT NULL'], ['bool', 'BOOLEAN NOT NULL'], ['date_attr', 'DATE NOT NULL'], ['datetime_attr', 'ZONED DATETIME NOT NULL'], ['duration_attr', 'DURATION NOT NULL'], ['localdatetime_attr', 'LOCAL DATETIME NOT NULL'], ['localtime_attr', 'LOCAL TIME NOT NULL'], ['real', 'FLOAT NOT NULL'], ['time_attr', 'ZONED TIME NOT NULL']], 'key': 'neo4j_id', 'xgt_name': 'Node'}}, 'edges': {}}
-{'neo4j_id': 'int', 'int': 'int', 'str': 'text', 'bool': 'boolean', 'date_attr': 'date', 'datetime_attr': 'datetime', 'duration_attr': 'int', 'localdatetime_attr': 'datetime', 'localtime_attr': 'time', 'real': 'float', 'time_attr': 'time'}
-[{'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'int', 'propertyTypes': ['INTEGER NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'str', 'propertyTypes': ['STRING NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'bool', 'propertyTypes': ['BOOLEAN NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'date_attr', 'propertyTypes': ['DATE NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'datetime_attr', 'propertyTypes': ['ZONED DATETIME NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'duration_attr', 'propertyTypes': ['DURATION NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'localdatetime_attr', 'propertyTypes': ['LOCAL DATETIME NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'localtime_attr', 'propertyTypes': ['LOCAL TIME NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'real', 'propertyTypes': ['FLOAT NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'time_attr', 'propertyTypes': ['ZONED TIME NOT NULL'], 'mandatory': True}]
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_query_translator_loop_data ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_query_translator_loop_no_data ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_query_translator_multiple_node_labels_from ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_query_translator_multiple_node_labels_to ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_query_translator_multiple_node_labels_to_and_from ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_transfer_edges_to_neo4j Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (1638.6/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.0s (407.3/s, eta: 0:00:00.0s)     
-Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [######......................................................] 1/9 in 0:00:00.0s (89.3/s, eta: 0:00:00.1s)     Transferring: [#############...............................................] 2/9 in 0:00:00.0s (99.6/s, eta: 0:00:00.1s)     Transferring: [####################........................................] 3/9 in 0:00:00.0s (138.1/s, eta: 0:00:00.0s)     Transferring: [##########################..................................] 4/9 in 0:00:00.0s (165.7/s, eta: 0:00:00.0s)     Transferring: [#################################...........................] 5/9 in 0:00:00.0s (191.7/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (211.0/s, eta: 0:00:00.0s)     Transferring: [##############################################..............] 7/9 in 0:00:00.1s (105.8/s, eta: 0:00:00.0s)     Transferring: [#####################################################.......] 8/9 in 0:00:00.1s (106.3/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.1s (91.3/s, eta: 0:00:00.0s)     
-Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (2077.6/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.0s (475.4/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_transfer_everything_bolt Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (2047.8/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.0s (520.0/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_transfer_missing_graphs PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_transfer_no_data Transferring: 0 in 0:00:00.0s (0/s)     
-Transferring: 0 in 0:00:00.0s (0/s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_transfer_node_working_types_bolt 
-Attributes: {'neo4j_id': ['int'], 'int': ['int'], 'str': ['text'], 'bool': ['boolean'], 'date_attr': ['date'], 'datetime_attr': ['datetime'], 'duration_attr': ['int'], 'localdatetime_attr': ['datetime'], 'localtime_attr': ['time'], 'real': ['float'], 'time_attr': ['time'], 'bool_array': ['list', 'boolean', 1], 'date_array': ['list', 'date', 1], 'datetime_array': ['list', 'datetime', 1], 'double_array': ['list', 'float', 1], 'duration_array': ['list', 'int', 1], 'geo_attr2': ['list', 'float', 1], 'geo_attr3': ['list', 'float', 1], 'localdatetime_array': ['list', 'datetime', 1], 'localtime_array': ['list', 'time', 1], 'long_array': ['list', 'int', 1], 'point_array': ['list', 'float', 2], 'point_attr2': ['list', 'float', 1], 'point_attr3': ['list', 'float', 1], 'string_array': ['list', 'text', 1], 'time_array': ['list', 'time', 1]}
-Transferring: [............................................................] 0/3 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 3/3 in 0:00:00.0s (689.6/s, eta: 0:00:00.0s)     
-[[25, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None], [2, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None], [9, 343, 'string', True, datetime.date(2015, 3, 26), datetime.datetime(2015, 6, 24, 11, 50, 35, 556000), 1267920000000000, datetime.datetime(2015, 7, 4, 19, 32, 24), datetime.time(12, 50, 35, 556000), 3.140000104904175, datetime.time(12, 50, 35, 556000), [True, False, False], [datetime.date(2015, 3, 26), datetime.date(2000, 1, 4), datetime.date(2011, 1, 29)], [datetime.datetime(2015, 6, 24, 11, 50, 35, 556000), datetime.datetime(1999, 12, 31, 21, 1, 1), datetime.datetime(1904, 2, 1, 7, 40, 12, 340000)], [0.699999988079071, 1.899999976158142, 5.199999809265137], [1267920000000000, 450300000000000, 21660000000000], [3.5, 7.230000019073486], [1.5, 0.23000000417232513, 10.199999809265137], [datetime.datetime(2015, 6, 24, 12, 50, 35, 556000), datetime.datetime(2000, 1, 1, 1, 1, 1), datetime.datetime(1904, 2, 1, 10, 40, 12, 340000)], [datetime.time(12, 50, 35, 556000), datetime.time(11, 5, 35, 700000), datetime.time(10, 0)], [7, 1, 5], [[0.5, 1.2000000476837158], [0.5, 1.2000000476837158], [0.5, 1.2000000476837158]], [0.5, 1.2000000476837158], [0.23000000417232513, 1.5, 1.2000000476837158], ['ad', 'bc', 'de'], [datetime.time(12, 50, 35, 556000), datetime.time(11, 5, 35, 700000), datetime.time(10, 0)]]]
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_transfer_nodes_to_neo4j Transferring: [............................................................] 0/3 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 3/3 in 0:00:00.0s (741.3/s, eta: 0:00:00.0s)     
-Transferring: [............................................................] 0/3 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [####################........................................] 1/3 in 0:00:00.0s (100.2/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 2/3 in 0:00:00.0s (163.2/s, eta: 0:00:00.0s)     Transferring: [############################################################] 3/3 in 0:00:00.0s (217.1/s, eta: 0:00:00.0s)     
-Transferring: [............................................................] 0/3 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 3/3 in 0:00:00.0s (788.9/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_transfer_relationship_without_vertex_bolt Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (2100.3/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.0s (514.1/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_transfer_relationship_without_vertex_bolt_two_phase Transferring: [............................................................] 0/6 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 6/6 in 0:00:00.0s (2366.8/s, eta: 0:00:00.0s)     
-Transferring: [............................................................] 0/3 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 3/3 in 0:00:00.0s (758.0/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_transfer_relationship_working_types_bolt Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (2054.7/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.0s (438.8/s, eta: 0:00:00.0s)     
-[[8, 24, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None], [12, 18, 343, 'string', True, datetime.date(2015, 3, 26), datetime.datetime(2015, 6, 24, 11, 50, 35, 556000), 1267920000000000, datetime.datetime(2015, 7, 4, 19, 32, 24), datetime.time(12, 50, 35, 556000), 3.140000104904175, datetime.time(12, 50, 35, 556000), [True, False, False], [datetime.date(2015, 3, 26), datetime.date(2000, 1, 4), datetime.date(2011, 1, 29)], [datetime.datetime(2015, 6, 24, 11, 50, 35, 556000), datetime.datetime(1999, 12, 31, 21, 1, 1), datetime.datetime(1904, 2, 1, 7, 40, 12, 340000)], [0.699999988079071, 1.899999976158142, 5.199999809265137], [1267920000000000, 450300000000000, 21660000000000], [3.5, 7.230000019073486], [1.5, 0.23000000417232513, 10.199999809265137], [datetime.datetime(2015, 6, 24, 12, 50, 35, 556000), datetime.datetime(2000, 1, 1, 1, 1, 1), datetime.datetime(1904, 2, 1, 10, 40, 12, 340000)], [datetime.time(12, 50, 35, 556000), datetime.time(11, 5, 35, 700000), datetime.time(10, 0)], [7, 1, 5], [[0.5, 1.2000000476837158], [0.5, 1.2000000476837158], [0.5, 1.2000000476837158]], [0.5, 1.2000000476837158], [0.23000000417232513, 1.5, 1.2000000476837158], ['ad', 'bc', 'de'], [datetime.time(12, 50, 35, 556000), datetime.time(11, 5, 35, 700000), datetime.time(10, 0)]], [19, 26, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]]
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_0_neo4j::test_transfer_relationship_working_types_bolt_map Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (1711.5/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.0s (531.4/s, eta: 0:00:00.0s)     
-[[9, 25, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None], [27, 28, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None], [29, 2, 343, 'string', True, datetime.date(2015, 3, 26), datetime.datetime(2015, 6, 24, 11, 50, 35, 556000), 1267920000000000, datetime.datetime(2015, 7, 4, 19, 32, 24), datetime.time(12, 50, 35, 556000), 3.140000104904175, datetime.time(12, 50, 35, 556000), [True, False, False], [datetime.date(2015, 3, 26), datetime.date(2000, 1, 4), datetime.date(2011, 1, 29)], [datetime.datetime(2015, 6, 24, 11, 50, 35, 556000), datetime.datetime(1999, 12, 31, 21, 1, 1), datetime.datetime(1904, 2, 1, 7, 40, 12, 340000)], [0.699999988079071, 1.899999976158142, 5.199999809265137], [1267920000000000, 450300000000000, 21660000000000], [3.5, 7.230000019073486], [1.5, 0.23000000417232513, 10.199999809265137], [datetime.datetime(2015, 6, 24, 12, 50, 35, 556000), datetime.datetime(2000, 1, 1, 1, 1, 1), datetime.datetime(1904, 2, 1, 10, 40, 12, 340000)], [datetime.time(12, 50, 35, 556000), datetime.time(11, 5, 35, 700000), datetime.time(10, 0)], [7, 1, 5], [[0.5, 1.2000000476837158], [0.5, 1.2000000476837158], [0.5, 1.2000000476837158]], [0.5, 1.2000000476837158], [0.23000000417232513, 1.5, 1.2000000476837158], ['ad', 'bc', 'de'], [datetime.time(12, 50, 35, 556000), datetime.time(11, 5, 35, 700000), datetime.time(10, 0)]]]
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_append Transferring: [............................................................] 0/1 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 1/1 in 0:00:00.0s (340.9/s, eta: 0:00:00.0s)     
-Transferring: [............................................................] 0/1 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 1/1 in 0:00:00.0s (350.5/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_connector_creation PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_different_properties_combine_into_single_schema PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_dropping PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_edge_empty_labels Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [##########################..................................] 4/9 in 0:00:00.0s (1272.0/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (348.2/s, eta: 0:00:00.0s)     Transferring: [##############################################..............] 7/9 in 0:00:00.0s (214.6/s, eta: 0:00:00.0s)     Transferring: [#####################################################.......] 8/9 in 0:00:00.0s (168.6/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.1s (149.7/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_edge_empty_labels_schema Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [##########################..................................] 4/9 in 0:00:00.0s (1294.6/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (348.5/s, eta: 0:00:00.0s)     Transferring: [##############################################..............] 7/9 in 0:00:00.0s (214.4/s, eta: 0:00:00.0s)     Transferring: [#####################################################.......] 8/9 in 0:00:00.0s (169.2/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.1s (143.6/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_edge_empty_labels_schema_no_implicit Transferring: [............................................................] 0/6 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 4/6 in 0:00:00.0s (1447.4/s, eta: 0:00:00.0s)     Transferring: [############################################################] 6/6 in 0:00:00.0s (317.4/s, eta: 0:00:00.0s)     
-Transferring: [............................................................] 0/3 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [####################........................................] 1/3 in 0:00:00.0s (418.1/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 2/3 in 0:00:00.0s (113.9/s, eta: 0:00:00.0s)     Transferring: [############################################################] 3/3 in 0:00:00.0s (91.0/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_empty_labels Transferring: [............................................................] 0/1 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 1/1 in 0:00:00.0s (413.9/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_empty_labels_schema Transferring: [............................................................] 0/1 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 1/1 in 0:00:00.0s (413.8/s, eta: 0:00:00.0s)     
-Transferring: [............................................................] 0/1 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 1/1 in 0:00:00.0s (433.7/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_graph_delete_after_connector_created PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_graph_update_after_connector_created PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_map_edge_empty_labels Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [##########################..................................] 4/9 in 0:00:00.0s (1259.3/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (333.1/s, eta: 0:00:00.0s)     Transferring: [##############################################..............] 7/9 in 0:00:00.0s (220.8/s, eta: 0:00:00.0s)     Transferring: [#####################################################.......] 8/9 in 0:00:00.0s (174.6/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.1s (147.9/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_map_empty_labels Transferring: [............................................................] 0/1 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 1/1 in 0:00:00.0s (431.7/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_multiple_node_labels_from Transferring: [............................................................] 0/8 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [######################......................................] 3/8 in 0:00:00.0s (1287.9/s, eta: 0:00:00.0s)     Transferring: [##############################..............................] 4/8 in 0:00:00.0s (233.3/s, eta: 0:00:00.0s)     Transferring: [#####################################.......................] 5/8 in 0:00:00.0s (162.9/s, eta: 0:00:00.0s)     Transferring: [#############################################...............] 6/8 in 0:00:00.0s (133.7/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_multiple_node_labels_to Transferring: [............................................................] 0/8 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [######################......................................] 3/8 in 0:00:00.0s (982.3/s, eta: 0:00:00.0s)     Transferring: [##############################..............................] 4/8 in 0:00:00.0s (198.7/s, eta: 0:00:00.0s)     Transferring: [#####################################.......................] 5/8 in 0:00:00.0s (128.3/s, eta: 0:00:00.0s)     Transferring: [#############################################...............] 6/8 in 0:00:00.1s (112.6/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_multiple_property_types_edge_negative PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_multiple_property_types_vertex_negative PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_neo4j_edges PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_neo4j_edges_multi PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_neo4j_node_labels PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_neo4j_node_type_properties PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_neo4j_nodes PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_neo4j_properties PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_neo4j_property_keys PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_neo4j_rel_type_properties PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_neo4j_relationship_types PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_node_attributes {'vertices': {'Node': {'schema': [['neo4j_id', 'int'], ['int', 'int'], ['str', 'text'], ['bool', 'boolean'], ['date_attr', 'date'], ['datetime_attr', 'datetime'], ['duration_attr', 'int'], ['localdatetime_attr', 'datetime'], ['localtime_attr', 'time'], ['real', 'float'], ['time_attr', 'time']], 'neo4j_schema': [['neo4j_id', 'INTEGER'], ['int', 'INTEGER NOT NULL'], ['str', 'STRING NOT NULL'], ['bool', 'BOOLEAN NOT NULL'], ['date_attr', 'DATE NOT NULL'], ['datetime_attr', 'ZONED DATETIME NOT NULL'], ['duration_attr', 'DURATION NOT NULL'], ['localdatetime_attr', 'LOCAL DATETIME NOT NULL'], ['localtime_attr', 'LOCAL TIME NOT NULL'], ['real', 'FLOAT NOT NULL'], ['time_attr', 'ZONED TIME NOT NULL']], 'key': 'neo4j_id', 'xgt_name': 'Node'}}, 'edges': {}}
-{'neo4j_id': 'int', 'int': 'int', 'str': 'text', 'bool': 'boolean', 'date_attr': 'date', 'datetime_attr': 'datetime', 'duration_attr': 'int', 'localdatetime_attr': 'datetime', 'localtime_attr': 'time', 'real': 'float', 'time_attr': 'time'}
-[{'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'int', 'propertyTypes': ['INTEGER NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'str', 'propertyTypes': ['STRING NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'bool', 'propertyTypes': ['BOOLEAN NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'date_attr', 'propertyTypes': ['DATE NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'datetime_attr', 'propertyTypes': ['ZONED DATETIME NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'duration_attr', 'propertyTypes': ['DURATION NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'localdatetime_attr', 'propertyTypes': ['LOCAL DATETIME NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'localtime_attr', 'propertyTypes': ['LOCAL TIME NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'real', 'propertyTypes': ['FLOAT NOT NULL'], 'mandatory': True}, {'nodeType': ':`Node`', 'nodeLabels': ['Node'], 'propertyName': 'time_attr', 'propertyTypes': ['ZONED TIME NOT NULL'], 'mandatory': True}]
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_query_translator_loop_data ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_query_translator_loop_no_data ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_query_translator_multiple_node_labels_from ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_query_translator_multiple_node_labels_to ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_query_translator_multiple_node_labels_to_and_from ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-ANTLR runtime and generated code versions disagree: 4.13.2!=4.10.1
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_transfer_edges_to_neo4j Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (1755.2/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.0s (506.6/s, eta: 0:00:00.0s)     
-Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [######......................................................] 1/9 in 0:00:00.0s (114.6/s, eta: 0:00:00.1s)     Transferring: [#############...............................................] 2/9 in 0:00:00.0s (184.9/s, eta: 0:00:00.0s)     Transferring: [####################........................................] 3/9 in 0:00:00.0s (241.8/s, eta: 0:00:00.0s)     Transferring: [##########################..................................] 4/9 in 0:00:00.0s (275.1/s, eta: 0:00:00.0s)     Transferring: [#################################...........................] 5/9 in 0:00:00.0s (299.8/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (330.4/s, eta: 0:00:00.0s)     Transferring: [##############################################..............] 7/9 in 0:00:00.1s (76.4/s, eta: 0:00:00.0s)     Transferring: [#####################################################.......] 8/9 in 0:00:00.1s (78.8/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.1s (83.1/s, eta: 0:00:00.0s)     
-Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (1715.1/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.0s (500.1/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_transfer_everything_bolt Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (1589.3/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.0s (470.5/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_transfer_missing_graphs PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_transfer_no_data Transferring: 0 in 0:00:00.0s (0/s)     
-Transferring: 0 in 0:00:00.0s (0/s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_transfer_node_working_types_bolt 
-Attributes: {'neo4j_id': ['int'], 'int': ['int'], 'str': ['text'], 'bool': ['boolean'], 'date_attr': ['date'], 'datetime_attr': ['datetime'], 'duration_attr': ['int'], 'localdatetime_attr': ['datetime'], 'localtime_attr': ['time'], 'real': ['float'], 'time_attr': ['time'], 'bool_array': ['list', 'boolean', 1], 'date_array': ['list', 'date', 1], 'datetime_array': ['list', 'datetime', 1], 'double_array': ['list', 'float', 1], 'duration_array': ['list', 'int', 1], 'geo_attr2': ['list', 'float', 1], 'geo_attr3': ['list', 'float', 1], 'localdatetime_array': ['list', 'datetime', 1], 'localtime_array': ['list', 'time', 1], 'long_array': ['list', 'int', 1], 'point_array': ['list', 'float', 2], 'point_attr2': ['list', 'float', 1], 'point_attr3': ['list', 'float', 1], 'string_array': ['list', 'text', 1], 'time_array': ['list', 'time', 1]}
-Transferring: [............................................................] 0/3 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 3/3 in 0:00:00.0s (611.6/s, eta: 0:00:00.0s)     
-[[25, 343, 'string', True, datetime.date(2015, 3, 26), datetime.datetime(2015, 6, 24, 11, 50, 35, 556000), 1267920000000000, datetime.datetime(2015, 7, 4, 19, 32, 24), datetime.time(12, 50, 35, 556000), 3.140000104904175, datetime.time(12, 50, 35, 556000), [True, False, False], [datetime.date(2015, 3, 26), datetime.date(2000, 1, 4), datetime.date(2011, 1, 29)], [datetime.datetime(2015, 6, 24, 11, 50, 35, 556000), datetime.datetime(1999, 12, 31, 21, 1, 1), datetime.datetime(1904, 2, 1, 7, 40, 12, 340000)], [0.699999988079071, 1.899999976158142, 5.199999809265137], [1267920000000000, 450300000000000, 21660000000000], [3.5, 7.230000019073486], [1.5, 0.23000000417232513, 10.199999809265137], [datetime.datetime(2015, 6, 24, 12, 50, 35, 556000), datetime.datetime(2000, 1, 1, 1, 1, 1), datetime.datetime(1904, 2, 1, 10, 40, 12, 340000)], [datetime.time(12, 50, 35, 556000), datetime.time(11, 5, 35, 700000), datetime.time(10, 0)], [7, 1, 5], [[0.5, 1.2000000476837158], [0.5, 1.2000000476837158], [0.5, 1.2000000476837158]], [0.5, 1.2000000476837158], [0.23000000417232513, 1.5, 1.2000000476837158], ['ad', 'bc', 'de'], [datetime.time(12, 50, 35, 556000), datetime.time(11, 5, 35, 700000), datetime.time(10, 0)]], [9, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None], [27, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]]
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_transfer_nodes_to_neo4j Transferring: [............................................................] 0/3 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 3/3 in 0:00:00.0s (232.4/s, eta: 0:00:00.0s)     
-Transferring: [............................................................] 0/3 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [####################........................................] 1/3 in 0:00:00.1s (17.1/s, eta: 0:00:00.1s)     Transferring: [########################################....................] 2/3 in 0:00:00.1s (33.0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 3/3 in 0:00:00.1s (47.8/s, eta: 0:00:00.0s)     
-Transferring: [............................................................] 0/3 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 3/3 in 0:00:00.0s (714.5/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_transfer_relationship_without_vertex_bolt Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (1652.0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.0s (448.3/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_transfer_relationship_without_vertex_bolt_two_phase Transferring: [............................................................] 0/6 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 6/6 in 0:00:00.0s (2319.6/s, eta: 0:00:00.0s)     
-Transferring: [............................................................] 0/3 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [############################################################] 3/3 in 0:00:00.0s (810.0/s, eta: 0:00:00.0s)     
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_transfer_relationship_working_types_bolt Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (1765.4/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.0s (499.7/s, eta: 0:00:00.0s)     
-[[13, 14, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None], [15, 2, 343, 'string', True, datetime.date(2015, 3, 26), datetime.datetime(2015, 6, 24, 11, 50, 35, 556000), 1267920000000000, datetime.datetime(2015, 7, 4, 19, 32, 24), datetime.time(12, 50, 35, 556000), 3.140000104904175, datetime.time(12, 50, 35, 556000), [True, False, False], [datetime.date(2015, 3, 26), datetime.date(2000, 1, 4), datetime.date(2011, 1, 29)], [datetime.datetime(2015, 6, 24, 11, 50, 35, 556000), datetime.datetime(1999, 12, 31, 21, 1, 1), datetime.datetime(1904, 2, 1, 7, 40, 12, 340000)], [0.699999988079071, 1.899999976158142, 5.199999809265137], [1267920000000000, 450300000000000, 21660000000000], [3.5, 7.230000019073486], [1.5, 0.23000000417232513, 10.199999809265137], [datetime.datetime(2015, 6, 24, 12, 50, 35, 556000), datetime.datetime(2000, 1, 1, 1, 1, 1), datetime.datetime(1904, 2, 1, 10, 40, 12, 340000)], [datetime.time(12, 50, 35, 556000), datetime.time(11, 5, 35, 700000), datetime.time(10, 0)], [7, 1, 5], [[0.5, 1.2000000476837158], [0.5, 1.2000000476837158], [0.5, 1.2000000476837158]], [0.5, 1.2000000476837158], [0.23000000417232513, 1.5, 1.2000000476837158], ['ad', 'bc', 'de'], [datetime.time(12, 50, 35, 556000), datetime.time(11, 5, 35, 700000), datetime.time(10, 0)]], [19, 8, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]]
-PASSED
-test_neo4j_connector.py::TestXgtNeo4jConnector_1_neo4j_bolt::test_transfer_relationship_working_types_bolt_map Transferring: [............................................................] 0/9 in 0:00:00.0s (0/s, eta: 0:00:00.0s)     Transferring: [########################################....................] 6/9 in 0:00:00.0s (1594.5/s, eta: 0:00:00.0s)     Transferring: [############################################################] 9/9 in 0:00:00.0s (434.2/s, eta: 0:00:00.0s)     
-[[12, 9, 343, 'string', True, datetime.date(2015, 3, 26), datetime.datetime(2015, 6, 24, 11, 50, 35, 556000), 1267920000000000, datetime.datetime(2015, 7, 4, 19, 32, 24), datetime.time(12, 50, 35, 556000), 3.140000104904175, datetime.time(12, 50, 35, 556000), [True, False, False], [datetime.date(2015, 3, 26), datetime.date(2000, 1, 4), datetime.date(2011, 1, 29)], [datetime.datetime(2015, 6, 24, 11, 50, 35, 556000), datetime.datetime(1999, 12, 31, 21, 1, 1), datetime.datetime(1904, 2, 1, 7, 40, 12, 340000)], [0.699999988079071, 1.899999976158142, 5.199999809265137], [1267920000000000, 450300000000000, 21660000000000], [3.5, 7.230000019073486], [1.5, 0.23000000417232513, 10.199999809265137], [datetime.datetime(2015, 6, 24, 12, 50, 35, 556000), datetime.datetime(2000, 1, 1, 1, 1, 1), datetime.datetime(1904, 2, 1, 10, 40, 12, 340000)], [datetime.time(12, 50, 35, 556000), datetime.time(11, 5, 35, 700000), datetime.time(10, 0)], [7, 1, 5], [[0.5, 1.2000000476837158], [0.5, 1.2000000476837158], [0.5, 1.2000000476837158]], [0.5, 1.2000000476837158], [0.23000000417232513, 1.5, 1.2000000476837158], ['ad', 'bc', 'de'], [datetime.time(12, 50, 35, 556000), datetime.time(11, 5, 35, 700000), datetime.time(10, 0)]], [24, 26, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None], [25, 27, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]]
-PASSED
-
-============================= 84 passed in 10.74s ==============================
