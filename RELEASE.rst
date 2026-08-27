@@ -1,13 +1,16 @@
 Release Notes
 =============
 
-2.6.7 (08-25-2026)
+2.6.8 (08-27-2026)
 ------------------
 
 New Features
 ^^^^^^^^^^^^
   - Transfers to xGT now read rows from Neo4j in batches, which is several times faster. Controlled by the batch_size option of Neo4jConnector.
   - Added a "fast" install extra that pulls in neo4j-rust-ext, a faster bolt codec.
+
+2.6.7 (08-25-2026)
+------------------
 
 Changed
 ^^^^^^^

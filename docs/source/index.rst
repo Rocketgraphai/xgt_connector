@@ -217,8 +217,28 @@ itself. The connector instead has Neo4j group `batch_size` rows into each
 message, which by default makes a transfer several times faster.
 
 Neo4j holds a single batch at a time, so the batch size also bounds what the
-transfer costs the server. The default of 1000 rows is a conservative one.
-Raising it transfers faster, flattening out at around 20,000 rows:
+transfer costs the server. The default of 1000 rows is a conservative one, and
+raising it transfers faster. Transferring 500,000 nodes of five properties each
+ran at these rates:
+
+.. list-table::
+   :header-rows: 1
+
+   * - batch_size
+     - Speedup over a row at a time
+   * - 250
+     - 2.8x
+   * - 500
+     - 4.6x
+   * - 1000 (default)
+     - 7.1x
+   * - 5000
+     - 10.9x
+   * - 20000
+     - 12.5x
+
+The gain flattens out past 20,000 rows, so there is little reason to go higher.
+Batches below a few hundred rows give most of it back.
 
 .. code-block:: python
 
