@@ -47,6 +47,17 @@ Optional
    Improves schema querying.
    Available as an option to be turned on with the connector.
 
+* `neo4j-rust-ext <https://pypi.org/project/neo4j-rust-ext/>`_
+   A compiled replacement for the bolt codec of the Neo4j driver, which speeds
+   up batched transfers. Installed with the ``fast`` extra:
+
+   .. code-block:: bash
+
+      python -m pip install 'xgt_connector[fast]'
+
+   It requires an exact version of the Neo4j driver, so it is kept optional to
+   leave the version of that driver up to you.
+
 ODBC
 ^^^^
 
