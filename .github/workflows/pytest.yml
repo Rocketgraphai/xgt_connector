@@ -86,12 +86,16 @@ jobs:
           pip install './[odbc]'
         fi
 
-        sudo apt-get install odbc-mariadb
+        sudo apt-get install odbc-mariadb libsqliteodbc odbc-postgresql
 
     - name: Setup ODBC Driver
       run: |
         ls /usr/lib/x86_64-linux-gnu/odbc/
         echo -e '[MariaDB]\nDescription = ODBC Driver for MariaDB\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so\nFileUsage = 1' | sudo tee -a /etc/odbcinst.ini > /dev/null
+        # sqlite needs no server, so it covers a second database everywhere.
+        echo -e '[SQLite3]\nDescription = SQLite ODBC Driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libsqlite3odbc.so\nSetup = /usr/lib/x86_64-linux-gnu/odbc/libsqlite3odbc.so\nFileUsage = 1' | sudo tee -a /etc/odbcinst.ini > /dev/null
+        echo -e '[PostgreSQL Unicode]\nDescription = PostgreSQL ODBC driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/psqlodbcw.so\nFileUsage = 1' | sudo tee -a /etc/odbcinst.ini > /dev/null
+        odbcinst -q -d
 
     - name: Launch neo4j
       env:
@@ -124,6 +128,11 @@ jobs:
         docker run --rm -d --name mysql -p3306:3306 -e MYSQL_ROOT_PASSWORD=foo \
             -e MYSQL_USER=test -e MYSQL_PASSWORD=foo \
             -e MYSQL_DATABASE=test -d mariadb:latest
+
+    - name: Launch postgres
+      run: |
+        docker run --rm -d --name postgres -p5432:5432 -e POSTGRES_PASSWORD=foo \
+            -e POSTGRES_USER=test -e POSTGRES_DB=test postgres:latest
 
     - name: Launch xGT
       run: "docker run --rm -d --name xgt -p 4367:4367 rocketgraph/xgt"
