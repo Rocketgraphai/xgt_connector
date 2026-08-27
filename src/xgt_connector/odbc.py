@@ -80,7 +80,7 @@ class SQLODBCDriver(object):
         """
         self._connection_string = connection_string
         self._schema_query = "SELECT * FROM {0} WHERE 1=0"
-        self._data_query = "SELECT * FROM {0};"
+        self._data_query = "SELECT * FROM {0}"
         self._estimate_query="SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}';"
 
     def _get_data_query(self, table, arrow_schema):
@@ -118,7 +118,7 @@ class MongoODBCDriver(object):
         """
         self._connection_string = connection_string
         self._schema_query = "SELECT * FROM {0} WHERE 1=0"
-        self._data_query = "SELECT {0} FROM {1};"
+        self._data_query = "SELECT {0} FROM {1}"
         self._estimate_query = "SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}';"
         self._include_id = include_id
 
@@ -192,6 +192,8 @@ class OracleODBCDriver(object):
         )
         return reader.schema
 
+# A trailing semicolon is not portable. SAP ASE rejects one outright, and it
+# does no work in any of these queries, so none of them carry it.
 class SAPODBCDriver(object):
     def __init__(self, connection_string : str):
         """
@@ -206,7 +208,7 @@ class SAPODBCDriver(object):
         """
         self._connection_string = connection_string
         self._schema_query = "SELECT * FROM {0} WHERE 1=0"
-        self._data_query = "SELECT * FROM {0};"
+        self._data_query = "SELECT * FROM {0}"
         self._estimate_query="SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}';"
 
     def _get_data_query(self, table, arrow_schema):
@@ -242,7 +244,7 @@ class SnowflakeODBCDriver(object):
         """
         self._connection_string = connection_string
         self._schema_query = "SELECT * FROM {0} WHERE 1=0"
-        self._data_query = "SELECT * FROM {0};"
+        self._data_query = "SELECT * FROM {0}"
         self._estimate_query="SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}';"
         self._ansi_conversion = ansi_conversion
 
@@ -279,7 +281,7 @@ class SQLServerODBCDriver(object):
         """
         self._connection_string = connection_string
         self._schema_query = "SELECT * FROM {0} WHERE 1=0"
-        self._data_query = "SELECT * FROM {0};"
+        self._data_query = "SELECT * FROM {0}"
         # SQL Server keeps no TABLE_ROWS in INFORMATION_SCHEMA, its row counts
         # are in the partition stats. Index 0 is a heap and index 1 a clustered
         # index, one or the other holds the rows of a table.

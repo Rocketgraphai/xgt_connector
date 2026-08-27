@@ -44,7 +44,7 @@ import xgt
 from parameterized import parameterized_class
 
 from xgt_connector import (ODBCConnector, SQLODBCDriver, SQLServerODBCDriver,
-                           OracleODBCDriver)
+                           OracleODBCDriver, SAPODBCDriver)
 
 _SQLITE_FILE = os.path.join(tempfile.mkdtemp(), 'type_matrix.db')
 
@@ -120,6 +120,22 @@ DATABASES = [
     'first_row' : [1.0, 42, 1.5, 'hello', datetime(1989, 5, 6, 0, 0),
                    datetime(1989, 5, 6, 12, 56, 34)],
   },
+  {
+    'name' : 'sap_ase',
+    'driver' : 'sap',
+    'connection' : ('Driver={FreeTDS};Server=127.0.0.1;Port=5000;UID=sa;'
+                    'PWD=password;TDS_Version=5.0;'),
+    # A BIT in ASE cannot hold a null, so the boolean is left out rather than
+    # give this one table a shape the null row cannot use.
+    'ddl' : ('CREATE TABLE matrix (i BIGINT NULL, f DOUBLE PRECISION NULL, '
+             's VARCHAR(64) NULL, d DATE NULL, t TIME NULL, ts DATETIME NULL)'),
+    'insert' : ("INSERT INTO matrix VALUES (42, 1.5, 'hello', '1989-05-06', "
+                "'12:56:34', '1989-05-06 12:56:34')"),
+    # ASE hands its TIME over as text, with milliseconds.
+    'xgt_types' : ['int', 'float', 'text', 'date', 'text', 'datetime'],
+    'first_row' : [42, 1.5, 'hello', date(1989, 5, 6), '12:56:34.000',
+                   datetime(1989, 5, 6, 12, 56, 34)],
+  },
 ]
 
 @parameterized_class(DATABASES)
@@ -142,6 +158,8 @@ class TestODBCTypeMatrix(unittest.TestCase):
       odbc_driver = SQLServerODBCDriver(cls.connection)
     elif cls.driver == 'oracle':
       odbc_driver = OracleODBCDriver(cls.connection, upper_case_names = True)
+    elif cls.driver == 'sap':
+      odbc_driver = SAPODBCDriver(cls.connection)
     else:
       odbc_driver = SQLODBCDriver(cls.connection)
     cls.conn = ODBCConnector(cls.xgt, odbc_driver)

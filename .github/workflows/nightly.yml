@@ -16,15 +16,19 @@
 #
 #===----------------------------------------------------------------------===#
 
-# Oracle takes minutes to start and its image is large, and it does not behave
-# differently across python or neo4j versions, so running it on every job of the
-# PyTest matrix cost far more than it found. It runs here instead, once a night,
-# on a single python.
+# Oracle and SAP ASE take a while to start and their images are large, and
+# neither behaves differently across python or neo4j versions, so running them on
+# every job of the PyTest matrix would cost far more than it found. They run here
+# instead, once a night, on a single python.
 #
 # Db2 is not here. Its freely available CLI driver aborts the process when it
 # reads a null, so it cannot be tested until a driver built with a 64 bit SQLLEN
 # is available.
 name: Nightly databases
+
+permissions:
+  contents: read
+
 on:
   schedule:
     # 6 AM UTC, daily.
@@ -45,11 +49,15 @@ jobs:
       with:
         python-version: '3.14'
 
-    - name: Launch oracle
-      # Started first so that it comes up while everything else installs.
+    - name: Launch oracle and sap ase
+      # Started first so that they come up while everything else installs.
+      # ASE binds its listener by hostname, so the container needs the name its
+      # interfaces file expects, and the image carries no default command.
       run: |
         docker run --rm -d --name oracle -p1521:1521 -e ORACLE_PASSWORD=test \
             gvenzl/oracle-free:slim
+        docker run --rm -d --name ase --hostname dksybase -p5000:5000 \
+            --entrypoint sh ifnazar/sybase_15_7 /sybase/start
 
     - name: Install dependencies
       run: |
@@ -57,6 +65,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install parameterized pyodbc pandas pytest
         pip install './[odbc]'
+
+        # FreeTDS speaks the protocol SAP ASE uses and is packaged.
+        sudo apt-get install -y tdsodbc
 
         # Oracle ships its ODBC driver as a zip rather than a package.
         sudo apt-get install -y libaio1t64 unzip
@@ -76,6 +87,7 @@ jobs:
         ORACLE_LIB=$(ls -d /opt/oracle/instantclient_*)
         ORACLE_SO=$(ls $ORACLE_LIB/libsqora.so.*)
         echo -e "[Oracle]\nDescription = Oracle ODBC driver\nDriver = $ORACLE_SO\nFileUsage = 1" | sudo tee -a /etc/odbcinst.ini > /dev/null
+        echo -e "[FreeTDS]\nDescription = FreeTDS\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so\nFileUsage = 1" | sudo tee -a /etc/odbcinst.ini > /dev/null
         echo "$ORACLE_LIB" | sudo tee /etc/ld.so.conf.d/oracle.conf > /dev/null
         sudo ldconfig
         echo "LD_LIBRARY_PATH=$ORACLE_LIB" >> $GITHUB_ENV
@@ -84,16 +96,17 @@ jobs:
     - name: Launch xGT
       run: "docker run --rm -d --name xgt -p 4367:4367 rocketgraph/xgt"
 
-    - name: Wait for oracle
+    - name: Wait for oracle and sap ase
       # Asked for a connection rather than read out of the log, because a
       # database announces itself ready before it will accept one, and a test
       # that cannot connect skips rather than fails.
       env:
         ORACLE: 'Driver={Oracle};DBQ=127.0.0.1:1521/FREEPDB1;UID=system;PWD=test;'
+        ASE: 'Driver={FreeTDS};Server=127.0.0.1;Port=5000;UID=sa;PWD=password;TDS_Version=5.0;'
       run: |
         python - <<'PY'
         import os, sys, time, pyodbc
-        for name, cs in (('oracle', os.environ['ORACLE']),):
+        for name, cs in (('oracle', os.environ['ORACLE']), ('ase', os.environ['ASE'])):
             start = time.time()
             while time.time() - start < 600:
                 try:

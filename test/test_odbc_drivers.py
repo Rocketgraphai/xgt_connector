@@ -111,19 +111,19 @@ class TestDriverQueries(unittest.TestCase):
 
   def test_sql_queries(self):
     driver = SQLODBCDriver(CONNECTION)
-    assert driver._get_data_query('people', self.SCHEMA) == 'SELECT * FROM people;'
+    assert driver._get_data_query('people', self.SCHEMA) == 'SELECT * FROM people'
     assert self._schema_query_of(driver) == 'SELECT * FROM people WHERE 1=0'
     assert driver._conversions() == { }
 
   def test_sap_queries(self):
     driver = SAPODBCDriver(CONNECTION)
-    assert driver._get_data_query('people', self.SCHEMA) == 'SELECT * FROM people;'
+    assert driver._get_data_query('people', self.SCHEMA) == 'SELECT * FROM people'
     assert self._schema_query_of(driver) == 'SELECT * FROM people WHERE 1=0'
     assert driver._conversions() == { }
 
   def test_sql_server_queries(self):
     driver = SQLServerODBCDriver(CONNECTION)
-    assert driver._get_data_query('people', self.SCHEMA) == 'SELECT * FROM people;'
+    assert driver._get_data_query('people', self.SCHEMA) == 'SELECT * FROM people'
     assert self._schema_query_of(driver) == 'SELECT * FROM people WHERE 1=0'
     assert driver._conversions() == { }
 
@@ -157,7 +157,7 @@ class TestDriverQueries(unittest.TestCase):
 
   def test_snowflake_ansi_conversion(self):
     driver = SnowflakeODBCDriver(CONNECTION)
-    assert driver._get_data_query('people', self.SCHEMA) == 'SELECT * FROM people;'
+    assert driver._get_data_query('people', self.SCHEMA) == 'SELECT * FROM people'
     assert self._schema_query_of(driver) == 'SELECT * FROM people WHERE 1=0'
     assert driver._conversions() == { pa.decimal128(38, 0) : pa.int64() }
     assert SnowflakeODBCDriver(CONNECTION, ansi_conversion = False)._conversions() == { }
@@ -166,7 +166,7 @@ class TestDriverQueries(unittest.TestCase):
     # Mongo is asked for named columns so that the id can be left out.
     driver = MongoODBCDriver(CONNECTION)
     schema = pa.schema([('num', pa.int64()), ('name', pa.string())])
-    assert driver._get_data_query('people', schema) == 'SELECT num,name FROM people;'
+    assert driver._get_data_query('people', schema) == 'SELECT num,name FROM people'
     assert self._schema_query_of(driver) == 'SELECT * FROM people WHERE 1=0'
     assert driver._conversions() == { }
 
@@ -209,3 +209,13 @@ class TestEstimateQueries(unittest.TestCase):
     query = SQLServerODBCDriver(CONNECTION)._estimate_query.format('people')
     assert 'sys.dm_db_partition_stats' in query
     assert 'TABLE_ROWS' not in query
+
+  def test_no_query_ends_in_a_semicolon(self):
+    # SAP ASE rejects a trailing semicolon, and it does no work anywhere.
+    drivers = [SQLODBCDriver(CONNECTION), MongoODBCDriver(CONNECTION),
+               OracleODBCDriver(CONNECTION), SAPODBCDriver(CONNECTION),
+               SnowflakeODBCDriver(CONNECTION), SQLServerODBCDriver(CONNECTION)]
+    for driver in drivers:
+      for query in (driver._schema_query.format('people'),
+                    driver._data_query.format('people', 'people')):
+        assert not query.rstrip().endswith(';'), (driver, query)

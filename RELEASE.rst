@@ -14,6 +14,7 @@ Fixed
 ^^^^^
   - Queries run through Neo4jDriver.query() being run a second time when finalized, which ran writes twice.
   - Transfers from SQL Server, whose schema query used a LIMIT that SQL Server does not have.
+  - Transfers from SAP ASE, which rejects the trailing semicolon the queries carried.
 
 2.6.7 (08-25-2026)
 ------------------
