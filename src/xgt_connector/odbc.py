@@ -79,8 +79,8 @@ class SQLODBCDriver(object):
             'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
         """
         self._connection_string = connection_string
-        self._schema_query = "SELECT * FROM {0} LIMIT 1;"
-        self._data_query = "SELECT * FROM {0};"
+        self._schema_query = "SELECT * FROM {0} WHERE 1=0"
+        self._data_query = "SELECT * FROM {0}"
         self._estimate_query="SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}';"
 
     def _get_data_query(self, table, arrow_schema):
@@ -117,8 +117,8 @@ class MongoODBCDriver(object):
             By default false.
         """
         self._connection_string = connection_string
-        self._schema_query = "SELECT * FROM {0} LIMIT 1;"
-        self._data_query = "SELECT {0} FROM {1};"
+        self._schema_query = "SELECT * FROM {0} WHERE 1=0"
+        self._data_query = "SELECT {0} FROM {1}"
         self._estimate_query = "SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}';"
         self._include_id = include_id
 
@@ -165,10 +165,10 @@ class OracleODBCDriver(object):
         """
         self._connection_string = connection_string
         if upper_case_names:
-            self._schema_query = "SELECT * FROM {0} WHERE ROWNUM <= 1"
+            self._schema_query = "SELECT * FROM {0} WHERE 1=0"
             self._data_query = "SELECT * FROM {0}"
         else:
-            self._schema_query = "SELECT * FROM \"{0}\" WHERE ROWNUM <= 1"
+            self._schema_query = "SELECT * FROM \"{0}\" WHERE 1=0"
             self._data_query = "SELECT * FROM \"{0}\""
         self._estimate_query="SELECT NUM_ROWS FROM ALL_TABLES WHERE TABLE_NAME = '{0}'"
         self._ansi_conversion = ansi_conversion
@@ -192,6 +192,8 @@ class OracleODBCDriver(object):
         )
         return reader.schema
 
+# A trailing semicolon is not portable. SAP ASE rejects one outright, and it
+# does no work in any of these queries, so none of them carry it.
 class SAPODBCDriver(object):
     def __init__(self, connection_string : str):
         """
@@ -205,8 +207,8 @@ class SAPODBCDriver(object):
             'Driver={AES};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
         """
         self._connection_string = connection_string
-        self._schema_query = "SELECT TOP 1 * FROM {0};"
-        self._data_query = "SELECT * FROM {0};"
+        self._schema_query = "SELECT * FROM {0} WHERE 1=0"
+        self._data_query = "SELECT * FROM {0}"
         self._estimate_query="SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}';"
 
     def _get_data_query(self, table, arrow_schema):
@@ -241,8 +243,8 @@ class SnowflakeODBCDriver(object):
           This based on the ANSI int conversion Snowflake does and reverses that. By default true.
         """
         self._connection_string = connection_string
-        self._schema_query = "SELECT * FROM {0} LIMIT 1;"
-        self._data_query = "SELECT * FROM {0};"
+        self._schema_query = "SELECT * FROM {0} WHERE 1=0"
+        self._data_query = "SELECT * FROM {0}"
         self._estimate_query="SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}';"
         self._ansi_conversion = ansi_conversion
 
@@ -265,8 +267,45 @@ class SnowflakeODBCDriver(object):
         )
         return reader.schema
 
+class SQLServerODBCDriver(object):
+    def __init__(self, connection_string : str):
+        """
+        Initializes the driver class.
+
+        Parameters
+        ----------
+        connection_string : str
+            Standard ODBC connection string used for connecting to SQL Server.
+            Example:
+            'Driver={ODBC Driver 18 for SQL Server};Server=127.0.0.1,1433;Uid=sa;Pwd=foo;Database=test;'
+        """
+        self._connection_string = connection_string
+        self._schema_query = "SELECT * FROM {0} WHERE 1=0"
+        self._data_query = "SELECT * FROM {0}"
+        # SQL Server keeps no TABLE_ROWS in INFORMATION_SCHEMA, its row counts
+        # are in the partition stats. Index 0 is a heap and index 1 a clustered
+        # index, one or the other holds the rows of a table.
+        self._estimate_query = ("SELECT SUM(row_count) FROM sys.dm_db_partition_stats "
+                                "WHERE object_id = OBJECT_ID('{0}') AND index_id IN (0,1)")
+
+    def _get_data_query(self, table, arrow_schema):
+        return self._data_query.format(table)
+
+    def _conversions(self):
+       return { }
+
+    def _get_record_batch_schema(self, table, max_text_size, max_binary_size):
+        reader = read_arrow_batches_from_odbc(
+            query=self._schema_query.format(table),
+            connection_string=self._connection_string,
+            batch_size=1,
+            max_text_size=max_text_size,
+            max_binary_size=max_binary_size,
+        )
+        return reader.schema
+
 ODBCDriverTypes = Union[SQLODBCDriver, MongoODBCDriver, OracleODBCDriver,
-                        SAPODBCDriver, SnowflakeODBCDriver]
+                        SAPODBCDriver, SnowflakeODBCDriver, SQLServerODBCDriver]
 
 class ODBCConnector(object):
     def __init__(self, xgt_server : xgt.Connection, odbc_driver : ODBCDriverTypes):
