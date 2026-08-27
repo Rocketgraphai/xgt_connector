@@ -27,6 +27,11 @@ they are invisible when only one database is tested.
 Every database that cannot be reached is skipped, so this runs with whatever is
 available. Sqlite needs no server at all and so always runs.
 
+Skipping is right for a developer who has one database to hand, and wrong for CI,
+which starts them deliberately: a container that dies would take its tests with
+it and the run would still pass. Naming a database in XGT_TEST_REQUIRE_DATABASES
+turns being unable to reach it into a failure.
+
 Db2 is deliberately absent. Its CLI driver, the one the ibm_db wheel carries,
 reports the length of a null as a negative number, which aborts the process
 rather than raising, so a single null would take the whole run down with it.
@@ -47,6 +52,10 @@ from xgt_connector import (ODBCConnector, SQLODBCDriver, SQLServerODBCDriver,
                            OracleODBCDriver, SAPODBCDriver)
 
 _SQLITE_FILE = os.path.join(tempfile.mkdtemp(), 'type_matrix.db')
+
+# Databases this run provisioned, and so must be able to reach.
+REQUIRED = {name for name in
+            os.environ.get('XGT_TEST_REQUIRE_DATABASES', '').split(',') if name}
 
 # Each entry is a database, the table to build in it, and what that table is
 # expected to become in xGT. The expectations differ on purpose.
@@ -147,6 +156,10 @@ class TestODBCTypeMatrix(unittest.TestCase):
     try:
       cls.odbc = pyodbc.connect(cls.connection, autocommit = True)
     except Exception as e:
+      if cls.name in REQUIRED:
+        raise AssertionError(
+            f'{cls.name} is named in XGT_TEST_REQUIRE_DATABASES but could not be '
+            f'reached, so its tests would have been skipped silently: {e}')
       raise unittest.SkipTest(f'{cls.name} not reachable over ODBC: {e}')
     cls.xgt = xgt.Connection()
     try:

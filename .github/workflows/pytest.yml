@@ -152,7 +152,32 @@ jobs:
     - name: Show docker containers
       run: "docker ps -a"
 
+    - name: Wait for the databases
+      # They are started deliberately, so a test that cannot reach one is a
+      # failure rather than something to skip over.
+      run: |
+        python - <<'PY'
+        import sys, time, pyodbc
+        sys.path.insert(0, 'test')
+        from test_odbc_type_matrix import DATABASES
+        wanted = {'mariadb', 'postgres', 'sqlserver'}
+        for db in (d for d in DATABASES if d['name'] in wanted):
+            start = time.time()
+            while time.time() - start < 300:
+                try:
+                    pyodbc.connect(db['connection'], autocommit=True).close()
+                    print(f"{db['name']} ready after {time.time() - start:.0f}s")
+                    break
+                except Exception as e:
+                    last = str(e)[:90]
+                    time.sleep(5)
+            else:
+                sys.exit(f"{db['name']} never accepted a connection: {last}")
+        PY
+
     - name: Run test suite
       # -rs so that a database dropping out shows up as a reason rather than a dot.
+      env:
+        XGT_TEST_REQUIRE_DATABASES: sqlite,mariadb,postgres,sqlserver
       run: |
         pytest -v -s -rs test

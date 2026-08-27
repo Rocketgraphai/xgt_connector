@@ -125,5 +125,7 @@ jobs:
 
     - name: Run test suite
       # -rs so that a database dropping out shows up as a reason rather than a dot.
+      env:
+        XGT_TEST_REQUIRE_DATABASES: sqlite,oracle,sap_ase
       run: |
         pytest -v -s -rs test/test_odbc_type_matrix.py test/test_odbc_drivers.py
