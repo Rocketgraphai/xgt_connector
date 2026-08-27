@@ -605,25 +605,26 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.xgt.drop_frame('Relationship')
     self.xgt.drop_frame('Node')
 
-  def test_sparse_edge_anchors_fall_back(self):
-    # An edge batch holds every edge of the nodes in its range, so density has
-    # to be judged on distinct source nodes. Counting edges instead lets a
-    # couple of high degree sources far apart in id space look dense, and the
-    # transfer then walks a range of mostly empty batches.
-    self.neo4j_driver.query('CREATE (:Node{int: 1})').finalize()
+  def test_batch_density_counts_distinct_anchors(self):
+    # An edge batch holds every edge of the nodes in its range, so how densely
+    # packed the ids are has to be judged on distinct source nodes. Counting
+    # edges instead lets a few sources of high degree, far apart in id space,
+    # look dense, and the transfer then walks mostly empty batches.
+    #
+    # Asserted on the bounds query rather than on a sparse graph, because Neo4j
+    # hands out the ids of deleted nodes again and a test cannot say where in
+    # id space its nodes will land.
     self.neo4j_driver.query(
-        'UNWIND range(1, 2500) AS i CREATE (:Filler{int: i})').finalize()
-    self.neo4j_driver.query('CREATE (:Node{int: 2})').finalize()
-    self.neo4j_driver.query('MATCH (n:Filler) DELETE n').finalize()
-    self.neo4j_driver.query(
-        'MATCH (h:Node) UNWIND range(1, 10) AS i'
-        ' CREATE (h)-[:Relationship{int: i}]->(h)').finalize()
-    c = self._batched_connector(1000)
+        'UNWIND range(1, 10) AS i'
+        ' CREATE (:Node{int: i})-[:Relationship{int: i}]->(:Node{int: -i})').finalize()
+    c = self._batched_connector(4)
     with self._record_queries() as queries:
       c.transfer_to_xgt(vertices=['Node'], edges=['Relationship'])
-    batched = [q for q in queries if 'collect(' in q and 'Relationship' in q]
-    assert batched == [], batched
-    assert self.xgt.get_frame('Relationship').num_rows == 20
+    bounds = [q for q in queries if 'min(id(' in q]
+    assert len(bounds) > 0, queries
+    assert all('count(DISTINCT' in q for q in bounds), bounds
+    assert not any('count(*)' in q for q in bounds), bounds
+    assert self.xgt.get_frame('Relationship').num_rows == 10
     self.xgt.drop_frame('Relationship')
     self.xgt.drop_frame('Node')
 
