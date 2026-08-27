@@ -95,6 +95,29 @@ Transfer a chosen part of the graph rather than all of it:
 conn.transfer_to_xgt(vertices=['Person'], edges=['KNOWS'])
 ```
 
+### From a SQL database
+
+The ODBC connector works the same way. Give it a connection string and the
+tables to bring across:
+
+```python
+import xgt
+from xgt_connector import ODBCConnector, SQLODBCDriver
+
+connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
+xgt_server = xgt.Connection()
+conn = ODBCConnector(xgt_server, SQLODBCDriver(connection_string))
+
+# Bring a table across as an xGT table.
+conn.transfer_to_xgt([('my_table', 'test_table')])
+```
+
+A SQL table can also be mapped onto vertex and edge frames rather than a plain
+table, so that rows become a graph. Swap `SQLODBCDriver` for the driver of your
+database from the table above, and see the
+[ODBC guide](https://rocketgraphai.github.io/xgt_connector/odbc) for the mapping
+forms, writing back with `transfer_to_odbc`, and per database notes.
+
 ## Performance
 
 Bolt sends each row of a result as its own message, so a transfer that reads a
@@ -131,6 +154,11 @@ It needs no code change, and is only worth installing together with batching:
 decoding is not what a row at a time transfer spends its time on. See
 [the documentation](https://rocketgraphai.github.io/xgt_connector/#transferring-larger-graphs)
 for the full numbers.
+
+None of this applies to the ODBC connector, which reads arrow batches straight
+from the driver and hands them to xGT without building a python object per row.
+`batch_size` there controls how many rows the ODBC driver buffers, and the
+default suits most tables.
 
 ## API
 
