@@ -26,6 +26,12 @@ they are invisible when only one database is tested.
 
 Every database that cannot be reached is skipped, so this runs with whatever is
 available. Sqlite needs no server at all and so always runs.
+
+Db2 is deliberately absent. Its CLI driver, the one the ibm_db wheel carries,
+reports the length of a null as a negative number, which aborts the process
+rather than raising, so a single null would take the whole run down with it.
+The driver is built treating SQLLEN as 32 bits on a 64 bit platform. Reading a
+Db2 table without nulls does work, which is not much comfort.
 """
 
 import os
@@ -112,19 +118,6 @@ DATABASES = [
     # Only a NUMBER(38,0) converts to an int, a NUMBER(1) stays a float.
     'xgt_types' : ['float', 'int', 'float', 'text', 'datetime', 'datetime'],
     'first_row' : [1.0, 42, 1.5, 'hello', datetime(1989, 5, 6, 0, 0),
-                   datetime(1989, 5, 6, 12, 56, 34)],
-  },
-  {
-    'name' : 'db2',
-    'driver' : 'sql',
-    'connection' : ('Driver={Db2};Hostname=127.0.0.1;Port=50000;Database=testdb;'
-                    'UID=db2inst1;PWD=passw0rd;Protocol=TCPIP;'),
-    'ddl' : ('CREATE TABLE matrix (b SMALLINT, i BIGINT, f DOUBLE, s VARCHAR(64), '
-             'd DATE, ts TIMESTAMP)'),
-    'insert' : ("INSERT INTO matrix VALUES (1, 42, 1.5, 'hello', '1989-05-06', "
-                "'1989-05-06 12:56:34')"),
-    'xgt_types' : ['int', 'int', 'float', 'text', 'date', 'datetime'],
-    'first_row' : [1, 42, 1.5, 'hello', date(1989, 5, 6),
                    datetime(1989, 5, 6, 12, 56, 34)],
   },
 ]
