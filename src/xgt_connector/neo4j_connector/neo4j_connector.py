@@ -353,9 +353,15 @@ class Neo4jConnector(object):
             transfer faster, up to roughly 20000 where the gain flattens out.
             For edges the batch is cut on the source node, so a node of high
             degree contributes all of its edges to one batch no matter this
-            value. Pass None to transfer a Bolt record at a time instead.
+            value. Must be a positive integer, or None to transfer a Bolt record
+            at a time instead.
         """
 
+        if batch_size is not None and (not isinstance(batch_size, int)
+                                       or isinstance(batch_size, bool)
+                                       or batch_size < 1):
+            raise ValueError("batch_size must be a positive integer or None, "
+                             f"not {batch_size!r}.")
         self._batch_size = batch_size
         self._xgt_server = xgt_server
         if isinstance(neo4j_driver, (neo4j.Neo4jDriver, neo4j.BoltDriver)):

@@ -566,6 +566,16 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.xgt.drop_frame('Relationship')
     self.xgt.drop_frame('Node')
 
+  def test_batch_size_must_be_positive(self):
+    # A negative batch size walks an empty range of ids, which would transfer
+    # no rows at all into freshly created frames.
+    for batch_size in [-10, 0, 2.5, '1000']:
+      with self.assertRaises(ValueError):
+        Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = batch_size)
+    # None and a positive integer are both fine.
+    Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = None)
+    Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = 10)
+
   def test_batched_transfer_sparse_ids_falls_back(self):
     # Relationship ids are neither small nor dense, and node ids need not be
     # either, so a span far larger than the row count must not be walked.
