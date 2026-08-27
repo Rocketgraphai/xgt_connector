@@ -88,6 +88,14 @@ jobs:
 
         sudo apt-get install odbc-mariadb libsqliteodbc odbc-postgresql
 
+        # Microsoft ships its SQL Server driver from its own apt repository.
+        curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
+          | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
+        echo "deb [signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/24.04/prod noble main" \
+          | sudo tee /etc/apt/sources.list.d/mssql.list > /dev/null
+        sudo apt-get update
+        sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
+
     - name: Setup ODBC Driver
       run: |
         ls /usr/lib/x86_64-linux-gnu/odbc/
@@ -133,6 +141,12 @@ jobs:
       run: |
         docker run --rm -d --name postgres -p5432:5432 -e POSTGRES_PASSWORD=foo \
             -e POSTGRES_USER=test -e POSTGRES_DB=test postgres:latest
+
+    - name: Launch sql server
+      run: |
+        docker run --rm -d --name sqlserver -p1433:1433 -e ACCEPT_EULA=Y \
+            -e MSSQL_SA_PASSWORD='Str0ng!Passw0rd' -e MSSQL_PID=Developer \
+            mcr.microsoft.com/mssql/server:2022-latest
 
     - name: Launch xGT
       run: "docker run --rm -d --name xgt -p 4367:4367 rocketgraph/xgt"

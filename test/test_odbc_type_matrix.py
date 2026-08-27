@@ -37,7 +37,7 @@ import pyodbc
 import xgt
 from parameterized import parameterized_class
 
-from xgt_connector import ODBCConnector, SQLODBCDriver
+from xgt_connector import ODBCConnector, SQLODBCDriver, SQLServerODBCDriver
 
 _SQLITE_FILE = os.path.join(tempfile.mkdtemp(), 'type_matrix.db')
 
@@ -46,6 +46,7 @@ _SQLITE_FILE = os.path.join(tempfile.mkdtemp(), 'type_matrix.db')
 DATABASES = [
   {
     'name' : 'sqlite',
+    'driver' : 'sql',
     'connection' : f'Driver={{SQLite3}};Database={_SQLITE_FILE};',
     'ddl' : ('CREATE TABLE matrix (b BOOLEAN, i INTEGER, f REAL, s TEXT, '
              'd DATE, t TIME, ts DATETIME)'),
@@ -57,6 +58,7 @@ DATABASES = [
   },
   {
     'name' : 'mariadb',
+    'driver' : 'sql',
     'connection' : ('Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;'
                     'Uid=test;Pwd=foo;'),
     'ddl' : ('CREATE TABLE matrix (b BOOL, i BIGINT, f DOUBLE, s VARCHAR(64), '
@@ -70,6 +72,7 @@ DATABASES = [
   },
   {
     'name' : 'postgres',
+    'driver' : 'sql',
     'connection' : ('Driver={PostgreSQL Unicode};Server=127.0.0.1;Port=5432;'
                     'Database=test;Uid=test;Pwd=foo;'),
     'ddl' : ('CREATE TABLE matrix (b BOOLEAN, i BIGINT, f DOUBLE PRECISION, '
@@ -79,6 +82,20 @@ DATABASES = [
     # The PostgreSQL driver hands its boolean over as text rather than a boolean.
     'xgt_types' : ['text', 'int', 'float', 'text', 'date', 'text', 'datetime'],
     'first_row' : ['1', 42, 1.5, 'hello', date(1989, 5, 6), '12:56:34',
+                   datetime(1989, 5, 6, 12, 56, 34)],
+  },
+  {
+    'name' : 'sqlserver',
+    'connection' : ('Driver={ODBC Driver 18 for SQL Server};Server=127.0.0.1,1433;'
+                    'UID=sa;PWD=Str0ng!Passw0rd;TrustServerCertificate=yes;Database=master;'),
+    'driver' : 'sqlserver',
+    'ddl' : ('CREATE TABLE matrix (b BIT, i BIGINT, f FLOAT, s VARCHAR(64), '
+             'd DATE, t TIME, ts DATETIME2)'),
+    'insert' : ("INSERT INTO matrix VALUES (1, 42, 1.5, 'hello', '1989-05-06', "
+                "'12:56:34', '1989-05-06 12:56:34')"),
+    # A SQL Server TIME carries seven fractional digits, and arrives with them.
+    'xgt_types' : ['boolean', 'int', 'float', 'text', 'date', 'text', 'datetime'],
+    'first_row' : [True, 42, 1.5, 'hello', date(1989, 5, 6), '12:56:34.0000000',
                    datetime(1989, 5, 6, 12, 56, 34)],
   },
 ]
@@ -99,7 +116,9 @@ class TestODBCTypeMatrix(unittest.TestCase):
     except Exception:
       pass
     cls.xgt.set_default_namespace('matrix')
-    cls.conn = ODBCConnector(cls.xgt, SQLODBCDriver(cls.connection))
+    odbc_driver = (SQLServerODBCDriver(cls.connection) if cls.driver == 'sqlserver'
+                   else SQLODBCDriver(cls.connection))
+    cls.conn = ODBCConnector(cls.xgt, odbc_driver)
 
   @classmethod
   def teardown_class(cls):

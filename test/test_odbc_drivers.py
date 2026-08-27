@@ -31,7 +31,7 @@ import xgt
 
 import xgt_connector.odbc as odbc
 from xgt_connector import (SQLODBCDriver, MongoODBCDriver, OracleODBCDriver,
-                           SAPODBCDriver, SnowflakeODBCDriver)
+                           SAPODBCDriver, SnowflakeODBCDriver, SQLServerODBCDriver)
 
 CONNECTION = 'Driver={Fake};Server=127.0.0.1;Uid=test;Pwd=foo;'
 
@@ -112,25 +112,43 @@ class TestDriverQueries(unittest.TestCase):
   def test_sql_queries(self):
     driver = SQLODBCDriver(CONNECTION)
     assert driver._get_data_query('people', self.SCHEMA) == 'SELECT * FROM people;'
-    assert self._schema_query_of(driver) == 'SELECT * FROM people LIMIT 1;'
+    assert self._schema_query_of(driver) == 'SELECT * FROM people WHERE 1=0'
     assert driver._conversions() == { }
 
-  def test_sap_uses_top_rather_than_limit(self):
+  def test_sap_queries(self):
     driver = SAPODBCDriver(CONNECTION)
     assert driver._get_data_query('people', self.SCHEMA) == 'SELECT * FROM people;'
-    assert self._schema_query_of(driver) == 'SELECT TOP 1 * FROM people;'
+    assert self._schema_query_of(driver) == 'SELECT * FROM people WHERE 1=0'
     assert driver._conversions() == { }
+
+  def test_sql_server_queries(self):
+    driver = SQLServerODBCDriver(CONNECTION)
+    assert driver._get_data_query('people', self.SCHEMA) == 'SELECT * FROM people;'
+    assert self._schema_query_of(driver) == 'SELECT * FROM people WHERE 1=0'
+    assert driver._conversions() == { }
+
+  def test_no_schema_query_limits_rows(self):
+    # The row a schema query returns is thrown away, only the description of
+    # the result set is used, and every way of limiting rows is particular to
+    # some database. SQL Server has no LIMIT, which the generic driver used.
+    drivers = [SQLODBCDriver(CONNECTION), MongoODBCDriver(CONNECTION),
+               OracleODBCDriver(CONNECTION), SAPODBCDriver(CONNECTION),
+               SnowflakeODBCDriver(CONNECTION), SQLServerODBCDriver(CONNECTION)]
+    for driver in drivers:
+      query = driver._schema_query.format('people')
+      assert 'WHERE 1=0' in query, (driver, query)
+      for dialect in ('LIMIT', 'TOP ', 'ROWNUM'):
+        assert dialect not in query, (driver, query)
 
   def test_oracle_quotes_names_unless_upper_cased(self):
     driver = OracleODBCDriver(CONNECTION)
     assert driver._get_data_query('people', self.SCHEMA) == 'SELECT * FROM "people"'
-    assert self._schema_query_of(driver) == 'SELECT * FROM "people" WHERE ROWNUM <= 1'
+    assert self._schema_query_of(driver) == 'SELECT * FROM "people" WHERE 1=0'
 
   def test_oracle_upper_case_names_drops_the_quotes(self):
     driver = OracleODBCDriver(CONNECTION, upper_case_names = True)
     assert driver._get_data_query('PEOPLE', self.SCHEMA) == 'SELECT * FROM PEOPLE'
-    assert self._schema_query_of(driver, 'PEOPLE') == \
-        'SELECT * FROM PEOPLE WHERE ROWNUM <= 1'
+    assert self._schema_query_of(driver, 'PEOPLE') == 'SELECT * FROM PEOPLE WHERE 1=0'
 
   def test_oracle_ansi_conversion(self):
     assert OracleODBCDriver(CONNECTION)._conversions() == \
@@ -140,7 +158,7 @@ class TestDriverQueries(unittest.TestCase):
   def test_snowflake_ansi_conversion(self):
     driver = SnowflakeODBCDriver(CONNECTION)
     assert driver._get_data_query('people', self.SCHEMA) == 'SELECT * FROM people;'
-    assert self._schema_query_of(driver) == 'SELECT * FROM people LIMIT 1;'
+    assert self._schema_query_of(driver) == 'SELECT * FROM people WHERE 1=0'
     assert driver._conversions() == { pa.decimal128(38, 0) : pa.int64() }
     assert SnowflakeODBCDriver(CONNECTION, ansi_conversion = False)._conversions() == { }
 
@@ -149,7 +167,7 @@ class TestDriverQueries(unittest.TestCase):
     driver = MongoODBCDriver(CONNECTION)
     schema = pa.schema([('num', pa.int64()), ('name', pa.string())])
     assert driver._get_data_query('people', schema) == 'SELECT num,name FROM people;'
-    assert self._schema_query_of(driver) == 'SELECT * FROM people LIMIT 1;'
+    assert self._schema_query_of(driver) == 'SELECT * FROM people WHERE 1=0'
     assert driver._conversions() == { }
 
   def test_mongo_drops_the_id_column_by_default(self):
@@ -174,7 +192,7 @@ class TestEstimateQueries(unittest.TestCase):
   def test_every_driver_has_a_row_estimate_query(self):
     drivers = [SQLODBCDriver(CONNECTION), MongoODBCDriver(CONNECTION),
                OracleODBCDriver(CONNECTION), SAPODBCDriver(CONNECTION),
-               SnowflakeODBCDriver(CONNECTION)]
+               SnowflakeODBCDriver(CONNECTION), SQLServerODBCDriver(CONNECTION)]
     for driver in drivers:
       query = driver._estimate_query.format('people')
       assert 'people' in query, (driver, query)
@@ -184,3 +202,10 @@ class TestEstimateQueries(unittest.TestCase):
     # Oracle has no INFORMATION_SCHEMA, it uses ALL_TABLES instead.
     query = OracleODBCDriver(CONNECTION)._estimate_query.format('PEOPLE')
     assert query == "SELECT NUM_ROWS FROM ALL_TABLES WHERE TABLE_NAME = 'PEOPLE'"
+
+  def test_sql_server_estimates_from_partition_stats(self):
+    # SQL Server has no TABLE_ROWS in INFORMATION_SCHEMA, which is what the
+    # generic query asks for, so it needs one of its own.
+    query = SQLServerODBCDriver(CONNECTION)._estimate_query.format('people')
+    assert 'sys.dm_db_partition_stats' in query
+    assert 'TABLE_ROWS' not in query

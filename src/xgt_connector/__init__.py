@@ -32,5 +32,6 @@ try:
     from .odbc import OracleODBCDriver
     from .odbc import SAPODBCDriver
     from .odbc import SnowflakeODBCDriver
+    from .odbc import SQLServerODBCDriver
 except ImportError:
     pass
