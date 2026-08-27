@@ -211,11 +211,14 @@ These additional connectors will connect to Neo4j with a combination of connecti
 Transferring Larger Graphs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Bolt sends each row of a result as its own message, so by default a transfer
-spends most of its time on per row overhead rather than on the data itself.
-Passing `batch_size` to the connector has Neo4j group that many rows into each
-message, which is often ten times faster or more, depending on the shape of the
-data.
+Bolt sends each row of a result as its own message, so a transfer that reads a
+row at a time spends most of it on per row overhead rather than on the data
+itself. The connector instead has Neo4j group `batch_size` rows into each
+message, which by default makes a transfer several times faster.
+
+Neo4j holds a single batch at a time, so the batch size also bounds what the
+transfer costs the server. The default of 1000 rows is a conservative one.
+Raising it transfers faster, flattening out at around 20,000 rows:
 
 .. code-block:: python
 
@@ -223,10 +226,9 @@ data.
 
    conn.transfer_to_xgt(vertices=['Person'], edges=['KNOWS'])
 
-Neo4j holds a single batch at a time, so the batch size also bounds how much
-memory the transfer uses on the server. Batches between 10,000 and 50,000 rows
-transfer at close to the same rate, so there is little reason to use a larger
-one. Very small batches give back some of the gain.
+Batches of edges are cut on the source node, so a node of high degree
+contributes all of its edges to a single batch whatever the batch size is.
+Passing ``batch_size=None`` transfers a row at a time, as earlier releases did.
 
 Installing the optional
 `neo4j-rust-ext <https://pypi.org/project/neo4j-rust-ext/>`_ package speeds up

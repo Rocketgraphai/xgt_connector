@@ -487,7 +487,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       rows = sorted(tuple(row) for row in self.xgt.get_frame('Node').get_data())
       self.xgt.drop_frame('Node')
       return rows
-    expected = transfer(Neo4jConnector(self.xgt, self.neo4j_driver))
+    expected = transfer(
+        Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = None))
     # A batch size well under the row count exercises the batch boundaries.
     for batch_size in [1, 4, 25, 1000]:
       assert transfer(self._batched_connector(batch_size)) == expected, batch_size

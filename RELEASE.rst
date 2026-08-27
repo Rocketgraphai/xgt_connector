@@ -6,7 +6,7 @@ Release Notes
 
 New Features
 ^^^^^^^^^^^^
-  - Added a batch_size option to Neo4jConnector that transfers rows to xGT in batches grouped by Neo4j, which is much faster than a row at a time.
+  - Transfers to xGT now read rows from Neo4j in batches, which is several times faster. Controlled by the batch_size option of Neo4jConnector.
   - Added a "fast" install extra that pulls in neo4j-rust-ext, a faster bolt codec.
 
 Changed

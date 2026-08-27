@@ -328,7 +328,7 @@ class Neo4jConnector(object):
                        neo4j_driver,
                        verbose = False,
                        enable_apoc = True,
-                       batch_size = None):
+                       batch_size = 1000):
         """
         Initializes the connector class.
 
@@ -348,8 +348,12 @@ class Neo4jConnector(object):
             Number of rows Neo4j groups into a single Bolt record when
             transferring to xGT. Bolt sends one message per row, so grouping rows
             server side removes most of the per-row overhead. Neo4j holds one
-            batch in memory at a time. If None, rows are transferred one Bolt
-            record at a time.
+            batch in memory at a time, so this also bounds what a transfer costs
+            the server. The default of 1000 is a conservative one: larger batches
+            transfer faster, up to roughly 20000 where the gain flattens out.
+            For edges the batch is cut on the source node, so a node of high
+            degree contributes all of its edges to one batch no matter this
+            value. Pass None to transfer a Bolt record at a time instead.
         """
 
         self._batch_size = batch_size

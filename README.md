@@ -52,7 +52,6 @@ For faster transfers out of Neo4j, the `fast` extra adds a compiled bolt codec:
 ```bash
 python -m pip install 'xgt_connector[fast]'
 ```
-Pass `batch_size` to `Neo4jConnector` to use it.
 
 If you don't have Rocketgraph xGT, you can install and run the [Developer version](https://hub.docker.com/r/rocketgraphai/xgt) from Docker:
 
