@@ -42,7 +42,7 @@ Db2 table without nulls does work, which is not much comfort.
 import os
 import tempfile
 import unittest
-from datetime import date, datetime
+from datetime import date, datetime, time
 
 import pyodbc
 import xgt
@@ -68,8 +68,8 @@ DATABASES = [
              'd DATE, t TIME, ts DATETIME)'),
     'insert' : ("INSERT INTO matrix VALUES (1, 42, 1.5, 'hello', '1989-05-06', "
                 "'12:56:34', '1989-05-06 12:56:34')"),
-    'xgt_types' : ['boolean', 'int', 'float', 'text', 'date', 'text', 'datetime'],
-    'first_row' : [True, 42, 1.5, 'hello', date(1989, 5, 6), '12:56:34',
+    'xgt_types' : ['boolean', 'int', 'float', 'text', 'date', 'time', 'datetime'],
+    'first_row' : [True, 42, 1.5, 'hello', date(1989, 5, 6), time(12, 56, 34),
                    datetime(1989, 5, 6, 12, 56, 34)],
   },
   {
@@ -82,8 +82,8 @@ DATABASES = [
     'insert' : ("INSERT INTO matrix VALUES (1, 42, 1.5, 'hello', '1989-05-06', "
                 "'12:56:34', '1989-05-06 12:56:34')"),
     # MariaDB has no boolean of its own, BOOL is a tinyint.
-    'xgt_types' : ['int', 'int', 'float', 'text', 'date', 'text', 'datetime'],
-    'first_row' : [1, 42, 1.5, 'hello', date(1989, 5, 6), '12:56:34',
+    'xgt_types' : ['int', 'int', 'float', 'text', 'date', 'time', 'datetime'],
+    'first_row' : [1, 42, 1.5, 'hello', date(1989, 5, 6), time(12, 56, 34),
                    datetime(1989, 5, 6, 12, 56, 34)],
   },
   {
@@ -96,8 +96,8 @@ DATABASES = [
     'insert' : ("INSERT INTO matrix VALUES (true, 42, 1.5, 'hello', '1989-05-06', "
                 "'12:56:34', '1989-05-06 12:56:34')"),
     # The PostgreSQL driver hands its boolean over as text rather than a boolean.
-    'xgt_types' : ['text', 'int', 'float', 'text', 'date', 'text', 'datetime'],
-    'first_row' : ['1', 42, 1.5, 'hello', date(1989, 5, 6), '12:56:34',
+    'xgt_types' : ['text', 'int', 'float', 'text', 'date', 'time', 'datetime'],
+    'first_row' : ['1', 42, 1.5, 'hello', date(1989, 5, 6), time(12, 56, 34),
                    datetime(1989, 5, 6, 12, 56, 34)],
   },
   {
@@ -109,9 +109,8 @@ DATABASES = [
              'd DATE, t TIME, ts DATETIME2)'),
     'insert' : ("INSERT INTO matrix VALUES (1, 42, 1.5, 'hello', '1989-05-06', "
                 "'12:56:34', '1989-05-06 12:56:34')"),
-    # A SQL Server TIME carries seven fractional digits, and arrives with them.
-    'xgt_types' : ['boolean', 'int', 'float', 'text', 'date', 'text', 'datetime'],
-    'first_row' : [True, 42, 1.5, 'hello', date(1989, 5, 6), '12:56:34.0000000',
+    'xgt_types' : ['boolean', 'int', 'float', 'text', 'date', 'time', 'datetime'],
+    'first_row' : [True, 42, 1.5, 'hello', date(1989, 5, 6), time(12, 56, 34),
                    datetime(1989, 5, 6, 12, 56, 34)],
   },
   {
@@ -140,7 +139,8 @@ DATABASES = [
              's VARCHAR(64) NULL, d DATE NULL, t TIME NULL, ts DATETIME NULL)'),
     'insert' : ("INSERT INTO matrix VALUES (42, 1.5, 'hello', '1989-05-06', "
                 "'12:56:34', '1989-05-06 12:56:34')"),
-    # ASE hands its TIME over as text, with milliseconds.
+    # ASE is the one that still arrives as text, with milliseconds. Every other
+    # database gives a time of day once the odbc layer is new enough.
     'xgt_types' : ['int', 'float', 'text', 'date', 'text', 'datetime'],
     'first_row' : [42, 1.5, 'hello', date(1989, 5, 6), '12:56:34.000',
                    datetime(1989, 5, 6, 12, 56, 34)],
