@@ -27,6 +27,7 @@ import os
 import time
 import warnings
 from enum import Enum
+from urllib.parse import urlsplit
 from ..common import ProgressDisplay
 from ..common import BasicArrowClientAuthHandler
 
@@ -104,8 +105,12 @@ class Neo4jDriver(object):
         if driver_passed_in:
             self._neo4j_driver = host
         else:
-            self._neo4j_driver = neo4j.GraphDatabase.driver(f"{self._protocol}://{self._host}",
-                                                            auth=self._auth)
+            url = f"{self._protocol}://{self._host}"
+            # Callers who worked around bolt_port being ignored here may already
+            # carry a port on the host, so only supply one when it has none.
+            if urlsplit(url).port is None:
+                url = f"{url}:{self._bolt_port}"
+            self._neo4j_driver = neo4j.GraphDatabase.driver(url, auth=self._auth)
         if driver == 'neo4j-bolt':
             pass
         elif driver == 'py2neo-bolt':
@@ -194,6 +199,7 @@ class Neo4jDriver(object):
             self._query = query
             self._connector = connector
             self._closed = False
+            self._result = None
             if write:
                 self._session = self._connector._neo4j_driver.session(database=self._connector._database,
                                                                       default_access_mode=neo4j.WRITE_ACCESS)
@@ -207,14 +213,19 @@ class Neo4jDriver(object):
             self.finalize()
 
         def result(self):
-            return self._session.run(self._query)
+            # Held onto rather than run again: every caller that iterates the
+            # result is followed by finalize(), which would otherwise run the
+            # whole query a second time. For a write that means writing twice.
+            if self._result is None:
+                self._result = self._session.run(self._query)
+            return self._result
 
         def finalize(self):
             for result in self.result():
                 pass
             if not self._closed:
                 self._session.close()
-                self._close = True
+                self._closed = True
 
 class Neo4jConnector(object):
     _NEO4J_TYPE_TO_XGT_TYPE = {
@@ -273,6 +284,35 @@ class Neo4jConnector(object):
         'PointArray': pa.list_(pa.list_(pa.float32())),
     }
 
+    # Neo4j 2026.02 and later report Cypher type names from
+    # db.schema.nodeTypeProperties() and db.schema.relTypeProperties() instead of
+    # the legacy names used above, e.g. 'INTEGER NOT NULL' for 'Long' and
+    # 'LIST<STRING NOT NULL> NOT NULL' for 'StringArray'. Map the scalar names onto
+    # the legacy keys, as a scalar and as the element of a list.
+    # How sparse the ids of a batch anchor may be before walking ranges of them
+    # costs more than it saves.
+    _MAX_ID_SPAN_PER_ANCHOR = 1000
+
+    # Types arrow accepts straight from the driver, needing no conversion.
+    _NEO4J_PASSTHROUGH_TYPES = frozenset({
+        'INTEGER', 'Long', 'FLOAT', 'Double', 'STRING', 'String', 'Boolean',
+        'BooleanArray', 'LongArray', 'DoubleArray', 'StringArray',
+    })
+
+    _NEO4J_CYPHER_TYPE_TO_LEGACY_TYPE = {
+        'INTEGER': ('INTEGER', 'LongArray'),
+        'FLOAT': ('FLOAT', 'DoubleArray'),
+        'STRING': ('STRING', 'StringArray'),
+        'BOOLEAN': ('Boolean', 'BooleanArray'),
+        'DATE': ('Date', 'DateArray'),
+        'ZONED TIME': ('Time', 'TimeArray'),
+        'LOCAL TIME': ('LocalTime', 'LocalTimeArray'),
+        'ZONED DATETIME': ('DateTime', 'DateTimeArray'),
+        'LOCAL DATETIME': ('LocalDateTime', 'LocalDateTimeArray'),
+        'DURATION': ('Duration', 'DurationArray'),
+        'POINT': ('Point', 'PointArray'),
+    }
+
     class _Labels(Enum):
         HAS_BOTH = 0,
         BOTH_EMPTY = 1,
@@ -293,7 +333,8 @@ class Neo4jConnector(object):
     def __init__(self, xgt_server,
                        neo4j_driver,
                        verbose = False,
-                       enable_apoc = True):
+                       enable_apoc = True,
+                       batch_size = 1000):
         """
         Initializes the connector class.
 
@@ -309,8 +350,25 @@ class Neo4jConnector(object):
             If the connector finds APOC, it will use that to improve schema queries.
             If set to True this enables that feature.
             By default this is True.
+        batch_size : int, optional
+            Number of rows Neo4j groups into a single Bolt record when
+            transferring to xGT. Bolt sends one message per row, so grouping rows
+            server side removes most of the per-row overhead. Neo4j holds one
+            batch in memory at a time, so this also bounds what a transfer costs
+            the server. The default of 1000 is a conservative one: larger batches
+            transfer faster, up to roughly 20000 where the gain flattens out.
+            For edges the batch is cut on the source node, so a node of high
+            degree contributes all of its edges to one batch no matter this
+            value. Must be a positive integer, or None to transfer a Bolt record
+            at a time instead.
         """
 
+        if batch_size is not None and (not isinstance(batch_size, int)
+                                       or isinstance(batch_size, bool)
+                                       or batch_size < 1):
+            raise ValueError("batch_size must be a positive integer or None, "
+                             f"not {batch_size!r}.")
+        self._batch_size = batch_size
         self._xgt_server = xgt_server
         if isinstance(neo4j_driver, (neo4j.Neo4jDriver, neo4j.BoltDriver)):
             self._neo4j_driver = Neo4jDriver.from_Neo4jDriver(neo4j_driver)
@@ -696,15 +754,18 @@ class Neo4jConnector(object):
                 attributes = {_:t for _, t, *_unused_ in table_schema}
                 key = schema['key']
                 if vertex != '':
-                    query = f"MATCH (v:{vertex}) RETURN id(v) AS {key}"  # , {', '.join(attributes)}"
+                    match_clause = f"MATCH (v:{vertex})"
                 else:
-                    query = f"MATCH (v) where size(labels(v)) = 0 RETURN id(v) AS {key}"  # , {', '.join(attributes)}"
+                    match_clause = f"MATCH (v) where size(labels(v)) = 0"
+                projection = f"id(v) AS {key}"
                 for a in attributes:
                     if a != key:
-                        query += xlate_result_property(a, attributes[a]) # f", v.{a} AS {a}"
+                        projection += xlate_result_property(a, attributes[a]) # f", v.{a} AS {a}"
+                query = f"{match_clause} RETURN {projection}"
                 # Is an empty vertex type if None:
                 if schema['neo4j_schema'] is not None:
-                    self.__copy_data(query, schema['xgt_name'], schema['neo4j_schema'], progress_bar)
+                    self.__copy_data(query, schema['xgt_name'], schema['neo4j_schema'], progress_bar,
+                                     match_clause, projection, 'v')
             for edge, schema_list in xgt_schemas['edges'].items():
                 if self.__verbose:
                     print(f'Copy data for node {edge} into schema: {schema_list}')
@@ -719,19 +780,21 @@ class Neo4jConnector(object):
                     target_key = schema['target_key']
                     match_type = schema['empty_labels']
                     if match_type == self._Labels.HAS_BOTH:
-                        query = f"MATCH (u:{source})-[e:{edge}]->(v:{target}) RETURN"
+                        match_clause = f"MATCH (u:{source})-[e:{edge}]->(v:{target})"
                     elif match_type == self._Labels.BOTH_EMPTY:
-                        query = f"MATCH (u)-[e:{edge}]->(v) where size(labels(u)) = 0 and size(labels(v)) = 0 RETURN"
+                        match_clause = f"MATCH (u)-[e:{edge}]->(v) where size(labels(u)) = 0 and size(labels(v)) = 0"
                     elif match_type == self._Labels.SOURCE_EMPTY:
-                        query = f"MATCH (u)-[e:{edge}]->(v:{target}) where size(labels(u)) = 0 RETURN"
+                        match_clause = f"MATCH (u)-[e:{edge}]->(v:{target}) where size(labels(u)) = 0"
                     elif match_type == self._Labels.TARGET_EMPTY:
-                        query = f"MATCH (u:{source})-[e:{edge}]->(v) where size(labels(v)) = 0 RETURN"
-                    query += f" id(u) AS {source_key}"
-                    query += f", id(v) AS {target_key}"
+                        match_clause = f"MATCH (u:{source})-[e:{edge}]->(v) where size(labels(v)) = 0"
+                    projection = f"id(u) AS {source_key}"
+                    projection += f", id(v) AS {target_key}"
                     for a in attributes:
                         if a != source_key and a != target_key:
-                            query += f", e.{a} AS {a}"
-                    self.__copy_data(query, name, schema['neo4j_schema'], progress_bar)
+                            projection += f", e.{a} AS {a}"
+                    query = f"{match_clause} RETURN {projection}"
+                    self.__copy_data(query, name, schema['neo4j_schema'], progress_bar,
+                                     match_clause, projection, 'u')
         return  None
 
     def transfer_to_xgt(self, vertices = None, edges = None,
@@ -1312,12 +1375,39 @@ class Neo4jConnector(object):
 
         return schemas
 
+    @classmethod
+    def _neo4j_canonical_type(cls, prop_type):
+        """Map a Neo4j type name onto the key used by the type tables above.
+
+        Names reported by Neo4j 4.4 through 2026.01 are already keys and pass
+        through untouched. Neo4j 2026.02 and later report Cypher type names with a
+        nullability suffix and parameterized lists, rewritten onto the legacy key
+        here.
+        """
+        if prop_type in cls._NEO4J_TYPE_TO_XGT_TYPE:
+            return prop_type
+        base = prop_type.removesuffix(' NOT NULL').strip()
+        if base.startswith('LIST<') and base.endswith('>'):
+            element = base[len('LIST<'):-1].removesuffix(' NOT NULL').strip()
+            if element in cls._NEO4J_CYPHER_TYPE_TO_LEGACY_TYPE:
+                return cls._NEO4J_CYPHER_TYPE_TO_LEGACY_TYPE[element][1]
+        elif base in cls._NEO4J_CYPHER_TYPE_TO_LEGACY_TYPE:
+            return cls._NEO4J_CYPHER_TYPE_TO_LEGACY_TYPE[base][0]
+        return prop_type
+
     def __neo4j_type_to_xgt_type(self, prop_type):
         if isinstance(prop_type, list):
                 raise ValueError(
                     f"Multiple types for property not supported.")
-        elif prop_type in self._NEO4J_TYPE_TO_XGT_TYPE:
-            return self._NEO4J_TYPE_TO_XGT_TYPE[prop_type]
+        canonical_type = self._neo4j_canonical_type(prop_type)
+        if canonical_type in self._NEO4J_TYPE_TO_XGT_TYPE:
+            return self._NEO4J_TYPE_TO_XGT_TYPE[canonical_type]
+        raise TypeError(f'The "{prop_type}" Neo4j type is not yet supported')
+
+    def __neo4j_type_to_arrow_type(self, prop_type):
+        canonical_type = self._neo4j_canonical_type(prop_type)
+        if canonical_type in self._NEO4J_TYPE_TO_ARROW_TYPE:
+            return self._NEO4J_TYPE_TO_ARROW_TYPE[canonical_type]
         raise TypeError(f'The "{prop_type}" Neo4j type is not yet supported')
 
     def __arrow_writer(self, frame_name, schema):
@@ -1341,23 +1431,124 @@ class Neo4jConnector(object):
             arrow_conn.authenticate(BasicArrowClientAuthHandler())
         return arrow_conn.do_get(pf.Ticket(self._default_namespace + '__' + frame_name))
 
-    def __copy_data(self, cypher_for_extract, frame, neo4j_schema, progress_bar):
+    def __copy_data(self, cypher_for_extract, frame, neo4j_schema, progress_bar,
+                    match_clause = None, projection = None, batch_anchor = None):
         if self._neo4j_driver._py2neo_driver is not None:
             self.__py2neo_copy_data(cypher_for_extract, neo4j_schema, frame, progress_bar)
         elif self._neo4j_driver._arrow_driver is not None:
             self.__arrow_copy_data(cypher_for_extract, frame, progress_bar)
+        elif self._batch_size and match_clause is not None:
+            self.__batched_bolt_copy_data(match_clause, projection, batch_anchor,
+                                          neo4j_schema, frame, progress_bar)
         else:
             self.__bolt_copy_data(cypher_for_extract, neo4j_schema, frame, progress_bar)
+
+    def __arrow_schema(self, neo4j_schema):
+        schema = pa.schema([])
+        # With xGT 10.1 we need to change double to float
+        # so we infer the schema manually.
+        for i, value in enumerate(neo4j_schema):
+            arrow_type = self.__neo4j_type_to_arrow_type(value[1])
+            schema = schema.append(pa.field('col' + str(i), arrow_type))
+        return schema
+
+    @staticmethod
+    def __convert_duration(val):
+        # For months this average seconds in a month.
+        return (val.months * 2628288 + val.days * 86400 +
+                val.seconds) * 10**9 + val.nanoseconds
+
+    @classmethod
+    def __convert_value(cls, val):
+        if isinstance(val, (neo4j.time.Date, neo4j.time.Time, neo4j.time.DateTime)):
+            return val.to_native()
+        elif isinstance(val, neo4j.time.Duration):
+            return cls.__convert_duration(val)
+        elif isinstance(val, list) and len(val) > 0:
+            if isinstance(val[0], (neo4j.time.Date, neo4j.time.Time,
+                                   neo4j.time.DateTime)):
+                return [x.to_native() for x in val]
+            elif isinstance(val[0], neo4j.time.Duration):
+                return [cls.__convert_duration(x) for x in val]
+        return val
+
+    def __batched_bolt_copy_data(self, match_clause, projection, batch_anchor,
+                                 neo4j_schema, frame, progress_bar):
+        """Transfer rows in batches grouped by Neo4j.
+
+        Bolt frames every result row as its own message, so a row-at-a-time
+        result spends nearly all of its time on per-message overhead rather than
+        on the data. Asking Neo4j to collect a batch of rows into one value
+        amortizes that over the whole batch.
+
+        Batches are cut on ranges of the internal id of `batch_anchor` so that
+        Neo4j only ever holds one batch, rather than the whole result, in memory.
+        collect() of a list per row is used rather than one collect() per column
+        because the latter drops nulls, which would silently misalign columns
+        whenever an optional property is missing.
+
+        The anchor is always a node. Relationship ids are neither small nor
+        dense, so walking a range of them would step through a span many orders
+        of magnitude larger than the number of relationships. Edges are cut on
+        their source node instead, which covers every edge exactly once.
+        Node ids can still be sparse enough to make ranges pointless, so the
+        span is compared against the number of distinct anchors and the row at a
+        time path is used when a range walk would not pay off.
+        """
+        keys = [key for key, *_unused_ in neo4j_schema]
+        # The match clause may already carry a WHERE for the empty label cases.
+        conjunction = 'AND' if ' where ' in match_clause.lower() else 'WHERE'
+        id_expr = f"id({batch_anchor})"
+        batch_size = self._batch_size
+
+        # Counted over distinct anchors rather than rows: an edge batch holds
+        # every edge of the nodes in its range, so a handful of nodes of high
+        # degree would otherwise make a sparse span look dense enough to walk.
+        bounds_query = (f"{match_clause} RETURN min({id_expr}), max({id_expr}), "
+                        f"count(DISTINCT {id_expr})")
+        with self._neo4j_driver.query(bounds_query, False) as query:
+            bounds = [(record[0], record[1], record[2]) for record in query.result()]
+        low, high, anchors = bounds[0] if bounds else (None, None, 0)
+        if low is None or anchors == 0:
+            return
+        if (high - low + 1) > anchors * self._MAX_ID_SPAN_PER_ANCHOR:
+            self.__bolt_copy_data(f"{match_clause} RETURN {projection}",
+                                  neo4j_schema, frame, progress_bar)
+            return
+
+        batch_query = (
+            f"{match_clause} {conjunction} {id_expr} >= $low AND {id_expr} < $high "
+            f"WITH {projection} "
+            f"WITH collect([{', '.join(keys)}]) AS batch "
+            f"RETURN batch")
+
+        arrow_schema = self.__arrow_schema(neo4j_schema)
+        # Columns holding a type that maps onto itself are handed to arrow as is.
+        convert = [self._neo4j_canonical_type(type) not in
+                   self._NEO4J_PASSTHROUGH_TYPES for _unused_, type in neo4j_schema]
+        xgt_writer = self.__arrow_writer(frame, arrow_schema)
+        with self._neo4j_driver.bolt.session(database=self._neo4j_driver._database,
+                                             default_access_mode=neo4j.READ_ACCESS) as session:
+            for low in range(low, high + 1, batch_size):
+                result = session.run(batch_query, low=low, high=low + batch_size)
+                for record in result:
+                    rows = record['batch']
+                    if len(rows) == 0:
+                        continue
+                    columns = [list(column) for column in zip(*rows)]
+                    for i, needs_convert in enumerate(convert):
+                        if needs_convert:
+                            columns[i] = [self.__convert_value(val)
+                                          for val in columns[i]]
+                    xgt_writer.write(
+                        pa.RecordBatch.from_arrays(columns, schema=arrow_schema))
+                    progress_bar.show_progress(len(rows))
+        xgt_writer.close()
 
     def __bolt_copy_data(self, cypher_for_extract, neo4j_schema, frame, progress_bar):
         with self._neo4j_driver.bolt.session(database=self._neo4j_driver._database,
                                              default_access_mode=neo4j.READ_ACCESS) as session:
-            schema = pa.schema([])
-            # With xGT 10.1 we need to change double to float
-            # so we infer the schema manually.
-            for i, value in enumerate(neo4j_schema):
-                arrow_type = self._NEO4J_TYPE_TO_ARROW_TYPE[value[1]]
-                schema = schema.append(pa.field('col' + str(i), arrow_type))
+            schema = self.__arrow_schema(neo4j_schema)
 
             result = session.run(cypher_for_extract)
             first_record = result.peek()
@@ -1369,27 +1560,9 @@ class Neo4jConnector(object):
 
             xgt_writer = self.__arrow_writer(frame, schema)
             chunk_count = 0
-            def convert_duration(val):
-                return (val.months * 2628288 + val.days * 86400 +
-                        val.seconds) * 10**9 + val.nanoseconds
             for record in result:
                 for i, val in enumerate(record):
-                    if isinstance(val, (neo4j.time.Date, neo4j.time.Time,
-                                        neo4j.time.DateTime)):
-                        data[i][chunk_count] = val.to_native()
-                    elif isinstance(val, neo4j.time.Duration):
-                        # For months this average seconds in a month.
-                        data[i][chunk_count] = convert_duration(val)
-                    elif isinstance(val, list):
-                        if isinstance(val[0], (neo4j.time.Date, neo4j.time.Time,
-                                               neo4j.time.DateTime)):
-                            data[i][chunk_count] = [x.to_native() for x in val]
-                        elif isinstance(val[0], neo4j.time.Duration):
-                            data[i][chunk_count] = [convert_duration(x) for x in val]
-                        else:
-                            data[i][chunk_count] = val
-                    else:
-                        data[i][chunk_count] = val
+                    data[i][chunk_count] = self.__convert_value(val)
                 chunk_count = chunk_count + 1
                 if chunk_count == block_size:
                     batch = pa.RecordBatch.from_arrays(data, schema=schema)
@@ -1407,12 +1580,7 @@ class Neo4jConnector(object):
             xgt_writer.close()
 
     def __py2neo_copy_data(self, cypher_for_extract, neo4j_schema, frame, progress_bar):
-        schema = pa.schema([])
-        # With xGT 10.1 we need to change double to float
-        # so we infer the schema manually.
-        for i, value in enumerate(neo4j_schema):
-            arrow_type = self._NEO4J_TYPE_TO_ARROW_TYPE[value[1]]
-            schema = schema.append(pa.field('col' + str(i), arrow_type))
+        schema = self.__arrow_schema(neo4j_schema)
 
         result = self._neo4j_driver._py2neo_driver.query(cypher_for_extract)
         data = [None] * len(result.keys())

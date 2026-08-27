@@ -40,9 +40,27 @@ jobs:
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
+        # 4.4 and 5 report legacy schema type names, 2026.02 and later Cypher ones.
+        neo4j-version: ['4.4.12', '5', 'latest']
+        # Nothing under test needs the plugin, so cover a plain server too.
+        gds: [true, false]
+        fast: [false]
+        exclude:
+          # One python is enough to show the connector does not need the plugin.
+          - {gds: false, python-version: '3.10'}
+          - {gds: false, python-version: '3.11'}
+          - {gds: false, python-version: '3.12'}
+          - {gds: false, python-version: '3.13'}
+        include:
+          # neo4j-rust-ext swaps out the whole bolt codec, so run every neo4j
+          # against it as well.
+          - {os: ubuntu-latest, python-version: '3.14', neo4j-version: '4.4.12', gds: true, fast: true}
+          - {os: ubuntu-latest, python-version: '3.14', neo4j-version: '5', gds: true, fast: true}
+          - {os: ubuntu-latest, python-version: '3.14', neo4j-version: 'latest', gds: true, fast: true}
 
     steps:
     - name: Check out repository code
@@ -59,24 +77,57 @@ jobs:
         python -m pip install --upgrade pip
         pip install parameterized pyodbc pandas
         pip install pytest
-        pip install './[odbc]'
+        if [ "${{ matrix.fast }}" = "true" ]; then
+          pip install './[odbc,fast]'
+          # A missing wheel would otherwise leave the pure python codec in place
+          # and quietly test nothing new.
+          python -c "import neo4j._rust"
+        else
+          pip install './[odbc]'
+        fi
 
-        sudo apt-get install odbc-mariadb
+        sudo apt-get install odbc-mariadb libsqliteodbc odbc-postgresql
+
+        # The runner already has the Microsoft repository, which carries the SQL
+        # Server driver. Adding it again under another keyring makes apt refuse
+        # to read any of its sources at all.
+        sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
 
     - name: Setup ODBC Driver
       run: |
         ls /usr/lib/x86_64-linux-gnu/odbc/
         echo -e '[MariaDB]\nDescription = ODBC Driver for MariaDB\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so\nFileUsage = 1' | sudo tee -a /etc/odbcinst.ini > /dev/null
+        # sqlite needs no server, so it covers a second database everywhere.
+        echo -e '[SQLite3]\nDescription = SQLite ODBC Driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libsqlite3odbc.so\nSetup = /usr/lib/x86_64-linux-gnu/odbc/libsqlite3odbc.so\nFileUsage = 1' | sudo tee -a /etc/odbcinst.ini > /dev/null
+        echo -e '[PostgreSQL Unicode]\nDescription = PostgreSQL ODBC driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/psqlodbcw.so\nFileUsage = 1' | sudo tee -a /etc/odbcinst.ini > /dev/null
+
+        odbcinst -q -d
 
     - name: Launch neo4j
+      env:
+        NEO4J_VERSION: ${{ matrix.neo4j-version }}
+        WITH_GDS: ${{ matrix.gds }}
       run: |
         mkdir -p neo4j/plugins
+        # Neo4j 5 renamed the plugin variable and moved dbms.default_listen_address
+        # into the server namespace, and refuses to start when handed a setting it
+        # does not recognize.
+        if [ "${NEO4J_VERSION%%.*}" = "4" ]; then
+          plugin_var=NEO4JLABS_PLUGINS
+          listen_address=NEO4J_dbms_default__listen__address=0.0.0.0
+        else
+          plugin_var=NEO4J_PLUGINS
+          listen_address=NEO4J_server_default__listen__address=0.0.0.0
+        fi
+        plugins=()
+        if [ "$WITH_GDS" = "true" ]; then
+          plugins=(--env "$plugin_var=[\"graph-data-science\"]")
+        fi
         docker run --rm -d --name neo4j -p7474:7474 -p7687:7687 -p 9999:9999 \
             --user=$(id -u):$(id -g) -v $PWD/neo4j/plugins:/var/lib/neo4j/plugins \
-            --env NEO4J_AUTH=neo4j/foo --env NEO4J_EDITION=community \
-            --env NEO4JLABS_PLUGINS='["graph-data-science"]' \
-            --env HOST=0.0.0.0  --env NEO4J_dbms_default__listen__address=0.0.0.0 \
-            neo4j:4.4.12
+            --env NEO4J_AUTH=neo4j/testtest --env NEO4J_EDITION=community \
+            "${plugins[@]}" --env HOST=0.0.0.0 --env "$listen_address" \
+            neo4j:${NEO4J_VERSION}
 
     - name: Launch mariadb
       run: |
@@ -84,12 +135,49 @@ jobs:
             -e MYSQL_USER=test -e MYSQL_PASSWORD=foo \
             -e MYSQL_DATABASE=test -d mariadb:latest
 
+    - name: Launch postgres
+      run: |
+        docker run --rm -d --name postgres -p5432:5432 -e POSTGRES_PASSWORD=foo \
+            -e POSTGRES_USER=test -e POSTGRES_DB=test postgres:latest
+
+    - name: Launch sql server
+      run: |
+        docker run --rm -d --name sqlserver -p1433:1433 -e ACCEPT_EULA=Y \
+            -e MSSQL_SA_PASSWORD='Str0ng!Passw0rd' -e MSSQL_PID=Developer \
+            mcr.microsoft.com/mssql/server:2022-latest
+
     - name: Launch xGT
       run: "docker run --rm -d --name xgt -p 4367:4367 rocketgraph/xgt"
 
     - name: Show docker containers
       run: "docker ps -a"
 
-    - name: Run test suite
+    - name: Wait for the databases
+      # They are started deliberately, so a test that cannot reach one is a
+      # failure rather than something to skip over.
       run: |
-        pytest -v -s test
+        python - <<'PY'
+        import sys, time, pyodbc
+        sys.path.insert(0, 'test')
+        from test_odbc_type_matrix import DATABASES
+        wanted = {'mariadb', 'postgres', 'sqlserver'}
+        for db in (d for d in DATABASES if d['name'] in wanted):
+            start = time.time()
+            while time.time() - start < 300:
+                try:
+                    pyodbc.connect(db['connection'], autocommit=True).close()
+                    print(f"{db['name']} ready after {time.time() - start:.0f}s")
+                    break
+                except Exception as e:
+                    last = str(e)[:90]
+                    time.sleep(5)
+            else:
+                sys.exit(f"{db['name']} never accepted a connection: {last}")
+        PY
+
+    - name: Run test suite
+      # -rs so that a database dropping out shows up as a reason rather than a dot.
+      env:
+        XGT_TEST_REQUIRE_DATABASES: sqlite,mariadb,postgres,sqlserver
+      run: |
+        pytest -v -s -rs test

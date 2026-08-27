@@ -19,6 +19,7 @@
 
 import unittest
 from parameterized import parameterized_class
+import contextlib
 import time
 
 import neo4j
@@ -26,8 +27,10 @@ import xgt
 from xgt_connector import Neo4jConnector, Neo4jDriver
 
 @parameterized_class([
-   { "driver": "neo4j" },
-   { "driver": "neo4j-bolt" },
+   { "driver": "neo4j", "batch_size": None },
+   { "driver": "neo4j", "batch_size": 4 },
+   { "driver": "neo4j-bolt", "batch_size": None },
+   { "driver": "neo4j-bolt", "batch_size": 4 },
 ])
 class TestXgtNeo4jConnector(unittest.TestCase):
   # Print all diffs on failure.
@@ -42,7 +45,23 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       pass
     cls.xgt.set_default_namespace('test')
     cls.neo4j_driver, cls.conn = cls._setup_connector(cls.driver)
+    cls._probe_neo4j_type_names()
     return
+
+  @classmethod
+  def _probe_neo4j_type_names(cls):
+    # Neo4j 4.4 through 2026.01 report legacy type names such as 'Long' and
+    # 'String' from db.schema.nodeTypeProperties(), while 2026.02 and later report
+    # Cypher type names such as 'INTEGER NOT NULL' and 'STRING NOT NULL'. Tests
+    # that assert on these raw names ask the server which spelling it uses.
+    cls.neo4j_driver.query('MATCH (n) DETACH DELETE n').finalize()
+    cls.neo4j_driver.query('CREATE (:TypeProbe{int: 1, str: "hello"})').finalize()
+    names = {prop['propertyName'] : prop['propertyTypes'][0]
+             for prop in cls.conn.neo4j_node_type_properties
+             if prop['nodeLabels'] == ['TypeProbe']}
+    cls.neo4j_driver.query('MATCH (n) DETACH DELETE n').finalize()
+    cls.INT_TYPE = names['int']
+    cls.STR_TYPE = names['str']
 
   @classmethod
   def teardown_class(cls):
@@ -54,10 +73,10 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def _setup_connector(cls, connector_type, retries = 20):
     try:
       if connector_type == "neo4j":
-        driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'foo'))
+        driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'testtest'))
       else:
-        driver = Neo4jDriver(auth=('neo4j', 'foo'), driver=connector_type)
-      conn = Neo4jConnector(cls.xgt, driver)
+        driver = Neo4jDriver(auth=('neo4j', 'testtest'), driver=connector_type)
+      conn = Neo4jConnector(cls.xgt, driver, batch_size = cls.batch_size)
       # Validate the db can run queries.
       with conn._neo4j_driver.bolt.session() as session:
         session.run("call db.info()")
@@ -68,10 +87,10 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         time.sleep(3)
         return cls._setup_connector(connector_type, retries - 1)
     if connector_type == "neo4j":
-        driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'foo'))
+        driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'testtest'))
     else:
-        driver = Neo4jDriver(auth=('neo4j', 'foo'), driver=connector_type)
-    conn = Neo4jConnector(cls.xgt, driver)
+        driver = Neo4jDriver(auth=('neo4j', 'testtest'), driver=connector_type)
+    conn = Neo4jConnector(cls.xgt, driver, batch_size = cls.batch_size)
     return (conn._neo4j_driver, conn)
 
   def setup_method(self, method):
@@ -141,6 +160,32 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.neo4j_driver.query('CREATE (:Node1{}), (:Node2{int : 1})').finalize()
     self.assertCountEqual(c.neo4j_node_labels, ['Node1', 'Node2'])
 
+  def test_query_runs_once(self):
+    # result() used to run the query, and the finalize() that follows it ran
+    # the query a second time.
+    runs = []
+    original_run = neo4j.Session.run
+    def run(session, query, *args, **kwargs):
+      runs.append(str(query))
+      return original_run(session, query, *args, **kwargs)
+    neo4j.Session.run = run
+    try:
+      with self.neo4j_driver.query('RETURN 1 AS one', False) as query:
+        rows = [record['one'] for record in query.result()]
+    finally:
+      neo4j.Session.run = original_run
+    assert rows == [1], rows
+    assert len(runs) == 1, runs
+
+  def test_write_query_is_not_run_twice(self):
+    with self.neo4j_driver.query('CREATE (:Node{int: 1}) RETURN 1', True) as query:
+      for _record in query.result():
+        pass
+    count = self.conn.neo4j_node_type_properties
+    with self.neo4j_driver.query('MATCH (n:Node) RETURN count(n) AS c', False) as query:
+      rows = [record['c'] for record in query.result()]
+    assert rows == [1], rows
+
   def test_neo4j_property_keys(self):
     c = self.conn
     self._populate_node_working_types_bolt()
@@ -158,8 +203,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.assertCountEqual(
         c.neo4j_rel_type_properties,
         [{'relType': ':`Relationship1`', 'propertyName': None, 'propertyTypes': None, 'mandatory': False},
-         {'relType': ':`Relationship2`', 'propertyName': 'int', 'propertyTypes': ['Long'], 'mandatory': False},
-         {'relType': ':`Relationship2`', 'propertyName': 'str', 'propertyTypes': ['String'], 'mandatory': True}])
+         {'relType': ':`Relationship2`', 'propertyName': 'int', 'propertyTypes': [self.INT_TYPE], 'mandatory': False},
+         {'relType': ':`Relationship2`', 'propertyName': 'str', 'propertyTypes': [self.STR_TYPE], 'mandatory': True}])
 
   def test_neo4j_node_type_properties(self):
     c = self.conn
@@ -168,8 +213,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.assertCountEqual(
         c.neo4j_node_type_properties,
         [{'nodeType': ':`Node1`', 'nodeLabels': ['Node1'], 'propertyName': None, 'propertyTypes': None, 'mandatory': False},
-         {'nodeType': ':`Node2`', 'nodeLabels': ['Node2'], 'propertyName': 'int', 'propertyTypes': ['Long'], 'mandatory': False},
-         {'nodeType': ':`Node2`', 'nodeLabels': ['Node2'], 'propertyName': 'str', 'propertyTypes': ['String'], 'mandatory': True}])
+         {'nodeType': ':`Node2`', 'nodeLabels': ['Node2'], 'propertyName': 'int', 'propertyTypes': [self.INT_TYPE], 'mandatory': False},
+         {'nodeType': ':`Node2`', 'nodeLabels': ['Node2'], 'propertyName': 'str', 'propertyTypes': [self.STR_TYPE], 'mandatory': True}])
 
   def test_neo4j_edges(self):
     c = self.conn
@@ -183,7 +228,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert c.neo4j_edges['Relationship2']['endpoints'] == {('Node1', 'Node2')}
     assert c.neo4j_edges['Relationship2']['sources'] == {'Node1'}
     assert c.neo4j_edges['Relationship2']['targets'] == {'Node2'}
-    assert c.neo4j_edges['Relationship2']['schema'] == {'int' : 'Long'}
+    assert c.neo4j_edges['Relationship2']['schema'] == {'int' : self.INT_TYPE}
 
   def test_neo4j_edges_multi(self):
     c = self.conn
@@ -193,14 +238,14 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert c.neo4j_edges['Relationship1']['endpoints'] == {('Node1', 'Node2'), ('Node2', 'Node1')}
     assert c.neo4j_edges['Relationship1']['sources'] == {'Node1', 'Node2'}
     assert c.neo4j_edges['Relationship1']['targets'] == {'Node1', 'Node2'}
-    assert c.neo4j_edges['Relationship1']['schema'] == {'int' : 'Long'}
+    assert c.neo4j_edges['Relationship1']['schema'] == {'int' : self.INT_TYPE}
 
   def test_neo4j_nodes(self):
     c = self.conn
     self.neo4j_driver.query('CREATE (:Node1{}), (:Node2{int : 1})').finalize()
     assert len(c.neo4j_nodes) == 2
     assert c.neo4j_nodes['Node1'] == {}
-    assert c.neo4j_nodes['Node2'] == {'int' : 'Long'}
+    assert c.neo4j_nodes['Node2'] == {'int' : self.INT_TYPE}
 
   def test_graph_update_after_connector_created(self):
     c = self.conn
@@ -455,6 +500,181 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert node_frame.num_rows == 1
     self.xgt.drop_frame("Node1_Relationship_Node1")
     self.xgt.drop_frame("Node2_Relationship_Node1")
+
+  def _batched_connector(self, batch_size):
+    return Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = batch_size)
+
+  def test_batched_transfer_matches_unbatched(self):
+    self.neo4j_driver.query(
+        'UNWIND range(1, 25) AS i CREATE (n:Node{int: i, str: "s" + toString(i)})'
+        ' WITH n, i WHERE i % 4 <> 0 SET n.x = i * 2').finalize()
+    def transfer(connector):
+      connector.transfer_to_xgt(vertices=['Node'])
+      rows = sorted(tuple(row) for row in self.xgt.get_frame('Node').get_data())
+      self.xgt.drop_frame('Node')
+      return rows
+    expected = transfer(
+        Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = None))
+    # A batch size well under the row count exercises the batch boundaries.
+    for batch_size in [1, 4, 25, 1000]:
+      assert transfer(self._batched_connector(batch_size)) == expected, batch_size
+    assert len(expected) == 25
+    # The optional property is absent on some nodes and must stay aligned.
+    assert sum(1 for row in expected if None in row) == 6
+
+  def test_batched_transfer_edges(self):
+    self.neo4j_driver.query(
+        'UNWIND range(1, 20) AS i'
+        ' CREATE (:Node{int: i})-[:Relationship{int: i}]->(:Node{int: -i})').finalize()
+    c = self._batched_connector(3)
+    c.transfer_to_xgt(vertices=['Node'], edges=['Relationship'])
+    assert self.xgt.get_frame('Node').num_rows == 40
+    assert self.xgt.get_frame('Relationship').num_rows == 20
+    self.xgt.drop_frame('Relationship')
+    self.xgt.drop_frame('Node')
+
+  @contextlib.contextmanager
+  def _record_queries(self):
+    queries = []
+    original_run = neo4j.Session.run
+    def run(session, query, *args, **kwargs):
+      queries.append(str(query))
+      return original_run(session, query, *args, **kwargs)
+    neo4j.Session.run = run
+    try:
+      yield queries
+    finally:
+      neo4j.Session.run = original_run
+
+  def test_batched_transfer_edges_stay_batched(self):
+    # Relationship ids are neither small nor dense, so batching edges on them
+    # walks a span many orders of magnitude larger than the edge count. Edges
+    # must be batched on a node instead, and must not silently stop batching.
+    self.neo4j_driver.query(
+        'UNWIND range(1, 60) AS i'
+        ' CREATE (:Node{int: i})-[:Relationship{int: i}]->(:Node{int: -i})').finalize()
+    c = self._batched_connector(10)
+    with self._record_queries() as queries:
+      c.transfer_to_xgt(vertices=['Node'], edges=['Relationship'])
+    batched = [q for q in queries if 'collect(' in q and 'Relationship' in q]
+    assert len(batched) > 0, queries
+    # Asserted on the query itself because relationship ids only spread out on
+    # a database far larger than a test builds, so no amount of data here would
+    # show the difference.
+    assert all('id(u) >=' in q for q in batched), batched
+    assert not any('id(e) >=' in q for q in batched), batched
+    assert len(queries) < 100, len(queries)
+    assert self.xgt.get_frame('Relationship').num_rows == 60
+    self.xgt.drop_frame('Relationship')
+    self.xgt.drop_frame('Node')
+
+  def test_batched_transfer_sparse_node_ids(self):
+    self.neo4j_driver.query(
+        'UNWIND range(1, 60) AS i CREATE (:Node{int: i})').finalize()
+    # Leaves holes in the ids the batches are cut on.
+    self.neo4j_driver.query(
+        'MATCH (n:Node) WHERE n.int % 3 <> 0 DELETE n').finalize()
+    c = self._batched_connector(4)
+    c.transfer_to_xgt(vertices=['Node'])
+    rows = sorted(row[1] for row in self.xgt.get_frame('Node').get_data())
+    assert rows == [i for i in range(1, 61) if i % 3 == 0]
+    self.xgt.drop_frame('Node')
+
+  def test_batched_transfer_uneven_batches(self):
+    # One source node owns many more edges than a batch holds.
+    self.neo4j_driver.query(
+        'CREATE (h:Node{int: 0}) WITH h UNWIND range(1, 50) AS i'
+        ' CREATE (h)-[:Relationship{int: i}]->(:Node{int: i})').finalize()
+    c = self._batched_connector(2)
+    c.transfer_to_xgt(vertices=['Node'], edges=['Relationship'])
+    assert self.xgt.get_frame('Node').num_rows == 51
+    assert self.xgt.get_frame('Relationship').num_rows == 50
+    self.xgt.drop_frame('Relationship')
+    self.xgt.drop_frame('Node')
+
+  def test_batch_size_must_be_positive(self):
+    # A negative batch size walks an empty range of ids, which would transfer
+    # no rows at all into freshly created frames. True is rejected as well,
+    # since it would otherwise quietly mean a batch size of one.
+    for batch_size in [-10, 0, 2.5, '1000', True]:
+      with self.assertRaises(ValueError) as caught:
+        Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = batch_size)
+      assert 'batch_size' in str(caught.exception), caught.exception
+    # None and a positive integer are both fine.
+    Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = None)
+    Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = 10)
+
+  def test_bad_batch_size_leaves_xgt_untouched(self):
+    # The rejection has to happen before any frame is created, because
+    # transfer_to_xgt recreates the destination frames before copying.
+    self.neo4j_driver.query(
+        'UNWIND range(1, 20) AS i CREATE (:Node{int: i})').finalize()
+    with self.assertRaises(ValueError):
+      Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = -10)
+    with self.assertRaises(Exception):
+      self.xgt.get_frame('Node')
+    # A sound connector still transfers every row afterwards.
+    c = Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = 5)
+    c.transfer_to_xgt(vertices=['Node'])
+    assert self.xgt.get_frame('Node').num_rows == 20
+    self.xgt.drop_frame('Node')
+
+  def test_batch_size_larger_than_the_data(self):
+    # A single batch wider than the whole result must still transfer it all.
+    self.neo4j_driver.query(
+        'UNWIND range(1, 15) AS i'
+        ' CREATE (:Node{int: i})-[:Relationship{int: i}]->(:Node{int: -i})').finalize()
+    c = Neo4jConnector(self.xgt, self.neo4j_driver, batch_size = 1000000)
+    c.transfer_to_xgt(vertices=['Node'], edges=['Relationship'])
+    assert self.xgt.get_frame('Node').num_rows == 30
+    assert self.xgt.get_frame('Relationship').num_rows == 15
+    self.xgt.drop_frame('Relationship')
+    self.xgt.drop_frame('Node')
+
+  def test_batch_density_counts_distinct_anchors(self):
+    # An edge batch holds every edge of the nodes in its range, so how densely
+    # packed the ids are has to be judged on distinct source nodes. Counting
+    # edges instead lets a few sources of high degree, far apart in id space,
+    # look dense, and the transfer then walks mostly empty batches.
+    #
+    # Asserted on the bounds query rather than on a sparse graph, because Neo4j
+    # hands out the ids of deleted nodes again and a test cannot say where in
+    # id space its nodes will land.
+    self.neo4j_driver.query(
+        'UNWIND range(1, 10) AS i'
+        ' CREATE (:Node{int: i})-[:Relationship{int: i}]->(:Node{int: -i})').finalize()
+    c = self._batched_connector(4)
+    with self._record_queries() as queries:
+      c.transfer_to_xgt(vertices=['Node'], edges=['Relationship'])
+    bounds = [q for q in queries if 'min(id(' in q]
+    assert len(bounds) > 0, queries
+    assert all('count(DISTINCT' in q for q in bounds), bounds
+    assert not any('count(*)' in q for q in bounds), bounds
+    assert self.xgt.get_frame('Relationship').num_rows == 10
+    self.xgt.drop_frame('Relationship')
+    self.xgt.drop_frame('Node')
+
+  def test_batched_transfer_sparse_ids_falls_back(self):
+    # Relationship ids are neither small nor dense, and node ids need not be
+    # either, so a span far larger than the row count must not be walked.
+    self.neo4j_driver.query(
+        'UNWIND range(1, 10) AS i CREATE (:Node{int: i})').finalize()
+    c = self._batched_connector(2)
+    c._MAX_ID_SPAN_PER_ANCHOR = 0
+    c.transfer_to_xgt(vertices=['Node'])
+    rows = sorted(row[1] for row in self.xgt.get_frame('Node').get_data())
+    assert rows == list(range(1, 11))
+    self.xgt.drop_frame('Node')
+
+  def test_batched_transfer_no_data(self):
+    self.neo4j_driver.query('CREATE (:Node{int: 1})').finalize()
+    schema = self.conn.get_xgt_schemas(vertices=['Node'])
+    self.neo4j_driver.query('MATCH (n) DETACH DELETE n').finalize()
+    c = self._batched_connector(10)
+    c.create_xgt_schemas(schema)
+    c.copy_data_to_xgt(schema)
+    assert self.xgt.get_frame('Node').num_rows == 0
+    self.xgt.drop_frame('Node')
 
   def test_multiple_property_types_vertex_negative(self):
     c = self.conn

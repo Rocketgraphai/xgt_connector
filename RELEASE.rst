@@ -1,6 +1,34 @@
 Release Notes
 =============
 
+2.6.8 (08-27-2026)
+------------------
+
+New Features
+^^^^^^^^^^^^
+  - Transfers to xGT now read rows from Neo4j in batches, which is several times faster. Controlled by the batch_size option of Neo4jConnector.
+  - Added SQLServerODBCDriver for connecting to SQL Server.
+  - Added a "fast" install extra that pulls in neo4j-rust-ext, a faster bolt codec.
+
+Fixed
+^^^^^
+  - Queries run through Neo4jDriver.query() being run a second time when finalized, which ran writes twice.
+  - Transfers from SQL Server, whose schema query used a LIMIT that SQL Server does not have.
+  - Transfers from SAP ASE, which rejects the trailing semicolon the queries carried.
+
+2.6.7 (08-25-2026)
+------------------
+
+Changed
+^^^^^^^
+  - Drop support for python 3.9.
+  - Test against Neo4j 4.4, 5, and the latest release, with and without graph-data-science.
+
+Fixed
+^^^^^
+  - Neo4j 2026.02 and later reporting schema property types with Cypher type names.
+  - Neo4jDriver ignoring bolt_port and always connecting to port 7687.
+
 2.6.6 (02-11-2026)
 ------------------
 
