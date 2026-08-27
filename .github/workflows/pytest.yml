@@ -88,13 +88,24 @@ jobs:
 
         sudo apt-get install odbc-mariadb libsqliteodbc odbc-postgresql
 
-        # Microsoft ships its SQL Server driver from its own apt repository.
-        curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
-          | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
-        echo "deb [signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/24.04/prod noble main" \
-          | sudo tee /etc/apt/sources.list.d/mssql.list > /dev/null
-        sudo apt-get update
+        # The runner already has the Microsoft repository, which carries the SQL
+        # Server driver. Adding it again under another keyring makes apt refuse
+        # to read any of its sources at all.
         sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
+
+        # Oracle ships its ODBC driver as a zip rather than a package.
+        sudo apt-get install -y libaio1t64 unzip
+        sudo mkdir -p /opt/oracle
+        cd /opt/oracle
+        sudo curl -fsSLO https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linuxx64.zip
+        sudo curl -fsSLO https://download.oracle.com/otn_software/linux/instantclient/instantclient-odbc-linuxx64.zip
+        sudo unzip -q instantclient-basiclite-linuxx64.zip
+        sudo unzip -q -o instantclient-odbc-linuxx64.zip
+        sudo ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1
+        cd -
+
+        # The ibm_db wheel carries the Db2 CLI driver, which is also its ODBC one.
+        pip install ibm_db
 
     - name: Setup ODBC Driver
       run: |
@@ -103,6 +114,18 @@ jobs:
         # sqlite needs no server, so it covers a second database everywhere.
         echo -e '[SQLite3]\nDescription = SQLite ODBC Driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libsqlite3odbc.so\nSetup = /usr/lib/x86_64-linux-gnu/odbc/libsqlite3odbc.so\nFileUsage = 1' | sudo tee -a /etc/odbcinst.ini > /dev/null
         echo -e '[PostgreSQL Unicode]\nDescription = PostgreSQL ODBC driver\nDriver = /usr/lib/x86_64-linux-gnu/odbc/psqlodbcw.so\nFileUsage = 1' | sudo tee -a /etc/odbcinst.ini > /dev/null
+
+        # Both of these live at paths that carry a version, so look them up.
+        ORACLE_LIB=$(ls -d /opt/oracle/instantclient_*)
+        ORACLE_SO=$(ls $ORACLE_LIB/libsqora.so.*)
+        CLIDRIVER=$(python -c "import ibm_db, os; print(os.path.join(os.path.dirname(os.path.dirname(ibm_db.__file__)), 'clidriver', 'lib'))")
+        echo -e "[Oracle]\nDescription = Oracle ODBC driver\nDriver = $ORACLE_SO\nFileUsage = 1" | sudo tee -a /etc/odbcinst.ini > /dev/null
+        echo -e "[Db2]\nDescription = IBM Db2 CLI driver\nDriver = $CLIDRIVER/libdb2.so\nFileUsage = 1" | sudo tee -a /etc/odbcinst.ini > /dev/null
+        # The Oracle and Db2 drivers need their own libraries on the path.
+        echo "$ORACLE_LIB" | sudo tee /etc/ld.so.conf.d/oracle.conf > /dev/null
+        sudo ldconfig
+        echo "LD_LIBRARY_PATH=$ORACLE_LIB:$CLIDRIVER" >> $GITHUB_ENV
+
         odbcinst -q -d
 
     - name: Launch neo4j
@@ -148,11 +171,36 @@ jobs:
             -e MSSQL_SA_PASSWORD='Str0ng!Passw0rd' -e MSSQL_PID=Developer \
             mcr.microsoft.com/mssql/server:2022-latest
 
+    - name: Launch oracle
+      run: |
+        docker run --rm -d --name oracle -p1521:1521 -e ORACLE_PASSWORD=test \
+            gvenzl/oracle-free:slim
+
+    - name: Launch db2
+      run: |
+        docker run --rm -d --name db2 -p50000:50000 --privileged=true \
+            -e LICENSE=accept -e DB2INST1_PASSWORD=passw0rd -e DBNAME=testdb \
+            icr.io/db2_community/db2
+
     - name: Launch xGT
       run: "docker run --rm -d --name xgt -p 4367:4367 rocketgraph/xgt"
 
     - name: Show docker containers
       run: "docker ps -a"
+
+    - name: Wait for oracle and db2
+      # Both take minutes to come up. Without a wait the tests would find them
+      # missing and quietly skip, which is worse than a slow job.
+      run: |
+        for db in oracle db2; do
+          echo "waiting for $db"
+          start=$SECONDS
+          until docker logs $db 2>&1 | grep -qiE "DATABASE IS READY TO USE|Setup has completed"; do
+            if [ $((SECONDS - start)) -gt 600 ]; then echo "$db timed out"; break; fi
+            sleep 10
+          done
+          echo "$db waited $((SECONDS - start))s"
+        done
 
     - name: Run test suite
       run: |

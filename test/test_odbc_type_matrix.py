@@ -37,7 +37,8 @@ import pyodbc
 import xgt
 from parameterized import parameterized_class
 
-from xgt_connector import ODBCConnector, SQLODBCDriver, SQLServerODBCDriver
+from xgt_connector import (ODBCConnector, SQLODBCDriver, SQLServerODBCDriver,
+                           OracleODBCDriver)
 
 _SQLITE_FILE = os.path.join(tempfile.mkdtemp(), 'type_matrix.db')
 
@@ -98,6 +99,34 @@ DATABASES = [
     'first_row' : [True, 42, 1.5, 'hello', date(1989, 5, 6), '12:56:34.0000000',
                    datetime(1989, 5, 6, 12, 56, 34)],
   },
+  {
+    'name' : 'oracle',
+    'driver' : 'oracle',
+    'connection' : 'Driver={Oracle};DBQ=127.0.0.1:1521/FREEPDB1;UID=system;PWD=test;',
+    # Oracle has no boolean and no time of day on its own, and its DATE carries
+    # a time, so this table is shaped differently from the others.
+    'ddl' : ('CREATE TABLE matrix (b NUMBER(1), i NUMBER(38,0), f BINARY_DOUBLE, '
+             's VARCHAR2(64), d DATE, ts TIMESTAMP)'),
+    'insert' : ("INSERT INTO matrix VALUES (1, 42, 1.5, 'hello', "
+                "DATE '1989-05-06', TIMESTAMP '1989-05-06 12:56:34')"),
+    # Only a NUMBER(38,0) converts to an int, a NUMBER(1) stays a float.
+    'xgt_types' : ['float', 'int', 'float', 'text', 'datetime', 'datetime'],
+    'first_row' : [1.0, 42, 1.5, 'hello', datetime(1989, 5, 6, 0, 0),
+                   datetime(1989, 5, 6, 12, 56, 34)],
+  },
+  {
+    'name' : 'db2',
+    'driver' : 'sql',
+    'connection' : ('Driver={Db2};Hostname=127.0.0.1;Port=50000;Database=testdb;'
+                    'UID=db2inst1;PWD=passw0rd;Protocol=TCPIP;'),
+    'ddl' : ('CREATE TABLE matrix (b SMALLINT, i BIGINT, f DOUBLE, s VARCHAR(64), '
+             'd DATE, ts TIMESTAMP)'),
+    'insert' : ("INSERT INTO matrix VALUES (1, 42, 1.5, 'hello', '1989-05-06', "
+                "'1989-05-06 12:56:34')"),
+    'xgt_types' : ['int', 'int', 'float', 'text', 'date', 'datetime'],
+    'first_row' : [1, 42, 1.5, 'hello', date(1989, 5, 6),
+                   datetime(1989, 5, 6, 12, 56, 34)],
+  },
 ]
 
 @parameterized_class(DATABASES)
@@ -116,8 +145,12 @@ class TestODBCTypeMatrix(unittest.TestCase):
     except Exception:
       pass
     cls.xgt.set_default_namespace('matrix')
-    odbc_driver = (SQLServerODBCDriver(cls.connection) if cls.driver == 'sqlserver'
-                   else SQLODBCDriver(cls.connection))
+    if cls.driver == 'sqlserver':
+      odbc_driver = SQLServerODBCDriver(cls.connection)
+    elif cls.driver == 'oracle':
+      odbc_driver = OracleODBCDriver(cls.connection, upper_case_names = True)
+    else:
+      odbc_driver = SQLODBCDriver(cls.connection)
     cls.conn = ODBCConnector(cls.xgt, odbc_driver)
 
   @classmethod
@@ -138,7 +171,8 @@ class TestODBCTypeMatrix(unittest.TestCase):
     cursor.execute(self.ddl)
     cursor.execute(self.insert)
     # A row of nulls, which is where drivers most often differ.
-    cursor.execute('INSERT INTO matrix VALUES (NULL,NULL,NULL,NULL,NULL,NULL,NULL)')
+    nulls = ','.join(['NULL'] * len(self.xgt_types))
+    cursor.execute(f'INSERT INTO matrix VALUES ({nulls})')
     try:
       self.xgt.drop_frame('matrix')
     except Exception:
