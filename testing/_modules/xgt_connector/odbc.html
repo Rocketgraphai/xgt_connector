@@ -597,8 +597,8 @@
 <span class="sd">            &#39;Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connection_string</span> <span class="o">=</span> <span class="n">connection_string</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2"> LIMIT 1;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2">;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2"> WHERE 1=0&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_query</span><span class="o">=</span><span class="s2">&quot;SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = &#39;</span><span class="si">{0}</span><span class="s2">&#39;;&quot;</span></div>
 
 
@@ -641,8 +641,8 @@
 <span class="sd">            By default false.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connection_string</span> <span class="o">=</span> <span class="n">connection_string</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2"> LIMIT 1;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT </span><span class="si">{0}</span><span class="s2"> FROM </span><span class="si">{1}</span><span class="s2">;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2"> WHERE 1=0&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT </span><span class="si">{0}</span><span class="s2"> FROM </span><span class="si">{1}</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = &#39;</span><span class="si">{0}</span><span class="s2">&#39;;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_include_id</span> <span class="o">=</span> <span class="n">include_id</span></div>
 
@@ -695,10 +695,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connection_string</span> <span class="o">=</span> <span class="n">connection_string</span>
         <span class="k">if</span> <span class="n">upper_case_names</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2"> WHERE ROWNUM &lt;= 1&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2"> WHERE 1=0&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2">&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="se">\&quot;</span><span class="si">{0}</span><span class="se">\&quot;</span><span class="s2"> WHERE ROWNUM &lt;= 1&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="se">\&quot;</span><span class="si">{0}</span><span class="se">\&quot;</span><span class="s2"> WHERE 1=0&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="se">\&quot;</span><span class="si">{0}</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_query</span><span class="o">=</span><span class="s2">&quot;SELECT NUM_ROWS FROM ALL_TABLES WHERE TABLE_NAME = &#39;</span><span class="si">{0}</span><span class="s2">&#39;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ansi_conversion</span> <span class="o">=</span> <span class="n">ansi_conversion</span></div>
@@ -724,6 +724,8 @@
         <span class="k">return</span> <span class="n">reader</span><span class="o">.</span><span class="n">schema</span></div>
 
 
+<span class="c1"># A trailing semicolon is not portable. SAP ASE rejects one outright, and it</span>
+<span class="c1"># does no work in any of these queries, so none of them carry it.</span>
 <div class="viewcode-block" id="SAPODBCDriver">
 <a class="viewcode-back" href="../../odbc/xgt_connector.SAPODBCDriver.html#xgt_connector.SAPODBCDriver">[docs]</a>
 <span class="k">class</span> <span class="nc">SAPODBCDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -741,8 +743,8 @@
 <span class="sd">            &#39;Driver={AES};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connection_string</span> <span class="o">=</span> <span class="n">connection_string</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT TOP 1 * FROM </span><span class="si">{0}</span><span class="s2">;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2">;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2"> WHERE 1=0&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_query</span><span class="o">=</span><span class="s2">&quot;SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = &#39;</span><span class="si">{0}</span><span class="s2">&#39;;&quot;</span></div>
 
 
@@ -783,8 +785,8 @@
 <span class="sd">          This based on the ANSI int conversion Snowflake does and reverses that. By default true.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connection_string</span> <span class="o">=</span> <span class="n">connection_string</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2"> LIMIT 1;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2">;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2"> WHERE 1=0&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_query</span><span class="o">=</span><span class="s2">&quot;SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = &#39;</span><span class="si">{0}</span><span class="s2">&#39;;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ansi_conversion</span> <span class="o">=</span> <span class="n">ansi_conversion</span></div>
 
@@ -809,8 +811,45 @@
         <span class="k">return</span> <span class="n">reader</span><span class="o">.</span><span class="n">schema</span></div>
 
 
+<span class="k">class</span> <span class="nc">SQLServerODBCDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_string</span> <span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the driver class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        connection_string : str</span>
+<span class="sd">            Standard ODBC connection string used for connecting to SQL Server.</span>
+<span class="sd">            Example:</span>
+<span class="sd">            &#39;Driver={ODBC Driver 18 for SQL Server};Server=127.0.0.1,1433;Uid=sa;Pwd=foo;Database=test;&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection_string</span> <span class="o">=</span> <span class="n">connection_string</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2"> WHERE 1=0&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2">&quot;</span>
+        <span class="c1"># SQL Server keeps no TABLE_ROWS in INFORMATION_SCHEMA, its row counts</span>
+        <span class="c1"># are in the partition stats. Index 0 is a heap and index 1 a clustered</span>
+        <span class="c1"># index, one or the other holds the rows of a table.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_query</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SELECT SUM(row_count) FROM sys.dm_db_partition_stats &quot;</span>
+                                <span class="s2">&quot;WHERE object_id = OBJECT_ID(&#39;</span><span class="si">{0}</span><span class="s2">&#39;) AND index_id IN (0,1)&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_data_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_conversions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="k">return</span> <span class="p">{</span> <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">_get_record_batch_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">max_text_size</span><span class="p">,</span> <span class="n">max_binary_size</span><span class="p">):</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">read_arrow_batches_from_odbc</span><span class="p">(</span>
+            <span class="n">query</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">),</span>
+            <span class="n">connection_string</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_connection_string</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">max_text_size</span><span class="o">=</span><span class="n">max_text_size</span><span class="p">,</span>
+            <span class="n">max_binary_size</span><span class="o">=</span><span class="n">max_binary_size</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">reader</span><span class="o">.</span><span class="n">schema</span>
+
 <span class="n">ODBCDriverTypes</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">SQLODBCDriver</span><span class="p">,</span> <span class="n">MongoODBCDriver</span><span class="p">,</span> <span class="n">OracleODBCDriver</span><span class="p">,</span>
-                        <span class="n">SAPODBCDriver</span><span class="p">,</span> <span class="n">SnowflakeODBCDriver</span><span class="p">]</span>
+                        <span class="n">SAPODBCDriver</span><span class="p">,</span> <span class="n">SnowflakeODBCDriver</span><span class="p">,</span> <span class="n">SQLServerODBCDriver</span><span class="p">]</span>
 
 <div class="viewcode-block" id="ODBCConnector">
 <a class="viewcode-back" href="../../odbc/xgt_connector.ODBCConnector.html#xgt_connector.ODBCConnector">[docs]</a>

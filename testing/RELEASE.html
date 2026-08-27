@@ -522,6 +522,7 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>Transfers to xGT now read rows from Neo4j in batches, which is several times faster. Controlled by the batch_size option of Neo4jConnector.</p></li>
+<li><p>Added SQLServerODBCDriver for connecting to SQL Server.</p></li>
 <li><p>Added a “fast” install extra that pulls in neo4j-rust-ext, a faster bolt codec.</p></li>
 </ul>
 </div></blockquote>
@@ -531,6 +532,8 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>Queries run through Neo4jDriver.query() being run a second time when finalized, which ran writes twice.</p></li>
+<li><p>Transfers from SQL Server, whose schema query used a LIMIT that SQL Server does not have.</p></li>
+<li><p>Transfers from SAP ASE, which rejects the trailing semicolon the queries carried.</p></li>
 </ul>
 </div></blockquote>
 </section>
