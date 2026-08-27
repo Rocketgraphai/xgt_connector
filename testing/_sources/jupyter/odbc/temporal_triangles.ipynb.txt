@@ -1,0 +1,209 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "0a84f0a2",
+   "metadata": {},
+   "source": [
+    "# Temporal Triangles ODBC\n",
+    "This notebook walks through running the temporal triangles benchmark on xGT using MySQL."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "8e10ab2e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from xgt_connector import ODBCConnector, SQLODBCDriver\n",
+    "import xgt\n",
+    "import time\n",
+    "import pyodbc\n",
+    "import requests"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "52f1e71d",
+   "metadata": {},
+   "source": [
+    "## Connect to xGT and MySQL"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "066e36c6",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'\n",
+    "xgt_server = xgt.Connection()\n",
+    "odbc_driver = SQLODBCDriver(connection_string)   \n",
+    "c = ODBCConnector(xgt_server, odbc_driver)       \n",
+    "pyodbc_driver = pyodbc.connect(connection_string)\n",
+    "cursor = pyodbc_driver.cursor()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c80a4a94",
+   "metadata": {},
+   "source": [
+    "## Transfer the dataset locally"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "c21fbd4a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "file_object = requests.get('https://datasets.rocketgraph.com/TT/tt.1M')\n",
+    "with open('tt.1M', 'wb') as local_file:\n",
+    "    local_file.write(file_object.content)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "64d027ac",
+   "metadata": {},
+   "source": [
+    "## Load the data into MySQL"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "36502592",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "cursor.execute(\"DROP TABLE IF EXISTS Edges\")\n",
+    "cursor.execute(\"CREATE TABLE Edges (src BIGINT, trg BIGINT, timestamp BIGINT)\")\n",
+    "cursor.execute(\"LOAD DATA LOCAL INFILE './tt.1M' INTO TABLE Edges FIELDS TERMINATED BY ',' LINES TERMINATED BY '\\n';\") \n",
+    "pyodbc_driver.commit()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3b4e7f02",
+   "metadata": {},
+   "source": [
+    "## Query to run"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "d7154ed8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "threshold=15\n",
+    "query = \"\"\"\n",
+    "    MATCH (v1)-[e1:Edges]->(v2)\n",
+    "              -[e2:Edges]->(v3)\n",
+    "              -[e3:Edges]->(v1)\n",
+    "    WHERE v1 <> v2 AND v1 <> v3 AND v2 <> v3\n",
+    "      AND e1.timestamp <= e2.timestamp\n",
+    "      AND e2.timestamp <= e3.timestamp\n",
+    "      AND e3.timestamp - e1.timestamp < {:d}\n",
+    "    RETURN v1.key as v1id,\n",
+    "           e1.timestamp as e1_timestamp,\n",
+    "           v2.key as v2id,\n",
+    "           e2.timestamp as e2_timestamp,\n",
+    "           v3.key as v3id,\n",
+    "           e3.timestamp as e3_timestamp,\n",
+    "           e3.timestamp - e1.timestamp as delta\n",
+    "  \"\"\".format(threshold)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1b52fb50",
+   "metadata": {},
+   "source": [
+    "## Transfer data to xGT"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "f49f1f12",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Transferring: [############################################################] 1000000/1000000 in 0:00:00.8s (1306231.1/s, eta: 0:00:00.0s)     \n",
+      "Transfer to xgt time: 0.85\n"
+     ]
+    }
+   ],
+   "source": [
+    "t0 = time.time()\n",
+    "c.transfer_to_xgt([('Edges', ('Vertex', 'Vertex', 'src', 'trg'))], easy_edges=True)\n",
+    "t_duration = time.time() - t0\n",
+    "print(f\"Transfer to xgt time: {t_duration:,.2f}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e2b24e88",
+   "metadata": {},
+   "source": [
+    "## Run query on xGT"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "8db838d2",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[[26563, 7598, 51565, 7598, 15727, 7612, 14]]\n",
+      "Query to xgt time: 0.57\n",
+      "Total xgt time including transfer: 1.43\n"
+     ]
+    }
+   ],
+   "source": [
+    "t0 = time.time()\n",
+    "job = xgt_server.run_job(query)\n",
+    "q_duration = time.time() - t0\n",
+    "print(job.get_data())\n",
+    "print(f\"Query to xgt time: {q_duration:,.2f}\")\n",
+    "print(f\"Total xgt time including transfer: {t_duration + q_duration:,.2f}\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
