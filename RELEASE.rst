@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+2.6.8 (08-27-2026)
+------------------
+
+Fixed
+^^^^^
+  - Queries run through Neo4jDriver.query() being run a second time when finalized, which ran writes twice.
+
 2.6.7 (08-25-2026)
 ------------------
 
