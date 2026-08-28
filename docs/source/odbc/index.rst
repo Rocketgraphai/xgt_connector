@@ -30,9 +30,19 @@ ODBC Connector
 The extra ODBC connector module allows for connecting to databases that support ODBC.
 The ODBC connector requires at least xGT 1.14.0.
 
-The ODBC driver has been tested against Databricks, DB2, MySQL, MariaDB, Oracle, Snowflake, SAP ASE, and SAP IQ.
-The driver regularly runs unit tests against MariaDB.
-Some SQL specific drivers are available below for Oracle, Snowflake and SAP-based databases.
+Every change is tested against MariaDB, PostgreSQL, SQLite and SQL Server, and a
+nightly run adds Oracle and SAP ASE. Each of those transfers a table of every
+supported type, including nulls, and checks what it becomes in xGT, because what
+a column arrives as depends on what its ODBC driver reports rather than on the
+connector.
+
+Databricks, MySQL, Snowflake, SAP IQ and MongoDB have been used with the
+connector but no automated test covers them, so they rest on their driver
+behaving as the tested ones do. DB2 needs care over which driver is used, see
+:ref:`odbc-db2`.
+
+Some SQL specific drivers are available below for Oracle, SQL Server, Snowflake
+and SAP-based databases.
 In general, SQL syntax varies between vendors, so transfer_to_xgt or transfer_to_odbc aren't guaranteed to work.
 However, transfer_query_to_xgt will likely work with any vendor using the generic SQLODBCDriver.
 
@@ -357,6 +367,8 @@ This would transfer the table, `my_table`, under the `test` database to the xGT 
 SQL Server keeps no row counts in ``INFORMATION_SCHEMA``, so ``SQLServerODBCDriver`` reads them
 from the partition statistics instead. That is the only thing it does differently, but without it
 the progress bar has no total to work towards.
+
+.. _odbc-db2:
 
 Connecting to DB2
 ^^^^^^^^^^^^^^^^^
