@@ -36,10 +36,10 @@ supported type, including nulls, and checks what it becomes in xGT, because what
 a column arrives as depends on what its ODBC driver reports rather than on the
 connector.
 
-Databricks, MySQL, Snowflake, SAP IQ and MongoDB have been used with the
+Databricks, DB2, MySQL, Snowflake, SAP IQ and MongoDB have been used with the
 connector but no automated test covers them, so they rest on their driver
-behaving as the tested ones do. DB2 needs care over which driver is used, see
-:ref:`odbc-db2`.
+behaving as the tested ones do. DB2 in particular works only with the right
+driver, see :ref:`odbc-db2`.
 
 Some SQL specific drivers are available below for Oracle, SQL Server, Snowflake
 and SAP-based databases.
