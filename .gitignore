@@ -70,6 +70,7 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/build/
 
 # PyBuilder
 target/
@@ -127,3 +128,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# What a run of the connector or of the tests leaves lying about. None of these
+# belong in a commit, and a stale one of them has been committed by accident
+# more than once.
+*.out
+output*.csv
+output*.parquet
+test/res
+test/res[0-9]*
