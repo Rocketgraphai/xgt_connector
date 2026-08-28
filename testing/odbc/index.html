@@ -542,9 +542,17 @@
 <span id="odbc"></span><h1>ODBC Connector<a class="headerlink" href="#odbc-connector" title="Link to this heading">#</a></h1>
 <p>The extra ODBC connector module allows for connecting to databases that support ODBC.
 The ODBC connector requires at least xGT 1.14.0.</p>
-<p>The ODBC driver has been tested against Databricks, DB2, MySQL, MariaDB, Oracle, Snowflake, SAP ASE, and SAP IQ.
-The driver regularly runs unit tests against MariaDB.
-Some SQL specific drivers are available below for Oracle, Snowflake and SAP-based databases.
+<p>Every change is tested against MariaDB, PostgreSQL, SQLite and SQL Server, and a
+nightly run adds Oracle and SAP ASE. Each of those transfers a table of every
+supported type, including nulls, and checks what it becomes in xGT, because what
+a column arrives as depends on what its ODBC driver reports rather than on the
+connector.</p>
+<p>Databricks, DB2, MySQL, Snowflake, SAP IQ and MongoDB have been used with the
+connector but no automated test covers them, so they rest on their driver
+behaving as the tested ones do. DB2 in particular works only with the right
+driver, see <a class="reference internal" href="#odbc-db2"><span class="std std-ref">Connecting to DB2</span></a>.</p>
+<p>Some SQL specific drivers are available below for Oracle, SQL Server, Snowflake
+and SAP-based databases.
 In general, SQL syntax varies between vendors, so transfer_to_xgt or transfer_to_odbc aren’t guaranteed to work.
 However, transfer_query_to_xgt will likely work with any vendor using the generic SQLODBCDriver.</p>
 <section id="installation">
@@ -816,7 +824,7 @@ from the partition statistics instead. That is the only thing it does differentl
 the progress bar has no total to work towards.</p>
 </section>
 <section id="connecting-to-db2">
-<h3>Connecting to DB2<a class="headerlink" href="#connecting-to-db2" title="Link to this heading">#</a></h3>
+<span id="odbc-db2"></span><h3>Connecting to DB2<a class="headerlink" href="#connecting-to-db2" title="Link to this heading">#</a></h3>
 <p>After installing <a class="reference external" href="https://www.ibm.com/support/pages/db2-odbc-cli-driver-download-and-installation-information">IBM’s ODBC driver</a>, connect like so:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
