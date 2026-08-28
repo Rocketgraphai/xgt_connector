@@ -7,7 +7,7 @@ Release Notes
 New Features
 ^^^^^^^^^^^^
   - Transfers to xGT now read rows from Neo4j in batches, which is several times faster. Controlled by the batch_size option of Neo4jConnector.
-  - Added SQLServerODBCDriver for connecting to SQL Server.
+  - Added support for SQL Server, through the new SQLServerODBCDriver or the generic SQLODBCDriver.
   - Added a "fast" install extra that pulls in neo4j-rust-ext, a faster bolt codec.
 
 Changed
@@ -20,8 +20,8 @@ Changed
 Fixed
 ^^^^^
   - Queries run through Neo4jDriver.query() being run a second time when finalized, which ran writes twice.
-  - Transfers from SQL Server, whose schema query used a LIMIT that SQL Server does not have.
-  - Transfers from SAP ASE, which rejects the trailing semicolon the queries carried.
+  - The schema queries no longer use syntax particular to one database, so they work wherever the connector can reach.
+  - The queries no longer end in a semicolon, which SAP ASE 15.7 rejects.
 
 2.6.7 (08-25-2026)
 ------------------
