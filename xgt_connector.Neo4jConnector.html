@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="_static/documentation_options.js?v=65b05be9"></script>
+    <script src="_static/documentation_options.js?v=acc74ff5"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -517,10 +517,10 @@
 <h1>xgt_connector.Neo4jConnector<a class="headerlink" href="#xgt-connector-neo4jconnector" title="Link to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="xgt_connector.Neo4jConnector">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">xgt_connector.</span></span><span class="sig-name descname"><span class="pre">Neo4jConnector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xgt_connector/neo4j_connector/neo4j_connector.html#Neo4jConnector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xgt_connector.Neo4jConnector" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">xgt_connector.</span></span><span class="sig-name descname"><span class="pre">Neo4jConnector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xgt_connector/neo4j_connector/neo4j_connector.html#Neo4jConnector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xgt_connector.Neo4jConnector" title="Link to this definition">#</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="xgt_connector.Neo4jConnector.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xgt_connector/neo4j_connector/neo4j_connector.html#Neo4jConnector.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xgt_connector.Neo4jConnector.__init__" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xgt_connector/neo4j_connector/neo4j_connector.html#Neo4jConnector.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xgt_connector.Neo4jConnector.__init__" title="Link to this definition">#</a></dt>
 <dd><p>Initializes the connector class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -531,6 +531,16 @@
 <li><p><strong>enable_apoc</strong> (<em>bool</em>) – If the connector finds APOC, it will use that to improve schema queries.
 If set to True this enables that feature.
 By default this is True.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of rows Neo4j groups into a single Bolt record when
+transferring to xGT. Bolt sends one message per row, so grouping rows
+server side removes most of the per-row overhead. Neo4j holds one
+batch in memory at a time, so this also bounds what a transfer costs
+the server. The default of 1000 is a conservative one: larger batches
+transfer faster, up to roughly 20000 where the gain flattens out.
+For edges the batch is cut on the source node, so a node of high
+degree contributes all of its edges to one batch no matter this
+value. Must be a positive integer, or None to transfer a Bolt record
+at a time instead.</p></li>
 </ul>
 </dd>
 </dl>
@@ -598,7 +608,7 @@ By default this is True.</p></li>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xgt_connector/neo4j_connector/neo4j_connector.html#Neo4jConnector.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xgt_connector/neo4j_connector/neo4j_connector.html#Neo4jConnector.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
 <dd><p>Initializes the connector class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -609,6 +619,16 @@ By default this is True.</p></li>
 <li><p><strong>enable_apoc</strong> (<em>bool</em>) – If the connector finds APOC, it will use that to improve schema queries.
 If set to True this enables that feature.
 By default this is True.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of rows Neo4j groups into a single Bolt record when
+transferring to xGT. Bolt sends one message per row, so grouping rows
+server side removes most of the per-row overhead. Neo4j holds one
+batch in memory at a time, so this also bounds what a transfer costs
+the server. The default of 1000 is a conservative one: larger batches
+transfer faster, up to roughly 20000 where the gain flattens out.
+For edges the batch is cut on the source node, so a node of high
+degree contributes all of its edges to one batch no matter this
+value. Must be a positive integer, or None to transfer a Bolt record
+at a time instead.</p></li>
 </ul>
 </dd>
 </dl>

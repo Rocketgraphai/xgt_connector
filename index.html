@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="_static/documentation_options.js?v=65b05be9"></script>
+    <script src="_static/documentation_options.js?v=acc74ff5"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -633,6 +633,87 @@ These additional drivers can provide much faster performance than the default ne
 </div>
 <p>These additional connectors will connect to Neo4j with a combination of connections currently and may have some limitations.</p>
 </section>
+<section id="transferring-larger-graphs">
+<h3>Transferring Larger Graphs<a class="headerlink" href="#transferring-larger-graphs" title="Link to this heading">#</a></h3>
+<p>Bolt sends each row of a result as its own message, so a transfer that reads a
+row at a time spends most of it on per row overhead rather than on the data
+itself. The connector instead has Neo4j group <cite>batch_size</cite> rows into each
+message, which by default makes a transfer several times faster.</p>
+<p>Neo4j holds a single batch at a time, so the batch size also bounds what the
+transfer costs the server. The default of 1000 rows is a conservative one, and
+raising it transfers faster. Transferring 500,000 nodes of five properties each
+ran at these rates:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>batch_size</p></th>
+<th class="head"><p>Speedup over a row at a time</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>250</p></td>
+<td><p>2.8x</p></td>
+</tr>
+<tr class="row-odd"><td><p>500</p></td>
+<td><p>4.6x</p></td>
+</tr>
+<tr class="row-even"><td><p>1000 (default)</p></td>
+<td><p>7.1x</p></td>
+</tr>
+<tr class="row-odd"><td><p>5000</p></td>
+<td><p>10.9x</p></td>
+</tr>
+<tr class="row-even"><td><p>20000</p></td>
+<td><p>12.5x</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The gain flattens out past 20,000 rows, so there is little reason to go higher.
+Batches below a few hundred rows give most of it back.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_server</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">20000</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Person&#39;</span><span class="p">],</span> <span class="n">edges</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;KNOWS&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Batches of edges are cut on the source node, so a node of high degree
+contributes all of its edges to a single batch whatever the batch size is.
+Passing <code class="docutils literal notranslate"><span class="pre">batch_size=None</span></code> transfers a row at a time, as earlier releases did.</p>
+<p>Installing the optional
+<a class="reference external" href="https://pypi.org/project/neo4j-rust-ext/">neo4j-rust-ext</a> package speeds up
+batched transfers further, by replacing the bolt codec of the Neo4j driver with
+a compiled one:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;xgt_connector[fast]&#39;</span>
+</pre></div>
+</div>
+<p>It needs no code change. On the transfer above it roughly halved the time
+again, giving about 24 times the rate of a row at a time transfer:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>batch_size</p></th>
+<th class="head"><p>Plain</p></th>
+<th class="head"><p>With neo4j-rust-ext</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>None (a row at a time)</p></td>
+<td><p>32.9s</p></td>
+<td><p>31.2s</p></td>
+</tr>
+<tr class="row-odd"><td><p>1000 (default)</p></td>
+<td><p>5.1s</p></td>
+<td><p>3.2s</p></td>
+</tr>
+<tr class="row-even"><td><p>20000</p></td>
+<td><p>2.7s</p></td>
+<td><p>1.4s</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>It is only worth installing together with batching. Decoding is not what a row
+at a time transfer spends its time on, which is why the first row of that table
+barely moves.</p>
+</section>
 <section id="additional-examples">
 <h3>Additional Examples<a class="headerlink" href="#additional-examples" title="Link to this heading">#</a></h3>
 <p>More detailed examples can be found in <a class="reference internal" href="jupyter/index.html#jupyter"><span class="std std-ref">Jupyter Notebooks</span></a> or on github:</p>
@@ -721,32 +802,33 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="RELEASE.html">Release Notes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id1">2.6.7 (08-25-2026)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id2">2.6.6 (02-11-2026)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id5">2.6.5 (11-05-2025)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id7">2.6.4 (02-25-2025)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id9">2.6.3 (02-12-2025)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id11">2.6.2 (10-15-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id13">2.6.1 (10-02-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id15">2.6.0 (02-20-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id17">2.5.0 (02-14-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id20">2.4.0 (02-06-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id22">2.3.0 (12-18-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id25">2.2.0 (12-07-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id27">2.1.0 (08-23-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id29">2.0.0 (06-14-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id32">1.7.0 (02-22-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id34">1.6.0 (10-21-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id37">1.5.2 (08-26-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id39">1.5.1 (07-29-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id41">1.5.0 (07-29-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id43">1.4.0 (07-26-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id47">1.3.1 (07-11-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id49">1.3.0 (07-08-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id51">1.2.1 (07-01-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id53">1.2.0 (06-24-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id56">1.1.0 (06-17-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id60">1.0.0 (06-13-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id1">3.0.0 (08-27-2026)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id2">2.6.7 (08-25-2026)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id5">2.6.6 (02-11-2026)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id8">2.6.5 (11-05-2025)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id10">2.6.4 (02-25-2025)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id12">2.6.3 (02-12-2025)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id15">2.6.2 (10-15-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id17">2.6.1 (10-02-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id19">2.6.0 (02-20-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id21">2.5.0 (02-14-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id24">2.4.0 (02-06-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id26">2.3.0 (12-18-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id29">2.2.0 (12-07-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id31">2.1.0 (08-23-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id33">2.0.0 (06-14-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id36">1.7.0 (02-22-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id38">1.6.0 (10-21-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id41">1.5.2 (08-26-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id43">1.5.1 (07-29-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id45">1.5.0 (07-29-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id47">1.4.0 (07-26-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id51">1.3.1 (07-11-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id53">1.3.0 (07-08-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id55">1.2.1 (07-01-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id57">1.2.0 (06-24-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id60">1.1.0 (06-17-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id64">1.0.0 (06-13-2022)</a></li>
 </ul>
 </li>
 </ul>
@@ -815,6 +897,7 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mapping-neo4j-labels-and-types">Mapping Neo4j labels and types</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-auradb">Connecting to AuraDB</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-various-neo4j-drivers">Using various Neo4j drivers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transferring-larger-graphs">Transferring Larger Graphs</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-examples">Additional Examples</a></li>
 </ul>
 </li>

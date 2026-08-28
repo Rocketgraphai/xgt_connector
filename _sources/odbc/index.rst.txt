@@ -30,9 +30,19 @@ ODBC Connector
 The extra ODBC connector module allows for connecting to databases that support ODBC.
 The ODBC connector requires at least xGT 1.14.0.
 
-The ODBC driver has been tested against Databricks, DB2, MySQL, MariaDB, Oracle, Snowflake, SAP ASE, and SAP IQ.
-The driver regularly runs unit tests against MariaDB.
-Some SQL specific drivers are available below for Oracle, Snowflake and SAP-based databases.
+Every change is tested against MariaDB, PostgreSQL, SQLite and SQL Server, and a
+nightly run adds Oracle and SAP ASE. Each of those transfers a table of every
+supported type, including nulls, and checks what it becomes in xGT, because what
+a column arrives as depends on what its ODBC driver reports rather than on the
+connector.
+
+Databricks, DB2, MySQL, Snowflake, SAP IQ and MongoDB have been used with the
+connector but no automated test covers them, so they rest on their driver
+behaving as the tested ones do. DB2 in particular works only with the right
+driver, see :ref:`odbc-db2`.
+
+Some SQL specific drivers are available below for Oracle, SQL Server, Snowflake
+and SAP-based databases.
 In general, SQL syntax varies between vendors, so transfer_to_xgt or transfer_to_odbc aren't guaranteed to work.
 However, transfer_query_to_xgt will likely work with any vendor using the generic SQLODBCDriver.
 
@@ -336,6 +346,30 @@ After installing `Databricks' ODBC driver <https://www.databricks.com/spark/odbc
 
 This would transfer the table, `my_table`, under the `test` database to the xGT table named `test_table`.
 
+Connecting to SQL Server
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+After installing `Microsoft's ODBC driver <https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server>`_, connect like so:
+
+.. code-block:: python
+
+   import xgt
+   from xgt_connector import ODBCConnector, SQLServerODBCDriver
+
+   connection_string = 'Driver={ODBC Driver 18 for SQL Server};Server=127.0.0.1,1433;Uid=sa;Pwd=foo;Database=test;'
+   xgt_server = xgt.Connection()
+   odbc_server = SQLServerODBCDriver(connection_string)
+   conn = ODBCConnector(xgt_server, odbc_server)
+
+   conn.transfer_to_xgt([('my_table', 'test_table')])
+
+This would transfer the table, `my_table`, under the `test` database to the xGT table named `test_table`.
+SQL Server keeps no row counts in ``INFORMATION_SCHEMA``, so ``SQLServerODBCDriver`` reads them
+from the partition statistics instead. That is the only thing it does differently, but without it
+the progress bar has no total to work towards.
+
+.. _odbc-db2:
+
 Connecting to DB2
 ^^^^^^^^^^^^^^^^^
 
@@ -354,9 +388,14 @@ After installing `IBM's ODBC driver <https://www.ibm.com/support/pages/db2-odbc-
    conn.transfer_to_xgt([('my_table', 'test_table')])
 
 This would transfer the table, `my_table`, under the `test` database to the xGT table named `test_table`.
-With DB2 make sure you are using the correct driver.
-On 64-bit systems make sure you are using the libdb2o.so driver.
-The 32-bit driver does not work correctly with 64-bit systems, and will only transfer part of the data.
+.. warning::
+
+   On a 64-bit system, use the ``libdb2o.so`` driver. The 32-bit driver reports
+   the length of a value using 32 bits, which a 64-bit driver manager reads as a
+   negative number. Depending on the data that either transfers only part of it
+   or ends the process outright, and neither failure says what went wrong. The
+   CLI driver carried by the ``ibm_db`` python package is the 32-bit one, so it
+   is not a shortcut to a working setup.
 
 Connecting to Snowflake
 ^^^^^^^^^^^^^^^^^^^^^^^
