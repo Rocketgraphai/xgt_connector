@@ -336,6 +336,28 @@ After installing `Databricks' ODBC driver <https://www.databricks.com/spark/odbc
 
 This would transfer the table, `my_table`, under the `test` database to the xGT table named `test_table`.
 
+Connecting to SQL Server
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+After installing `Microsoft's ODBC driver <https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server>`_, connect like so:
+
+.. code-block:: python
+
+   import xgt
+   from xgt_connector import ODBCConnector, SQLServerODBCDriver
+
+   connection_string = 'Driver={ODBC Driver 18 for SQL Server};Server=127.0.0.1,1433;Uid=sa;Pwd=foo;Database=test;'
+   xgt_server = xgt.Connection()
+   odbc_server = SQLServerODBCDriver(connection_string)
+   conn = ODBCConnector(xgt_server, odbc_server)
+
+   conn.transfer_to_xgt([('my_table', 'test_table')])
+
+This would transfer the table, `my_table`, under the `test` database to the xGT table named `test_table`.
+SQL Server keeps no row counts in ``INFORMATION_SCHEMA``, so ``SQLServerODBCDriver`` reads them
+from the partition statistics instead. That is the only thing it does differently, but without it
+the progress bar has no total to work towards.
+
 Connecting to DB2
 ^^^^^^^^^^^^^^^^^
 
@@ -354,9 +376,14 @@ After installing `IBM's ODBC driver <https://www.ibm.com/support/pages/db2-odbc-
    conn.transfer_to_xgt([('my_table', 'test_table')])
 
 This would transfer the table, `my_table`, under the `test` database to the xGT table named `test_table`.
-With DB2 make sure you are using the correct driver.
-On 64-bit systems make sure you are using the libdb2o.so driver.
-The 32-bit driver does not work correctly with 64-bit systems, and will only transfer part of the data.
+.. warning::
+
+   On a 64-bit system, use the ``libdb2o.so`` driver. The 32-bit driver reports
+   the length of a value using 32 bits, which a 64-bit driver manager reads as a
+   negative number. Depending on the data that either transfers only part of it
+   or ends the process outright, and neither failure says what went wrong. The
+   CLI driver carried by the ``ibm_db`` python package is the 32-bit one, so it
+   is not a shortcut to a working setup.
 
 Connecting to Snowflake
 ^^^^^^^^^^^^^^^^^^^^^^^

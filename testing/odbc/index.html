@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../_static/documentation_options.js?v=8daaf82b"></script>
+    <script src="../_static/documentation_options.js?v=acc74ff5"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -796,6 +796,25 @@ Additional errors can be seen like so:</p>
 </div>
 <p>This would transfer the table, <cite>my_table</cite>, under the <cite>test</cite> database to the xGT table named <cite>test_table</cite>.</p>
 </section>
+<section id="connecting-to-sql-server">
+<h3>Connecting to SQL Server<a class="headerlink" href="#connecting-to-sql-server" title="Link to this heading">#</a></h3>
+<p>After installing <a class="reference external" href="https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server">Microsoft’s ODBC driver</a>, connect like so:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLServerODBCDriver</span>
+
+<span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver={ODBC Driver 18 for SQL Server};Server=127.0.0.1,1433;Uid=sa;Pwd=foo;Database=test;&#39;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLServerODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;my_table&#39;</span><span class="p">,</span> <span class="s1">&#39;test_table&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>This would transfer the table, <cite>my_table</cite>, under the <cite>test</cite> database to the xGT table named <cite>test_table</cite>.
+SQL Server keeps no row counts in <code class="docutils literal notranslate"><span class="pre">INFORMATION_SCHEMA</span></code>, so <code class="docutils literal notranslate"><span class="pre">SQLServerODBCDriver</span></code> reads them
+from the partition statistics instead. That is the only thing it does differently, but without it
+the progress bar has no total to work towards.</p>
+</section>
 <section id="connecting-to-db2">
 <h3>Connecting to DB2<a class="headerlink" href="#connecting-to-db2" title="Link to this heading">#</a></h3>
 <p>After installing <a class="reference external" href="https://www.ibm.com/support/pages/db2-odbc-cli-driver-download-and-installation-information">IBM’s ODBC driver</a>, connect like so:</p>
@@ -811,9 +830,15 @@ Additional errors can be seen like so:</p>
 </pre></div>
 </div>
 <p>This would transfer the table, <cite>my_table</cite>, under the <cite>test</cite> database to the xGT table named <cite>test_table</cite>.
-With DB2 make sure you are using the correct driver.
-On 64-bit systems make sure you are using the libdb2o.so driver.
-The 32-bit driver does not work correctly with 64-bit systems, and will only transfer part of the data.</p>
+.. warning:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>On a 64-bit system, use the ``libdb2o.so`` driver. The 32-bit driver reports
+the length of a value using 32 bits, which a 64-bit driver manager reads as a
+negative number. Depending on the data that either transfers only part of it
+or ends the process outright, and neither failure says what went wrong. The
+CLI driver carried by the ``ibm_db`` python package is the 32-bit one, so it
+is not a shortcut to a working setup.
+</pre></div>
+</div>
 </section>
 <section id="connecting-to-snowflake">
 <h3>Connecting to Snowflake<a class="headerlink" href="#connecting-to-snowflake" title="Link to this heading">#</a></h3>
@@ -1026,6 +1051,7 @@ See below for more details.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-parameters-when-transferring-to-xgt">Other parameters when transferring to <span class="nocap">xGT</span></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-databricks">Connecting to Databricks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-sql-server">Connecting to SQL Server</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-db2">Connecting to DB2</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-snowflake">Connecting to Snowflake</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-mongodb">Connecting to MongoDB</a></li>
